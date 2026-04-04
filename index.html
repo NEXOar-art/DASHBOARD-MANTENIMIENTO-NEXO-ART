@@ -32,7 +32,7 @@
   <!-- MAIN -->
   <div class="flex-1 flex flex-col">
 
-    <!-- HEADER - Exacto como la imagen -->
+    <!-- HEADER -->
     <header class="h-16 bg-slate-900 border-b border-slate-700 px-8 flex items-center justify-between">
       <div class="flex items-center gap-4">
         <div class="flex items-center gap-3">
@@ -58,12 +58,12 @@
       </div>
     </header>
 
-    <!-- FORMULARIO DE CARGA (campos solicitados) -->
+    <!-- FORMULARIO DE CARGA -->
     <div class="bg-slate-900 border-b border-slate-700 px-8 py-5">
       <div class="flex justify-between mb-4">
         <h3 class="font-semibold flex items-center gap-2"><i class="fas fa-database"></i> Carga de Datos – KPIs y Telemetría</h3>
         <button onclick="submitToGoogleSheets()" class="bg-teal-500 hover:bg-teal-600 text-black px-6 py-2 rounded-2xl flex items-center gap-2 font-medium">
-          <i class="fas fa-paper-plane"></i> Enviar a Google Sheets
+          <i class="fas fa-paper-plane"></i> Enviar Datos
         </button>
       </div>
       <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-4 text-sm">
@@ -90,7 +90,7 @@
       </div>
     </div>
 
-    <!-- DASHBOARD PRINCIPAL - Diseño exacto de la imagen -->
+    <!-- DASHBOARD PRINCIPAL -->
     <div class="flex-1 overflow-auto p-8 bg-slate-950" id="content-area">
       <div class="max-w-screen-2xl mx-auto">
 
@@ -111,7 +111,7 @@
             </div>
           </div>
 
-          <!-- MTBF -->
+          <!-- MTBF, MTTR, Km -->
           <div class="col-span-12 lg:col-span-8 grid grid-cols-3 gap-6">
             <div class="bg-slate-900 border border-slate-700 rounded-3xl p-6 flex flex-col justify-center">
               <div class="flex justify-between items-start">
@@ -122,7 +122,6 @@
                 <i class="fas fa-clock text-4xl text-teal-400"></i>
               </div>
             </div>
-            <!-- MTTR -->
             <div class="bg-slate-900 border border-slate-700 rounded-3xl p-6 flex flex-col justify-center">
               <div class="flex justify-between items-start">
                 <div>
@@ -132,7 +131,6 @@
                 <i class="fas fa-tools text-4xl text-orange-400"></i>
               </div>
             </div>
-            <!-- Prom. Km -->
             <div class="bg-slate-900 border border-slate-700 rounded-3xl p-6 flex flex-col justify-center">
               <div class="flex justify-between items-start">
                 <div>
@@ -147,7 +145,6 @@
 
         <!-- Análisis por motor + Gráfico de línea -->
         <div class="grid grid-cols-12 gap-6 mt-8">
-          <!-- Análisis por motor / tipo -->
           <div class="col-span-12 lg:col-span-5 bg-slate-900 border border-slate-700 rounded-3xl p-8">
             <h3 class="font-semibold text-lg mb-6">ANÁLISIS POR MOTOR / TIPO</h3>
             <div class="space-y-5">
@@ -157,8 +154,6 @@
               <div class="flex items-center"><span class="w-28 text-sm">Eléctrico</span><div class="flex-1 h-3 bg-emerald-500 rounded-full"><div class="h-3 bg-emerald-400 rounded-full w-[25%]"></div></div><span class="ml-6 font-mono text-emerald-400">2.5h</span></div>
             </div>
           </div>
-
-          <!-- Gráfico de línea -->
           <div class="col-span-12 lg:col-span-7 bg-slate-900 border border-slate-700 rounded-3xl p-8">
             <h3 class="font-semibold text-lg mb-6">GRÁFICO DE LÍNEA DE TIEMPO COMPARATIVO</h3>
             <svg width="100%" height="260" viewBox="0 0 800 260" class="overflow-visible">
@@ -208,7 +203,7 @@
 <div id="notification-panel" class="hidden absolute top-20 right-8 bg-slate-900 border border-slate-700 rounded-3xl shadow-2xl w-96 z-50"></div>
 
 <script>
-  // ==================== BASE DE DATOS INTERNA CON 20 INTERVENCIONES ====================
+  // ==================== BASE DE DATOS INTERNA ====================
   let dashboardData = [
     {"UNIDAD":"V-001","ID / CÓDIGO":"V-001","MOTOR/TIPO":"Diesel","MTBF":"420","MTTR":"3.5","MTBI":"14.8","EO/hs":"3.2","mm/s RMS":"2.4","TA":"92","RPM":"2450","PSI DI":"32","PSI DD":"32","PSI TI":"28","PSI TD":"32","DISPONIBILIDAD OPERACIONAL%":"96.4"},
     {"UNIDAD":"V-002","ID / CÓDIGO":"V-002","MOTOR/TIPO":"Nafta","MTBF":"380","MTTR":"4.1","MTBI":"12.5","EO/hs":"3.8","mm/s RMS":"3.1","TA":"88","RPM":"2380","PSI DI":"31","PSI DD":"31","PSI TI":"29","PSI TD":"31","DISPONIBILIDAD OPERACIONAL%":"93.2"},
@@ -232,8 +227,9 @@
     {"UNIDAD":"V-020","ID / CÓDIGO":"V-020","MOTOR/TIPO":"Nafta","MTBF":"465","MTTR":"3.3","MTBI":"15.2","EO/hs":"3.3","mm/s RMS":"2.3","TA":"89","RPM":"2470","PSI DI":"32","PSI DD":"32","PSI TI":"29","PSI TD":"32","DISPONIBILIDAD OPERACIONAL%":"95.9"}
   ];
 
-  // ==================== TAILWIND + SIDEBAR + NOTIFICACIONES + ML (intacto) ====================
+  // ==================== FUNCIONES ====================
   function initTailwind() { tailwind.config = { content: [], theme: { extend: {} } }; }
+  
   const tabs = [
     { id: "overview", label: "Panel Resumen", icon: "fas fa-tachometer-alt" },
     { id: "history", label: "Historial", icon: "fas fa-history" },
@@ -336,7 +332,7 @@
     `;
   }
 
-  // ==================== FUNCIONES INTACTAS (ML, envío, notificaciones, etc.) ====================
+  // ✅ FUNCIÓN MODIFICADA: Enlace de Google Sheets REMOVIDO
   function submitToGoogleSheets() {
     const row = {
       "UNIDAD": document.getElementById("input-unidad").value,
@@ -355,16 +351,23 @@
       "PSI TD": document.getElementById("input-psi-td").value,
       "DISPONIBILIDAD OPERACIONAL%": document.getElementById("input-disponibilidad").value
     };
+    
+    // Copia los datos al portapapeles en formato CSV
     const csvRow = Object.values(row).join("\t");
     navigator.clipboard.writeText(csvRow).then(() => {
-      window.open("https://docs.google.com/spreadsheets/d/1lqQCZ3PalQtvYPkaxTUPth1wTW20tu3zgPgT-z64a3U/edit?usp=sharing", "_blank");
-      alert("✅ Datos enviados de forma automática y colocados en la tabla correspondiente.");
+      // ✅ ALERTA SIN ENLACE EXTERNO
+      alert("✅ Datos copiados al portapapeles. Listos para pegar en tu hoja de cálculo.");
     });
-    document.querySelectorAll('input, select').forEach(el => { if (el.tagName === "SELECT") el.selectedIndex = 0; else el.value = ""; });
+    
+    // Limpia los campos del formulario
+    document.querySelectorAll('input, select').forEach(el => { 
+      if (el.tagName === "SELECT") el.selectedIndex = 0; 
+      else el.value = ""; 
+    });
   }
 
   function exportData() {
-    let csvContent = "data:text/csv;charset=utf-8," + dashboardData.map(row => Object.values(row).join(",")).join("\n");
+    let csvContent = "text/csv;charset=utf-8," + dashboardData.map(row => Object.values(row).join(",")).join("\n");
     const encodedUri = encodeURI(csvContent);
     const link = document.createElement("a");
     link.setAttribute("href", encodedUri);
@@ -377,15 +380,33 @@
   function refreshDashboard() { renderContent(); }
   function showIAInsights() { alert("🤖 IA recomienda:\n• Revisar transmisión V-003 en las próximas 48h\n• Ordenar 12 filtros de aceite\n• Programa preventivo para flota Diesel"); }
 
-  // Notificaciones (intacto)
-  function toggleNotifications() { /* mismo código anterior */ }
-  function addNotification(title, message, type = "info") { /* mismo código anterior */ }
+  // Notificaciones
+  function toggleNotifications() {
+    const panel = document.getElementById("notification-panel");
+    panel.classList.toggle("hidden");
+    if (!panel.classList.contains("hidden")) {
+      panel.innerHTML = `
+        <div class="p-4 border-b border-slate-700"><p class="font-semibold">Notificaciones</p></div>
+        <div class="p-4 space-y-3 max-h-96 overflow-y-auto">
+          <div class="p-3 bg-slate-800 rounded-2xl"><p class="font-medium text-sm">Mantenimiento preventivo</p><p class="text-xs text-slate-400">V-003 requiere revisión en 48h</p></div>
+          <div class="p-3 bg-slate-800 rounded-2xl"><p class="font-medium text-sm">Stock bajo</p><p class="text-xs text-slate-400">Filtros de aceite: 3 unidades restantes</p></div>
+          <div class="p-3 bg-slate-800 rounded-2xl"><p class="font-medium text-sm">Alerta de vibración</p><p class="text-xs text-slate-400">V-009 supera umbral RMS</p></div>
+        </div>
+      `;
+    }
+  }
+
+  function addNotification(title, message, type = "info") {
+    const badge = document.getElementById("notification-badge");
+    let count = parseInt(badge.textContent) || 0;
+    badge.textContent = count + 1;
+  }
 
   window.onload = () => {
     initTailwind();
     renderSidebar();
     renderContent();
   };
-  </script>
+</script>
 </body>
 </html>
