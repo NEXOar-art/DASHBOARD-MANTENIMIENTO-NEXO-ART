@@ -3,29 +3,51 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>NEXO-ART Taller Mecánico</title>
+  <title>NEXO-ART Taller Mecánico - Dashboard Predictivo</title>
   <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
     body { font-family: 'Inter', sans-serif; }
-    .tab-active { background-color: #00d4ff; color: #0a0a0a; font-weight: 600; }
-    .gauge-circle { position: relative; width: 180px; height: 180px; }
+    .gauge-circle { position: relative; width: 240px; height: 240px; margin: 0 auto; }
+    .custom-scrollbar::-webkit-scrollbar { width: 6px; }
+    .custom-scrollbar::-webkit-scrollbar-thumb { background-color: #334155; border-radius: 4px; }
   </style>
 </head>
 <body class="bg-slate-950 text-slate-200 overflow-hidden">
 
 <div class="flex h-screen">
 
-  <!-- SIDEBAR -->
-  <aside class="w-64 bg-slate-900 border-r border-slate-700 flex flex-col">
-    <div class="p-6 border-b border-slate-700 flex items-center gap-3">
-      <div class="w-9 h-9 bg-teal-500 rounded-2xl flex items-center justify-center text-white font-bold text-2xl">⚙️</div>
-      <h1 class="text-3xl font-black tracking-tighter text-transparent bg-clip-text bg-gradient-to-r from-teal-400 to-cyan-300">NEXO-ART</h1>
+  <!-- SIDEBAR (Rediseñado para Informe IA) -->
+  <aside class="w-[22rem] bg-slate-900 border-r border-slate-700 flex flex-col relative z-20 shadow-2xl">
+    <div class="p-6 border-b border-slate-700 flex items-center gap-3 shrink-0 bg-slate-950/50">
+      <div class="w-10 h-10 bg-teal-500 rounded-xl flex items-center justify-center text-white font-bold text-2xl shadow-lg shadow-teal-500/20">⚙️</div>
+      <div>
+        <h1 class="text-3xl font-black tracking-tighter text-transparent bg-clip-text bg-gradient-to-r from-teal-400 to-cyan-300">NEXO-ART</h1>
+        <p class="text-[10px] uppercase font-bold text-slate-500 tracking-widest -mt-1">Motor Intelligence</p>
+      </div>
     </div>
-    <nav id="sidebar-nav" class="flex-1 p-4 space-y-2 overflow-y-auto"></nav>
-    <div class="p-4 border-t border-slate-700 text-slate-400 text-sm flex items-center">
-      <i class="fas fa-cog mr-2"></i> Configuración
+    
+    <div class="flex-1 overflow-hidden flex flex-col p-5 bg-gradient-to-b from-slate-900 to-slate-950 relative">
+      <div class="absolute top-10 -right-20 w-40 h-40 bg-teal-500/5 rounded-full blur-3xl pointer-events-none"></div>
+      
+      <button onclick="generateReport()" class="w-full bg-indigo-600 hover:bg-indigo-500 text-white font-bold py-3.5 px-4 rounded-xl shadow-[0_0_15px_rgba(79,70,229,0.3)] transition-all flex items-center justify-center gap-2 shrink-0 border border-indigo-500/50 hover:scale-[1.02]">
+        <i class="fas fa-file-signature text-xl"></i> Exportar Informe de KPIs
+      </button>
+      
+      <div id="ai-report-container" class="mt-5 flex-1 overflow-y-auto bg-slate-950/80 rounded-xl p-5 border border-slate-800 text-sm text-slate-300 hidden leading-relaxed shadow-inner backdrop-blur-sm z-10 custom-scrollbar">
+      </div>
+      
+      <div id="ai-report-placeholder" class="mt-8 text-center px-2 flex flex-col items-center justify-center flex-1 z-10">
+         <i class="fas fa-robot text-5xl text-slate-800 mb-4"></i>
+         <p class="text-slate-500 text-sm">Presiona el botón superior para sintetizar un informe técnico con la situación actual de la flota y dictámenes del algoritmo.</p>
+      </div>
+    </div>
+    
+    <div class="p-4 border-t border-slate-700 text-slate-500 text-xs flex items-center justify-between bg-slate-950/50">
+      <span><i class="fas fa-server mr-1"></i> Data Server: Online</span>
+      <span class="text-teal-500 font-bold">V 1.3.0</span>
     </div>
   </aside>
 
@@ -35,378 +57,478 @@
     <!-- HEADER -->
     <header class="h-16 bg-slate-900 border-b border-slate-700 px-8 flex items-center justify-between">
       <div class="flex items-center gap-4">
-        <div class="flex items-center gap-3">
-          <div class="w-10 h-10 bg-teal-500 rounded-2xl flex items-center justify-center text-white font-black text-3xl">⚙️</div>
-          <div>
-            <h1 class="text-2xl font-black tracking-tighter text-teal-300">NEXO-ART</h1>
-            <p class="text-xs font-medium tracking-widest text-slate-400 -mt-1">TALLER MECÁNICO</p>
-          </div>
-        </div>
-        <div class="text-3xl font-semibold tracking-tight text-white">DASHBOARD DE RENDIMIENTO DEL TALLER</div>
+        <div class="text-3xl font-semibold tracking-tight text-white block ml-4">DASHBOARD INTELIGENTE</div>
       </div>
       <div class="flex items-center gap-6">
         <button onclick="exportData()" class="flex items-center gap-2 px-5 py-2 bg-slate-800 hover:bg-slate-700 rounded-2xl text-sm">
-          <i class="fas fa-download"></i> Exportar CSV
+          <i class="fas fa-download"></i> Exportar (ML Dataset)
         </button>
-        <button onclick="refreshDashboard()" class="flex items-center gap-2 px-5 py-2 bg-teal-500 hover:bg-teal-600 text-black rounded-2xl text-sm font-semibold">
+        <button onclick="calculateKPIs()" class="flex items-center gap-2 px-5 py-2 bg-teal-500 hover:bg-teal-600 text-black rounded-2xl text-sm font-semibold">
           <i class="fas fa-sync"></i> Actualizar
-        </button>
-        <button onclick="toggleNotifications()" class="relative text-2xl text-slate-300 hover:text-white">
-          <i class="fas fa-bell"></i>
-          <span id="notification-badge" class="absolute -top-1 -right-1 bg-red-500 text-[10px] font-bold px-1.5 rounded-full">3</span>
         </button>
       </div>
     </header>
 
-    <!-- FORMULARIO DE CARGA -->
+    <!-- FORMULARIO DE CARGA DE DATOS RAW -->
     <div class="bg-slate-900 border-b border-slate-700 px-8 py-5">
       <div class="flex justify-between mb-4">
-        <h3 class="font-semibold flex items-center gap-2"><i class="fas fa-database"></i> Carga de Datos – KPIs y Telemetría</h3>
-        <button onclick="submitToGoogleSheets()" class="bg-teal-500 hover:bg-teal-600 text-black px-6 py-2 rounded-2xl flex items-center gap-2 font-medium">
-          <i class="fas fa-paper-plane"></i> Enviar Datos
+        <h3 class="font-semibold flex items-center gap-2 text-teal-300"><i class="fas fa-database"></i> Ingesta de Datos Raw</h3>
+        <div class="text-slate-400 text-sm flex items-center gap-2">
+            Memoria de cálculo: <span id="mem-count" class="text-teal-400 font-bold px-2 py-0.5 bg-slate-800 rounded">20/20</span>
+        </div>
+        <button onclick="submitData()" class="bg-teal-500 hover:bg-teal-400 text-black px-6 py-2 rounded-2xl flex items-center gap-2 font-bold shadow-lg shadow-teal-500/20 transition-all">
+          <i class="fas fa-microchip"></i> Procesar & Almacenar
         </button>
       </div>
+      <!-- Agregamos KM aquí y ajustamos la grilla -->
       <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-4 text-sm">
-        <div><label class="text-slate-400 text-xs">UNIDAD</label><input id="input-unidad" type="text" class="bg-slate-800 w-full rounded-2xl px-4 py-3 text-sm" placeholder="V-001"></div>
-        <div><label class="text-slate-400 text-xs">ID / CÓDIGO</label><input id="input-id" type="text" class="bg-slate-800 w-full rounded-2xl px-4 py-3 text-sm" placeholder="V-001"></div>
-        <div><label class="text-slate-400 text-xs">MOTOR/TIPO</label>
-          <select id="input-motor" class="bg-slate-800 w-full rounded-2xl px-4 py-3 text-sm">
-            <option value="Nafta">Nafta</option>
-            <option value="Diesel">Diesel</option>
+        <div><label class="text-slate-400 text-[10px] font-bold">UNIDAD</label><input id="input-unidad" type="text" class="bg-slate-800 w-full rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-teal-500 transition-all" placeholder="Ej: V-021"></div>
+        <div><label class="text-slate-400 text-[10px] font-bold">ID / CÓDIGO</label><input id="input-id" type="text" class="bg-slate-800 w-full rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-teal-500 transition-all" placeholder="Ej: ID-99"></div>
+        <div>
+          <label class="text-slate-400 text-[10px] font-bold">MOTOR</label>
+          <select id="input-motor" class="bg-slate-800 w-full rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-teal-500">
+            <option value="Nafta">Gasolina (Nafta)</option>
+            <option value="Diesel">Diésel</option>
+            <option value="Hibrido">Híbrido</option>
+            <option value="Electrico">Eléctrico</option>
           </select>
         </div>
-        <div><label class="text-slate-400 text-xs">MTBF (hs)</label><input id="input-mtbf" type="text" class="bg-slate-800 w-full rounded-2xl px-4 py-3 text-sm" placeholder="420"></div>
-        <div><label class="text-slate-400 text-xs">MTTR (hs)</label><input id="input-mttr" type="text" class="bg-slate-800 w-full rounded-2xl px-4 py-3 text-sm" placeholder="3.5"></div>
-        <div><label class="text-slate-400 text-xs">MTBI (hs)</label><input id="input-mtbi" type="text" class="bg-slate-800 w-full rounded-2xl px-4 py-3 text-sm" placeholder="14.8"></div>
-        <div><label class="text-slate-400 text-xs">EO/hs</label><input id="input-eo" type="text" class="bg-slate-800 w-full rounded-2xl px-4 py-3 text-sm" placeholder="3.2"></div>
-        <div><label class="text-slate-400 text-xs">mm/s RMS</label><input id="input-vibracion" type="text" class="bg-slate-800 w-full rounded-2xl px-4 py-3 text-sm" placeholder="2.4"></div>
-        <div><label class="text-slate-400 text-xs">TA (°C)</label><input id="input-ta" type="text" class="bg-slate-800 w-full rounded-2xl px-4 py-3 text-sm" placeholder="92"></div>
-        <div><label class="text-slate-400 text-xs">RPM</label><input id="input-rpm" type="text" class="bg-slate-800 w-full rounded-2xl px-4 py-3 text-sm" placeholder="2450"></div>
-        <div><label class="text-slate-400 text-xs">PSI DI</label><input id="input-psi-di" type="text" class="bg-slate-800 w-full rounded-2xl px-4 py-3 text-sm" placeholder="32"></div>
-        <div><label class="text-slate-400 text-xs">PSI DD</label><input id="input-psi-dd" type="text" class="bg-slate-800 w-full rounded-2xl px-4 py-3 text-sm" placeholder="32"></div>
-        <div><label class="text-slate-400 text-xs">PSI TI</label><input id="input-psi-ti" type="text" class="bg-slate-800 w-full rounded-2xl px-4 py-3 text-sm" placeholder="28"></div>
-        <div><label class="text-slate-400 text-xs">PSI TD</label><input id="input-psi-td" type="text" class="bg-slate-800 w-full rounded-2xl px-4 py-3 text-sm" placeholder="32"></div>
-        <div><label class="text-slate-400 text-xs">DISPONIBILIDAD %</label><input id="input-disponibilidad" type="text" class="bg-slate-800 w-full rounded-2xl px-4 py-3 text-sm" placeholder="96.4"></div>
+        <div><label class="text-slate-400 text-[10px] font-bold text-teal-400">KILOMETRAJE</label><input id="input-km" type="number" class="bg-slate-800 w-full rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-teal-500" placeholder="Ej: 85000"></div>
+        <div><label class="text-slate-400 text-[10px] font-bold text-teal-400">UPTIME (hs)</label><input id="input-uptime" type="number" class="bg-slate-800 w-full rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-teal-500" placeholder="Ej: 350"></div>
+        <div><label class="text-slate-400 text-[10px] font-bold text-orange-400">DOWNTIME (hs)</label><input id="input-downtime" type="number" step="0.1" class="bg-slate-800 w-full rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-teal-500" placeholder="Ej: 3.5"></div>
+        <div><label class="text-slate-400 text-[10px] font-bold">VIBRACIÓN</label><input id="input-vibracion" type="number" step="0.1" class="bg-slate-800 w-full rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-teal-500" placeholder="Ej: 2.4 mm/s"></div>
+        <div><label class="text-slate-400 text-[10px] font-bold">TEMP (°C)</label><input id="input-ta" type="number" class="bg-slate-800 w-full rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-teal-500" placeholder="Ej: 92"></div>
+        <div><label class="text-slate-400 text-[10px] font-bold">RPM</label><input id="input-rpm" type="number" class="bg-slate-800 w-full rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-teal-500" placeholder="Ej: 2450"></div>
+        <div><label class="text-slate-400 text-[10px] font-bold">PSI DI</label><input id="input-psi-di" type="number" class="bg-slate-800 w-full rounded-xl px-4 py-3 text-sm focus:outline-none" placeholder="32"></div>
+        <div><label class="text-slate-400 text-[10px] font-bold">PSI DD</label><input id="input-psi-dd" type="number" class="bg-slate-800 w-full rounded-xl px-4 py-3 text-sm focus:outline-none" placeholder="32"></div>
+        <div><label class="text-slate-400 text-[10px] font-bold">PSI TI</label><input id="input-psi-ti" type="number" class="bg-slate-800 w-full rounded-xl px-4 py-3 text-sm focus:outline-none" placeholder="28"></div>
+        <div><label class="text-slate-400 text-[10px] font-bold">PSI TD</label><input id="input-psi-td" type="number" class="bg-slate-800 w-full rounded-xl px-4 py-3 text-sm focus:outline-none" placeholder="32"></div>
       </div>
     </div>
 
-    <!-- DASHBOARD PRINCIPAL -->
+    <!-- DASHBOARD PRINCIPAL Y MÉTRICAS COMPUTADAS -->
     <div class="flex-1 overflow-auto p-8 bg-slate-950" id="content-area">
       <div class="max-w-screen-2xl mx-auto">
 
-        <!-- Gauge + 3 KPIs principales -->
+        <!-- Tarjeta de Unidad en Análisis Robusta (NUEVO) -->
+        <div class="mb-8">
+          <div class="bg-gradient-to-r from-slate-900 via-slate-900 to-slate-800 border-l-[6px] border-teal-500 border-t border-r border-b border-slate-700/50 p-6 rounded-2xl flex flex-col md:flex-row items-center gap-6 shadow-[0_10px_30px_rgba(0,0,0,0.5)] relative overflow-hidden">
+             
+             <!-- Icono y decoración -->
+             <div class="w-20 h-20 bg-gradient-to-br from-teal-500/20 to-teal-500/5 text-teal-400 border border-teal-500/30 rounded-2xl flex items-center justify-center text-4xl shrink-0 z-10 shadow-inner">
+                 <i class="fas fa-truck-pickup"></i>
+             </div>
+             
+             <!-- Contenido Dinámico Motor -->
+             <div class="flex-1 z-10 w-full text-center md:text-left">
+               <p class="text-slate-400 text-xs font-bold uppercase tracking-widest mb-1 flex items-center md:justify-start justify-center gap-2">
+                 <span class="w-2 h-2 rounded-full bg-teal-500 animate-pulse"></span> Sistema Seleccionado
+               </p>
+               <div class="flex flex-col md:flex-row items-center md:items-baseline gap-4 mt-1">
+                 <h3 id="card-unidad" class="text-4xl lg:text-5xl font-black text-white drop-shadow-md tracking-tight">--</h3>
+                 <span id="card-motor" class="text-teal-400 border border-teal-500/30 bg-teal-500/10 px-4 py-1.5 rounded-full text-sm font-bold uppercase tracking-wide">Motor --</span>
+                 <span id="card-km" class="text-slate-400 bg-slate-900 px-3 py-1.5 rounded-full text-sm font-bold tracking-widest shadow-inner"><i class="fas fa-road"></i> -- KM</span>
+               </div>
+             </div>
+
+             <!-- Mini Stats al costado derecho -->
+             <div class="flex gap-4 z-10 w-full md:w-auto justify-center">
+                 <div class="bg-slate-950/50 rounded-xl p-3 border border-slate-800 text-center min-w-[100px]">
+                     <p class="text-[10px] text-slate-400 uppercase font-bold tracking-widest mb-1">Últ. RPM</p>
+                     <p id="card-rpm" class="text-xl font-bold text-white">--</p>
+                 </div>
+                 <div class="bg-slate-950/50 rounded-xl p-3 border border-slate-800 text-center min-w-[100px]">
+                     <p class="text-[10px] text-slate-400 uppercase font-bold tracking-widest mb-1">Estado</p>
+                     <p class="text-base font-bold text-teal-400 mt-1"><i class="fas fa-check-circle"></i> Online</p>
+                 </div>
+             </div>
+
+             <!-- Fondo decorativo CSS -->
+             <div class="hidden md:block absolute right-0 top-0 h-full w-96 bg-gradient-to-l from-teal-500/10 to-transparent pointer-events-none"></div>
+             <i class="fas fa-cogs absolute -right-4 -bottom-4 text-9xl text-slate-800/30 pointer-events-none"></i>
+          </div>
+        </div>
+
+        <h2 class="text-xl font-bold text-white mb-6"><i class="fas fa-chart-line text-teal-500 mr-2"></i> Rendimiento Matemático de la Flota</h2>
         <div class="grid grid-cols-12 gap-6">
+          
           <!-- Gauge Disponibilidad -->
-          <div class="col-span-12 lg:col-span-4 bg-slate-900 border border-slate-700 rounded-3xl p-8 flex flex-col items-center">
-            <h3 class="uppercase text-teal-400 text-sm font-semibold tracking-widest mb-3">DISPONIBILIDAD TOTAL DEL TALLER</h3>
-            <div class="gauge-circle">
-              <svg class="w-full h-full -rotate-90" viewBox="0 0 42 42">
-                <circle cx="21" cy="21" r="15" fill="none" stroke="#1f2937" stroke-width="6"/>
-                <circle cx="21" cy="21" r="15" fill="none" stroke="#00d4ff" stroke-width="6" stroke-dasharray="94.2 100" stroke-linecap="round"/>
+          <div class="col-span-12 lg:col-span-4 bg-slate-900 border border-slate-700/50 rounded-3xl p-8 flex flex-col items-center justify-center shadow-[0_0_40px_rgba(20,184,166,0.05)]">
+            <h3 class="uppercase text-teal-400 text-[11px] font-bold tracking-widest mb-6 text-center">DISPONIBILIDAD TOTAL</h3>
+            <div class="gauge-circle mt-2">
+              <svg class="w-full h-full -rotate-90 drop-shadow-[0_0_15px_rgba(0,212,255,0.4)]" viewBox="0 0 100 100">
+                <circle cx="50" cy="50" r="45" fill="none" stroke="#1f2937" stroke-width="8"/>
+                <circle id="svg-disp" cx="50" cy="50" r="45" fill="none" stroke="#00d4ff" stroke-width="8" stroke-dasharray="0 282.7" stroke-linecap="round" class="transition-all duration-1000 ease-out"/>
               </svg>
               <div class="absolute inset-0 flex flex-col items-center justify-center text-center">
-                <span class="text-6xl font-black text-teal-400">94.2%</span>
-                <span class="text-xs text-slate-400 mt-1">MTBF / (MTBF + MTTR)</span>
+                <span id="kpi-disp" class="text-4xl lg:text-6xl font-black text-teal-400 mt-2">0.0%</span>
               </div>
             </div>
+            <p id="trend-disp" class="text-sm font-semibold mt-6 bg-teal-500/10 text-teal-400 px-4 py-1.5 rounded-full"><i class="fas fa-arrow-up"></i> Óptimo</p>
           </div>
 
-          <!-- MTBF, MTTR, Km -->
-          <div class="col-span-12 lg:col-span-8 grid grid-cols-3 gap-6">
-            <div class="bg-slate-900 border border-slate-700 rounded-3xl p-6 flex flex-col justify-center">
-              <div class="flex justify-between items-start">
-                <div>
-                  <p class="text-slate-400 text-sm">MTBF Promedio del Taller</p>
-                  <p class="text-5xl font-bold text-white mt-2">120 <span class="text-2xl">horas</span></p>
-                </div>
-                <i class="fas fa-clock text-4xl text-teal-400"></i>
+          <div class="col-span-12 lg:col-span-8 grid grid-cols-1 md:grid-cols-2 gap-6">
+            <!-- MTBF -->
+            <div class="bg-gradient-to-br from-slate-900 to-slate-800 border border-slate-700 rounded-3xl p-6 flex flex-col items-center justify-center text-center shadow-lg relative overflow-hidden group">
+              <div class="absolute top-0 right-0 w-32 h-32 bg-teal-500/5 rounded-bl-full transition-all group-hover:scale-110 pointer-events-none"></div>
+              <div class="w-16 h-16 rounded-2xl bg-slate-800 flex items-center justify-center text-teal-400 text-3xl shadow-inner border border-slate-700 mb-4 z-10"><i class="fas fa-clock"></i></div>
+              <div class="z-10">
+                <h4 class="text-slate-400 text-lg font-bold tracking-wider uppercase">Prom. MTBF</h4>
+                <p class="text-xs text-slate-500 mb-4">Mean Time Between Failures</p>
+                <p class="text-7xl font-black text-white"><span id="kpi-mtbf">0</span><span class="text-3xl text-slate-500 font-medium ml-2">hs</span></p>
               </div>
             </div>
-            <div class="bg-slate-900 border border-slate-700 rounded-3xl p-6 flex flex-col justify-center">
-              <div class="flex justify-between items-start">
-                <div>
-                  <p class="text-slate-400 text-sm">MTTR Promedio del Taller</p>
-                  <p class="text-5xl font-bold text-white mt-2">4.5 <span class="text-2xl">horas</span></p>
-                </div>
-                <i class="fas fa-tools text-4xl text-orange-400"></i>
-              </div>
-            </div>
-            <div class="bg-slate-900 border border-slate-700 rounded-3xl p-6 flex flex-col justify-center">
-              <div class="flex justify-between items-start">
-                <div>
-                  <p class="text-slate-400 text-sm">Prom. Km entre intervenciones</p>
-                  <p class="text-5xl font-bold text-white mt-2">18,500 <span class="text-2xl">km</span></p>
-                </div>
-                <i class="fas fa-road text-4xl text-cyan-400"></i>
+            <!-- MTTR -->
+            <div class="bg-gradient-to-br from-slate-900 to-slate-800 border border-slate-700 rounded-3xl p-6 flex flex-col items-center justify-center text-center shadow-lg relative overflow-hidden group">
+              <div class="absolute top-0 right-0 w-32 h-32 bg-orange-500/5 rounded-bl-full transition-all group-hover:scale-110 pointer-events-none"></div>
+              <div class="w-16 h-16 rounded-2xl bg-slate-800 flex items-center justify-center text-orange-400 text-3xl shadow-inner border border-slate-700 mb-4 z-10"><i class="fas fa-tools"></i></div>
+              <div class="z-10">
+                <h4 class="text-slate-400 text-lg font-bold tracking-wider uppercase">Prom. MTTR</h4>
+                <p class="text-xs text-slate-500 mb-4">Mean Time To Repair</p>
+                <p class="text-7xl font-black text-white"><span id="kpi-mttr">0</span><span class="text-3xl text-slate-500 font-medium ml-2">hs</span></p>
               </div>
             </div>
           </div>
         </div>
-
-        <!-- Análisis por motor + Gráfico de línea -->
-        <div class="grid grid-cols-12 gap-6 mt-8">
-          <div class="col-span-12 lg:col-span-5 bg-slate-900 border border-slate-700 rounded-3xl p-8">
-            <h3 class="font-semibold text-lg mb-6">ANÁLISIS POR MOTOR / TIPO</h3>
-            <div class="space-y-5">
-              <div class="flex items-center"><span class="w-28 text-sm">Diesel</span><div class="flex-1 h-3 bg-teal-500 rounded-full"><div class="h-3 bg-teal-400 rounded-full w-[52%]"></div></div><span class="ml-6 font-mono text-teal-400">5.2h</span></div>
-              <div class="flex items-center"><span class="w-28 text-sm">Gasolina</span><div class="flex-1 h-3 bg-orange-500 rounded-full"><div class="h-3 bg-orange-400 rounded-full w-[38%]"></div></div><span class="ml-6 font-mono text-orange-400">3.8h</span></div>
-              <div class="flex items-center"><span class="w-28 text-sm">Híbrido</span><div class="flex-1 h-3 bg-cyan-500 rounded-full"><div class="h-3 bg-cyan-400 rounded-full w-[38%]"></div></div><span class="ml-6 font-mono text-cyan-400">3.8h</span></div>
-              <div class="flex items-center"><span class="w-28 text-sm">Eléctrico</span><div class="flex-1 h-3 bg-emerald-500 rounded-full"><div class="h-3 bg-emerald-400 rounded-full w-[25%]"></div></div><span class="ml-6 font-mono text-emerald-400">2.5h</span></div>
-            </div>
-          </div>
-          <div class="col-span-12 lg:col-span-7 bg-slate-900 border border-slate-700 rounded-3xl p-8">
-            <h3 class="font-semibold text-lg mb-6">GRÁFICO DE LÍNEA DE TIEMPO COMPARATIVO</h3>
-            <svg width="100%" height="260" viewBox="0 0 800 260" class="overflow-visible">
-              <polyline points="40,210 140,130 240,170 340,90 440,140 540,70 640,110 740,40" fill="none" stroke="#00d4ff" stroke-width="7" stroke-linejoin="round"/>
-              <polyline points="40,230 140,200 240,215 340,175 440,195 540,165 640,185 740,155" fill="none" stroke="#f59e0b" stroke-width="7" stroke-linejoin="round"/>
-              <circle cx="40" cy="210" r="9" fill="#00d4ff"/>
-              <circle cx="740" cy="40" r="9" fill="#00d4ff"/>
-            </svg>
-            <div class="flex justify-between text-xs text-slate-400 px-10 mt-2">
-              <span>May</span><span>Jun</span><span>Jul</span><span>Ago</span><span>Sep</span><span>Oct</span>
-            </div>
+        
+        <!-- GRÁFICOS DE LÓGICA TEMPORAL -->
+        <h2 class="text-xl font-bold text-white mb-6 mt-10"><i class="fas fa-chart-area text-purple-500 mr-2"></i> Análisis de Tendencia Temporal</h2>
+        <div class="bg-slate-900 border border-slate-700/50 rounded-3xl p-6 shadow-lg">
+          <div class="relative h-[400px] w-full">
+            <canvas id="timelineChart"></canvas>
           </div>
         </div>
 
-        <!-- Estado de Activos Clave -->
-        <div class="mt-10">
-          <h3 class="font-semibold text-lg mb-5">ESTADO DE ACTIVOS CLAVE</h3>
-          <div class="grid grid-cols-2 md:grid-cols-5 gap-6">
-            <div class="bg-slate-900 border border-teal-400/30 rounded-3xl p-6 text-center">
-              <p class="text-teal-400 text-xs font-medium">BAHÍA 1</p>
-              <p class="text-4xl font-bold text-teal-300">OPERATIVO</p>
+        <!-- Matriz de Correlación -->
+        <h2 class="text-xl font-bold text-white mb-6 mt-10"><i class="fas fa-th text-green-500 mr-2"></i> Matriz de Correlación de Variables</h2>
+        <div class="bg-slate-900 border border-slate-700/50 rounded-3xl p-6 shadow-lg overflow-x-auto">
+          <div id="correlation-matrix" class="min-w-[600px] text-white"></div>
+          <div class="mt-6 flex justify-end items-center gap-2 text-xs text-slate-400">
+             <span>Escala de Correlación:</span>
+             <div class="w-4 h-4 bg-rose-500 rounded-sm"></div> <span>Inversa Fuerte (-1)</span>
+             <div class="w-4 h-4 bg-slate-800 border border-slate-600 rounded-sm"></div> <span>Nula (0)</span>
+             <div class="w-4 h-4 bg-teal-500 rounded-sm"></div> <span>Directa Fuerte (+1)</span>
+          </div>
+        </div>
+
+        <!-- Predicciones IA -->
+        <h2 class="text-xl font-bold text-white mb-6 mt-10"><i class="fas fa-robot text-indigo-500 mr-2"></i> Motor de Recomendaciones y Explicación</h2>
+        <div class="bg-slate-900 border border-indigo-500/30 rounded-3xl p-6 shadow-lg relative overflow-hidden">
+          <div class="absolute top-0 left-0 w-1.5 h-full bg-indigo-500"></div>
+          
+          <div class="flex flex-col md:flex-row gap-8">
+            <div class="flex-1 flex flex-col justify-between" id="predictive-panel">
+               <!-- Panel Dinamico -->
             </div>
-            <div class="bg-slate-900 border border-orange-400/30 rounded-3xl p-6 text-center">
-              <p class="text-orange-400 text-xs font-medium">BAHÍA 2</p>
-              <p class="text-4xl font-bold text-orange-300">EN USO</p>
-            </div>
-            <div class="bg-slate-900 border border-emerald-400/30 rounded-3xl p-6 text-center">
-              <p class="text-emerald-400 text-xs font-medium">ELEVADOR PRINCIPAL</p>
-              <p class="text-4xl font-bold text-emerald-300">EN USO</p>
-            </div>
-            <div class="bg-slate-900 border border-teal-400/30 rounded-3xl p-6 text-center">
-              <p class="text-teal-400 text-xs font-medium">ESCÁNER DIAGNÓSTICO</p>
-              <p class="text-4xl font-bold text-teal-300">OPERATIVO</p>
-            </div>
-            <div class="bg-slate-900 border border-red-400/30 rounded-3xl p-6 text-center">
-              <p class="text-red-400 text-xs font-medium">HERRAMIENTAS ESPECIALES</p>
-              <p class="text-4xl font-bold text-red-300">MANTENIMIENTO</p>
+            
+            <div class="w-full md:w-1/3 bg-slate-950 p-5 rounded-2xl border border-slate-800 shrink-0">
+               <h4 class="text-slate-300 font-bold mb-3 text-sm">Análisis de Última Ingesta</h4>
+               <ul id="ml-status-list" class="space-y-3 text-xs text-slate-400"></ul>
             </div>
           </div>
         </div>
+        
       </div>
     </div>
   </div>
 </div>
 
-<!-- Panel Notificaciones -->
-<div id="notification-panel" class="hidden absolute top-20 right-8 bg-slate-900 border border-slate-700 rounded-3xl shadow-2xl w-96 z-50"></div>
-
 <script>
-  // ==================== BASE DE DATOS INTERNA ====================
-  let dashboardData = [
-    {"UNIDAD":"V-001","ID / CÓDIGO":"V-001","MOTOR/TIPO":"Diesel","MTBF":"420","MTTR":"3.5","MTBI":"14.8","EO/hs":"3.2","mm/s RMS":"2.4","TA":"92","RPM":"2450","PSI DI":"32","PSI DD":"32","PSI TI":"28","PSI TD":"32","DISPONIBILIDAD OPERACIONAL%":"96.4"},
-    {"UNIDAD":"V-002","ID / CÓDIGO":"V-002","MOTOR/TIPO":"Nafta","MTBF":"380","MTTR":"4.1","MTBI":"12.5","EO/hs":"3.8","mm/s RMS":"3.1","TA":"88","RPM":"2380","PSI DI":"31","PSI DD":"31","PSI TI":"29","PSI TD":"31","DISPONIBILIDAD OPERACIONAL%":"93.2"},
-    {"UNIDAD":"V-003","ID / CÓDIGO":"V-003","MOTOR/TIPO":"Diesel","MTBF":"310","MTTR":"5.2","MTBI":"9.8","EO/hs":"4.5","mm/s RMS":"5.8","TA":"105","RPM":"2200","PSI DI":"30","PSI DD":"30","PSI TI":"27","PSI TD":"30","DISPONIBILIDAD OPERACIONAL%":"88.7"},
-    {"UNIDAD":"V-004","ID / CÓDIGO":"V-004","MOTOR/TIPO":"Nafta","MTBF":"455","MTTR":"2.8","MTBI":"16.2","EO/hs":"2.9","mm/s RMS":"1.9","TA":"85","RPM":"2520","PSI DI":"33","PSI DD":"33","PSI TI":"30","PSI TD":"33","DISPONIBILIDAD OPERACIONAL%":"97.1"},
-    {"UNIDAD":"V-005","ID / CÓDIGO":"V-005","MOTOR/TIPO":"Diesel","MTBF":"290","MTTR":"6.1","MTBI":"8.5","EO/hs":"5.1","mm/s RMS":"6.3","TA":"110","RPM":"2150","PSI DI":"29","PSI DD":"29","PSI TI":"26","PSI TD":"29","DISPONIBILIDAD OPERACIONAL%":"85.4"},
-    {"UNIDAD":"V-006","ID / CÓDIGO":"V-006","MOTOR/TIPO":"Nafta","MTBF":"510","MTTR":"3.0","MTBI":"18.0","EO/hs":"2.7","mm/s RMS":"1.5","TA":"82","RPM":"2600","PSI DI":"34","PSI DD":"34","PSI TI":"31","PSI TD":"34","DISPONIBILIDAD OPERACIONAL%":"98.0"},
-    {"UNIDAD":"V-007","ID / CÓDIGO":"V-007","MOTOR/TIPO":"Diesel","MTBF":"340","MTTR":"4.8","MTBI":"11.2","EO/hs":"4.0","mm/s RMS":"4.2","TA":"98","RPM":"2300","PSI DI":"31","PSI DD":"31","PSI TI":"28","PSI TD":"31","DISPONIBILIDAD OPERACIONAL%":"91.5"},
-    {"UNIDAD":"V-008","ID / CÓDIGO":"V-008","MOTOR/TIPO":"Nafta","MTBF":"470","MTTR":"3.2","MTBI":"15.5","EO/hs":"3.1","mm/s RMS":"2.1","TA":"87","RPM":"2480","PSI DI":"32","PSI DD":"32","PSI TI":"29","PSI TD":"32","DISPONIBILIDAD OPERACIONAL%":"96.8"},
-    {"UNIDAD":"V-009","ID / CÓDIGO":"V-009","MOTOR/TIPO":"Diesel","MTBF":"265","MTTR":"7.0","MTBI":"7.9","EO/hs":"5.8","mm/s RMS":"7.5","TA":"115","RPM":"2050","PSI DI":"28","PSI DD":"28","PSI TI":"25","PSI TD":"28","DISPONIBILIDAD OPERACIONAL%":"82.3"},
-    {"UNIDAD":"V-010","ID / CÓDIGO":"V-010","MOTOR/TIPO":"Nafta","MTBF":"495","MTTR":"2.9","MTBI":"17.1","EO/hs":"2.8","mm/s RMS":"1.7","TA":"84","RPM":"2550","PSI DI":"33","PSI DD":"33","PSI TI":"30","PSI TD":"33","DISPONIBILIDAD OPERACIONAL%":"97.5"},
-    {"UNIDAD":"V-011","ID / CÓDIGO":"V-011","MOTOR/TIPO":"Diesel","MTBF":"355","MTTR":"4.5","MTBI":"12.0","EO/hs":"3.9","mm/s RMS":"3.8","TA":"96","RPM":"2350","PSI DI":"31","PSI DD":"31","PSI TI":"28","PSI TD":"31","DISPONIBILIDAD OPERACIONAL%":"92.8"},
-    {"UNIDAD":"V-012","ID / CÓDIGO":"V-012","MOTOR/TIPO":"Nafta","MTBF":"410","MTTR":"3.7","MTBI":"13.8","EO/hs":"3.4","mm/s RMS":"2.6","TA":"90","RPM":"2420","PSI DI":"32","PSI DD":"32","PSI TI":"29","PSI TD":"32","DISPONIBILIDAD OPERACIONAL%":"95.1"},
-    {"UNIDAD":"V-013","ID / CÓDIGO":"V-013","MOTOR/TIPO":"Diesel","MTBF":"275","MTTR":"6.5","MTBI":"8.2","EO/hs":"5.3","mm/s RMS":"6.9","TA":"108","RPM":"2180","PSI DI":"29","PSI DD":"29","PSI TI":"26","PSI TD":"29","DISPONIBILIDAD OPERACIONAL%":"84.9"},
-    {"UNIDAD":"V-014","ID / CÓDIGO":"V-014","MOTOR/TIPO":"Nafta","MTBF":"530","MTTR":"2.6","MTBI":"19.5","EO/hs":"2.5","mm/s RMS":"1.3","TA":"80","RPM":"2650","PSI DI":"34","PSI DD":"34","PSI TI":"31","PSI TD":"34","DISPONIBILIDAD OPERACIONAL%":"98.4"},
-    {"UNIDAD":"V-015","ID / CÓDIGO":"V-015","MOTOR/TIPO":"Diesel","MTBF":"325","MTTR":"5.0","MTBI":"10.5","EO/hs":"4.3","mm/s RMS":"4.9","TA":"102","RPM":"2280","PSI DI":"30","PSI DD":"30","PSI TI":"27","PSI TD":"30","DISPONIBILIDAD OPERACIONAL%":"90.2"},
-    {"UNIDAD":"V-016","ID / CÓDIGO":"V-016","MOTOR/TIPO":"Nafta","MTBF":"445","MTTR":"3.4","MTBI":"14.5","EO/hs":"3.0","mm/s RMS":"2.0","TA":"86","RPM":"2500","PSI DI":"32","PSI DD":"32","PSI TI":"29","PSI TD":"32","DISPONIBILIDAD OPERACIONAL%":"96.0"},
-    {"UNIDAD":"V-017","ID / CÓDIGO":"V-017","MOTOR/TIPO":"Diesel","MTBF":"295","MTTR":"6.8","MTBI":"8.0","EO/hs":"5.6","mm/s RMS":"7.2","TA":"112","RPM":"2100","PSI DI":"28","PSI DD":"28","PSI TI":"25","PSI TD":"28","DISPONIBILIDAD OPERACIONAL%":"83.5"},
-    {"UNIDAD":"V-018","ID / CÓDIGO":"V-018","MOTOR/TIPO":"Nafta","MTBF":"480","MTTR":"3.1","MTBI":"16.8","EO/hs":"2.9","mm/s RMS":"1.8","TA":"83","RPM":"2580","PSI DI":"33","PSI DD":"33","PSI TI":"30","PSI TD":"33","DISPONIBILIDAD OPERACIONAL%":"97.3"},
-    {"UNIDAD":"V-019","ID / CÓDIGO":"V-019","MOTOR/TIPO":"Diesel","MTBF":"335","MTTR":"4.9","MTBI":"11.0","EO/hs":"4.1","mm/s RMS":"4.5","TA":"99","RPM":"2320","PSI DI":"31","PSI DD":"31","PSI TI":"28","PSI TD":"31","DISPONIBILIDAD OPERACIONAL%":"91.8"},
-    {"UNIDAD":"V-020","ID / CÓDIGO":"V-020","MOTOR/TIPO":"Nafta","MTBF":"465","MTTR":"3.3","MTBI":"15.2","EO/hs":"3.3","mm/s RMS":"2.3","TA":"89","RPM":"2470","PSI DI":"32","PSI DD":"32","PSI TI":"29","PSI TD":"32","DISPONIBILIDAD OPERACIONAL%":"95.9"}
-  ];
-
-  // ==================== FUNCIONES ====================
   function initTailwind() { tailwind.config = { content: [], theme: { extend: {} } }; }
   
-  const tabs = [
-    { id: "overview", label: "Panel Resumen", icon: "fas fa-tachometer-alt" },
-    { id: "history", label: "Historial", icon: "fas fa-history" },
-    { id: "predictive", label: "IA Predictiva ML", icon: "fas fa-brain" },
-    { id: "costs", label: "Costos y Presupuestos", icon: "fas fa-dollar-sign" },
-    { id: "inventory", label: "Repuestos", icon: "fas fa-box" },
-    { id: "telemetry", label: "Telemetría Real-time", icon: "fas fa-satellite-dish" }
+  // Base de datos (Memoria RAM con Kilometraje Añadido)
+  const now = Date.now();
+  const dayMs = 86400000;
+  
+  let db = [
+    {unidad:"V-001", id:"V-001", motor:"Diesel", km: 82000, uptime: 420, downtime: 3.5, vibracion: 2.4, ta: 92, rpm: 2450, psiDi: 32, psiDd: 32, psiTi: 28, psiTd: 32, timestamp: new Date(now - 19*dayMs).toISOString()},
+    {unidad:"V-002", id:"V-002", motor:"Nafta", km: 45000, uptime: 380, downtime: 4.1, vibracion: 3.1, ta: 88, rpm: 2380, psiDi: 31, psiDd: 31, psiTi: 29, psiTd: 31, timestamp: new Date(now - 18*dayMs).toISOString()},
+    {unidad:"V-003", id:"V-003", motor:"Diesel", km: 110000, uptime: 310, downtime: 5.2, vibracion: 3.8, ta: 95, rpm: 2200, psiDi: 30, psiDd: 30, psiTi: 27, psiTd: 30, timestamp: new Date(now - 17*dayMs).toISOString()},
+    {unidad:"V-004", id:"V-004", motor:"Nafta", km: 38000, uptime: 455, downtime: 2.8, vibracion: 1.9, ta: 85, rpm: 2520, psiDi: 33, psiDd: 33, psiTi: 30, psiTd: 33, timestamp: new Date(now - 16*dayMs).toISOString()},
+    {unidad:"V-005", id:"V-005", motor:"Diesel", km: 65000, uptime: 290, downtime: 6.1, vibracion: 4.3, ta: 90, rpm: 2150, psiDi: 29, psiDd: 29, psiTi: 26, psiTd: 29, timestamp: new Date(now - 15*dayMs).toISOString()}
   ];
+  let timelineChartIns = null;
 
-  function renderSidebar() {
-    const nav = document.getElementById("sidebar-nav");
-    nav.innerHTML = tabs.map(tab => `
-      <button onclick="setActiveTab('${tab.id}')" id="tab-${tab.id}" class="flex items-center w-full px-4 py-3 rounded-2xl transition-all ${tab.id === 'overview' ? 'tab-active' : 'text-slate-400 hover:bg-slate-800'}">
-        <i class="${tab.icon} w-5 h-5 mr-3"></i>
-        <span class="font-medium">${tab.label}</span>
-      </button>
-    `).join("");
+  function updateUnidadCard(entrada) {
+    document.getElementById("card-unidad").innerText = entrada.unidad;
+    document.getElementById("card-motor").innerText = "Motor " + entrada.motor;
+    document.getElementById("card-km").innerHTML = `<i class="fas fa-road text-[10px]"></i> ${entrada.km.toLocaleString()} KM`;
+    document.getElementById("card-rpm").innerText = entrada.rpm;
   }
 
-  let activeTab = "overview";
-  function setActiveTab(id) {
-    activeTab = id;
-    document.querySelectorAll("#sidebar-nav button").forEach(b => b.classList.remove("tab-active"));
-    document.getElementById(`tab-${id}`).classList.add("tab-active");
-    renderContent();
+  function submitData() {
+    const uptime = parseFloat(document.getElementById("input-uptime").value);
+    const downtime = parseFloat(document.getElementById("input-downtime").value);
+    const km = parseFloat(document.getElementById("input-km").value) || 0;
+
+    if(isNaN(uptime) || isNaN(downtime) || uptime <= 0) {
+      alert("⚠️ Error: Se requieren valores numéricos mayores a 0 para el Uptime y Downtime.");
+      return;
+    }
+
+    const unidad = document.getElementById("input-unidad").value || "VEH-" + Math.floor(Math.random()*1000);
+    const id = document.getElementById("input-id").value || "ID-" + Math.floor(Math.random()*1000);
+    const motor = document.getElementById("input-motor").value;
+    const vibracion = parseFloat(document.getElementById("input-vibracion").value) || 0;
+    const ta = parseFloat(document.getElementById("input-ta").value) || 0;
+    const rpm = parseFloat(document.getElementById("input-rpm").value) || 0;
+    const psiDi = parseFloat(document.getElementById("input-psi-di").value) || 0;
+    const psiDd = parseFloat(document.getElementById("input-psi-dd").value) || 0;
+    const psiTi = parseFloat(document.getElementById("input-psi-ti").value) || 0;
+    const psiTd = parseFloat(document.getElementById("input-psi-td").value) || 0;
+
+    const nuevaEntrada = {
+      unidad, id, motor, km, uptime, downtime, vibracion, ta, rpm, psiDi, psiDd, psiTi, psiTd, timestamp: new Date().toISOString()
+    };
+
+    if (db.length >= 20) db.shift();
+    db.push(nuevaEntrada); 
+    document.getElementById("mem-count").innerText = `${db.length}/20`;
+    
+    document.querySelectorAll('input').forEach(el => el.value = "");
+    
+    calculateKPIs();
+    updateUnidadCard(nuevaEntrada);
+    runPredictiveAI(nuevaEntrada);
+    updateTimelineChart();
+    updateCorrelationMatrix();
   }
 
-  function renderContent() {
-    const area = document.getElementById("content-area");
-    area.innerHTML = `
-      <div class="max-w-screen-2xl mx-auto">
-        <!-- Gauge + KPIs principales -->
-        <div class="grid grid-cols-12 gap-6">
-          <div class="col-span-12 lg:col-span-4 bg-slate-900 border border-slate-700 rounded-3xl p-8 flex flex-col items-center">
-            <h3 class="uppercase text-teal-400 text-sm font-semibold tracking-widest mb-3">DISPONIBILIDAD TOTAL DEL TALLER</h3>
-            <div class="gauge-circle">
-              <svg class="w-full h-full -rotate-90" viewBox="0 0 42 42">
-                <circle cx="21" cy="21" r="15" fill="none" stroke="#1f2937" stroke-width="6"/>
-                <circle cx="21" cy="21" r="15" fill="none" stroke="#00d4ff" stroke-width="6" stroke-dasharray="94.2 100" stroke-linecap="round"/>
-              </svg>
-              <div class="absolute inset-0 flex flex-col items-center justify-center text-center">
-                <span class="text-6xl font-black text-teal-400">94.2%</span>
-                <span class="text-xs text-slate-400 mt-1">MTBF / (MTBF + MTTR)</span>
-              </div>
-            </div>
-          </div>
-          <div class="col-span-12 lg:col-span-8 grid grid-cols-3 gap-6">
-            <div class="bg-slate-900 border border-slate-700 rounded-3xl p-6 flex flex-col justify-center">
-              <div class="flex justify-between"><span class="text-slate-400">MTBF Promedio</span><i class="fas fa-clock text-teal-400"></i></div>
-              <p class="text-5xl font-bold mt-2">120 <span class="text-2xl">horas</span></p>
-            </div>
-            <div class="bg-slate-900 border border-slate-700 rounded-3xl p-6 flex flex-col justify-center">
-              <div class="flex justify-between"><span class="text-slate-400">MTTR Promedio</span><i class="fas fa-tools text-orange-400"></i></div>
-              <p class="text-5xl font-bold mt-2">4.5 <span class="text-2xl">horas</span></p>
-            </div>
-            <div class="bg-slate-900 border border-slate-700 rounded-3xl p-6 flex flex-col justify-center">
-              <div class="flex justify-between"><span class="text-slate-400">Prom. Km entre intervenciones</span><i class="fas fa-road text-cyan-400"></i></div>
-              <p class="text-5xl font-bold mt-2">18,500 <span class="text-2xl">km</span></p>
-            </div>
-          </div>
-        </div>
+  function calculateKPIs() {
+    if (db.length === 0) return;
+    let totalUptime = 0, totalDowntime = 0;
+    db.forEach(row => { totalUptime += row.uptime; totalDowntime += row.downtime; });
 
-        <!-- Análisis por motor + Gráfico de línea -->
-        <div class="grid grid-cols-12 gap-6 mt-8">
-          <div class="col-span-12 lg:col-span-5 bg-slate-900 border border-slate-700 rounded-3xl p-8">
-            <h3 class="font-semibold text-lg mb-6">ANÁLISIS POR MOTOR / TIPO</h3>
-            <div class="space-y-5">
-              <div class="flex items-center"><span class="w-28 text-sm">Diesel</span><div class="flex-1 h-3 bg-teal-500 rounded-full"><div class="h-3 bg-teal-400 rounded-full w-[52%]"></div></div><span class="ml-6 font-mono text-teal-400">5.2h</span></div>
-              <div class="flex items-center"><span class="w-28 text-sm">Gasolina</span><div class="flex-1 h-3 bg-orange-500 rounded-full"><div class="h-3 bg-orange-400 rounded-full w-[38%]"></div></div><span class="ml-6 font-mono text-orange-400">3.8h</span></div>
-              <div class="flex items-center"><span class="w-28 text-sm">Híbrido</span><div class="flex-1 h-3 bg-cyan-500 rounded-full"><div class="h-3 bg-cyan-400 rounded-full w-[38%]"></div></div><span class="ml-6 font-mono text-cyan-400">3.8h</span></div>
-              <div class="flex items-center"><span class="w-28 text-sm">Eléctrico</span><div class="flex-1 h-3 bg-emerald-500 rounded-full"><div class="h-3 bg-emerald-400 rounded-full w-[25%]"></div></div><span class="ml-6 font-mono text-emerald-400">2.5h</span></div>
-            </div>
-          </div>
-          <div class="col-span-12 lg:col-span-7 bg-slate-900 border border-slate-700 rounded-3xl p-8">
-            <h3 class="font-semibold text-lg mb-6">GRÁFICO DE LÍNEA DE TIEMPO COMPARATIVO</h3>
-            <svg width="100%" height="260" viewBox="0 0 800 260" class="overflow-visible">
-              <polyline points="40,210 140,130 240,170 340,90 440,140 540,70 640,110 740,40" fill="none" stroke="#00d4ff" stroke-width="7" stroke-linejoin="round"/>
-              <polyline points="40,230 140,200 240,215 340,175 440,195 540,165 640,185 740,155" fill="none" stroke="#f59e0b" stroke-width="7" stroke-linejoin="round"/>
-              <circle cx="40" cy="210" r="9" fill="#00d4ff"/>
-              <circle cx="740" cy="40" r="9" fill="#00d4ff"/>
-            </svg>
-            <div class="flex justify-between text-xs text-slate-400 px-10 mt-2">
-              <span>May</span><span>Jun</span><span>Jul</span><span>Ago</span><span>Sep</span><span>Oct</span>
-            </div>
-          </div>
-        </div>
+    const mtbf = totalUptime / db.length;
+    const mttr = totalDowntime / db.length;
+    let disponibilidad = 0;
+    if ((mtbf + mttr) > 0) disponibilidad = (mtbf / (mtbf + mttr)) * 100;
 
-        <!-- Estado de Activos Clave -->
-        <div class="mt-10">
-          <h3 class="font-semibold text-lg mb-5">ESTADO DE ACTIVOS CLAVE</h3>
-          <div class="grid grid-cols-2 md:grid-cols-5 gap-6">
-            <div class="bg-slate-900 border border-teal-400/30 rounded-3xl p-6 text-center"><p class="text-teal-400 text-xs font-medium">BAHÍA 1</p><p class="text-4xl font-bold text-teal-300">OPERATIVO</p></div>
-            <div class="bg-slate-900 border border-orange-400/30 rounded-3xl p-6 text-center"><p class="text-orange-400 text-xs font-medium">BAHÍA 2</p><p class="text-4xl font-bold text-orange-300">EN USO</p></div>
-            <div class="bg-slate-900 border border-emerald-400/30 rounded-3xl p-6 text-center"><p class="text-emerald-400 text-xs font-medium">ELEVADOR PRINCIPAL</p><p class="text-4xl font-bold text-emerald-300">EN USO</p></div>
-            <div class="bg-slate-900 border border-teal-400/30 rounded-3xl p-6 text-center"><p class="text-teal-400 text-xs font-medium">ESCÁNER DIAGNÓSTICO</p><p class="text-4xl font-bold text-teal-300">OPERATIVO</p></div>
-            <div class="bg-slate-900 border border-red-400/30 rounded-3xl p-6 text-center"><p class="text-red-400 text-xs font-medium">HERRAMIENTAS ESPECIALES</p><p class="text-4xl font-bold text-red-300">MANTENIMIENTO</p></div>
-          </div>
-        </div>
-      </div>
+    document.getElementById("kpi-mtbf").innerText = mtbf.toFixed(1);
+    document.getElementById("kpi-mttr").innerText = mttr.toFixed(1);
+    document.getElementById("kpi-disp").innerText = disponibilidad.toFixed(1) + "%";
+
+    const circ = 2 * Math.PI * 45;
+    const length = (disponibilidad / 100) * circ;
+    document.getElementById("svg-disp").setAttribute("stroke-dasharray", `${length} ${circ}`);
+  }
+
+  function runPredictiveAI(ultimaEntrada) {
+    const panel = document.getElementById("predictive-panel");
+    const statusList = document.getElementById("ml-status-list");
+    let predicciones = [];
+    let reportKM = [];
+
+    // LÓGICA DE EXPLICACIÓN EN VACIO Y CONTEXTO
+    let explicacionContexto = "";
+    if (ultimaEntrada.motor.toLowerCase().includes("diesel")) {
+        explicacionContexto = `<strong>Análisis de Diagnóstico Diésel:</strong> Opera por encendido por compresión (ofreciendo 20%-30% mayor eficiencia por litro). Diseñado para largas distancias y alto torque. <span class="text-rose-400">Atención: Sus averías son entre un 20%-25% más elevadas en costo</span> por la alta complejidad del sistema de emisiones.`;
+        if (ultimaEntrada.km >= 30000 && ultimaEntrada.km % 30000 < 5000) {
+            reportKM.push("Cambio Crítico: Filtro de Combustible requerido. Es vital para evitar dañar los inyectores de alta presión.");
+        }
+    } else {
+        explicacionContexto = `<strong>Análisis de Diagnóstico Gasolina/Nafta:</strong> Opera con bujías de ignición, característico por su conducción más suave y deportiva. Es ideal para trayectos cortos o urbanos debido a su menor costo de adquisición y mantenimiento.`;
+        if (ultimaEntrada.km >= 15000 && ultimaEntrada.km % 15000 < 3000) {
+            reportKM.push("Cambio Crítico: Las Bujías pueden estar desgastadas. Su falla provoca pérdida de potencia y aumento de consumo de gasolina.");
+        }
+    }
+
+    // Reglas universales por Kilometraje
+    if (ultimaEntrada.km >= 10000 && ultimaEntrada.km % 10000 < 2000) {
+        reportKM.push("Cambio Preventivo: Filtro de aire aproximándose a recambio (ciclo cada 10k-15k km).");
+    }
+    if (ultimaEntrada.km >= 40000 && ultimaEntrada.km % 40000 < 2000) {
+        reportKM.push("Refrigerante: Peligro de baja eficiencia térmica. Se recomienda renovación del líquido para evitar corrosión interna sistemática.");
+    }
+    if (ultimaEntrada.km >= 60000) {
+        reportKM.push("Distribución (Aviso Constante): Correa crítica. Si ha superado los 60,000 km, rotura puede causar daño irreparable. Considere reducción 20% del límite si es de uso primariamente urbano (<120,000 km máximo real vs 150k teórico).");
+    }
+
+    // Temperatura y Vibración Básica
+    let tempStatus = `<span class="text-teal-400"><i class="fas fa-check"></i> Normal</span>`;
+    if (ultimaEntrada.ta > 105) {
+      tempStatus = `<span class="text-rose-400"><i class="fas fa-times"></i> ${ultimaEntrada.ta}°C</span>`;
+      predicciones.push(`<div class="p-3 bg-rose-500/10 border border-rose-500/40 rounded-xl flex items-start gap-4 mb-2"><div class="text-rose-500 text-xl"><i class="fas fa-temperature-high"></i></div><div><p class="font-bold text-rose-400 text-xs">Riesgo de Sobrecalentamiento</p><p class="text-[11px] text-slate-300">Alta probabilidad de ruptura en junta estanco debido a calor térmico (${ultimaEntrada.ta}°C).</p></div></div>`);
+    }
+
+    let vibStatus = `<span class="text-teal-400"><i class="fas fa-check"></i> Normal</span>`;
+    if (ultimaEntrada.vibracion >= 5.0) {
+      vibStatus = `<span class="text-rose-400"><i class="fas fa-times"></i> ${ultimaEntrada.vibracion} mm/s</span>`;
+      predicciones.push(`<div class="p-3 bg-orange-500/10 border border-orange-500/40 rounded-xl flex items-start gap-4 mb-2"><div class="text-orange-500 text-xl"><i class="fas fa-wave-square"></i></div><div><p class="font-bold text-orange-400 text-xs">Anomalía Cinemática</p><p class="text-[11px] text-slate-300">Desgaste asincrónico progresivo detectado por vibraciones altas (${ultimaEntrada.vibracion} mm/s).</p></div></div>`);
+    }
+
+    if (reportKM.length > 0) {
+       let repList = reportKM.map(r => `<li>- ${r}</li>`).join("");
+       predicciones.push(`<div class="p-3 bg-indigo-500/10 border border-indigo-500/40 rounded-xl mb-2"><p class="font-bold text-indigo-400 text-xs"><i class="fas fa-road"></i> Alertas por Kilometraje Acumulado (${ultimaEntrada.km} KM)</p><ul class="text-[10px] text-slate-300 mt-1">${repList}</ul></div>`);
+    }
+
+    if (predicciones.length === 0) {
+      predicciones.push(`<div class="p-4 bg-teal-500/10 border border-teal-500/40 rounded-xl"><p class="font-bold text-teal-400"><i class="fas fa-shield-alt mr-2"></i> Parámetros de Sensores Físicos Óptimos</p></div>`);
+    }
+
+    // Unimos las explicaciones dinámicas
+    let HTML = `
+       <div class="bg-slate-950 p-4 rounded-xl border border-slate-800 text-slate-300 text-xs leading-relaxed mb-4">
+         ${explicacionContexto}
+       </div>
+       <div class="flex-1">
+         ${predicciones.join("")}
+       </div>
+    `;
+
+    panel.innerHTML = HTML;
+
+    statusList.innerHTML = `
+      <li class="flex justify-between items-center border-b border-slate-800 pb-2"><span>Target:</span> <span class="font-bold text-white">${ultimaEntrada.unidad}</span></li>
+      <li class="flex justify-between items-center border-b border-slate-800 pb-2"><span>Modelado TA:</span> ${tempStatus}</li>
+      <li class="flex justify-between items-center pb-2"><span>Modelado VIB:</span> ${vibStatus}</li>
     `;
   }
 
-  // ✅ FUNCIÓN MODIFICADA: Enlace de Google Sheets REMOVIDO
-  function submitToGoogleSheets() {
-    const row = {
-      "UNIDAD": document.getElementById("input-unidad").value,
-      "ID / CÓDIGO": document.getElementById("input-id").value,
-      "MOTOR/TIPO": document.getElementById("input-motor").value,
-      "MTBF": document.getElementById("input-mtbf").value,
-      "MTTR": document.getElementById("input-mttr").value,
-      "MTBI": document.getElementById("input-mtbi").value,
-      "EO/hs": document.getElementById("input-eo").value,
-      "mm/s RMS": document.getElementById("input-vibracion").value,
-      "TA": document.getElementById("input-ta").value,
-      "RPM": document.getElementById("input-rpm").value,
-      "PSI DI": document.getElementById("input-psi-di").value,
-      "PSI DD": document.getElementById("input-psi-dd").value,
-      "PSI TI": document.getElementById("input-psi-ti").value,
-      "PSI TD": document.getElementById("input-psi-td").value,
-      "DISPONIBILIDAD OPERACIONAL%": document.getElementById("input-disponibilidad").value
-    };
+  function generateReport() {
+    const container = document.getElementById("ai-report-container");
+    const placeholder = document.getElementById("ai-report-placeholder");
     
-    // Copia los datos al portapapeles en formato CSV
-    const csvRow = Object.values(row).join("\t");
-    navigator.clipboard.writeText(csvRow).then(() => {
-      // ✅ ALERTA SIN ENLACE EXTERNO
-      alert("✅ Datos copiados al portapapeles. Listos para pegar en tu hoja de cálculo.");
-    });
+    container.classList.remove("hidden");
+    if(placeholder) placeholder.classList.add("hidden");
     
-    // Limpia los campos del formulario
-    document.querySelectorAll('input, select').forEach(el => { 
-      if (el.tagName === "SELECT") el.selectedIndex = 0; 
-      else el.value = ""; 
+    if(db.length === 0) {
+        container.innerHTML = "<p class='text-rose-400'>Ingresa datos para redactar informe.</p>";
+        return;
+    }
+    
+    const last = db[db.length - 1];
+    const mtbf = document.getElementById("kpi-mtbf").innerText;
+    const mttr = document.getElementById("kpi-mttr").innerText;
+    const disp = document.getElementById("kpi-disp").innerText;
+
+    let explicacionMotor = last.motor.toLowerCase().includes("diesel") 
+       ? "Dado su Motor Diésel, advertimos a la gerencia que los costos de reparación prospectados serán 20-25% más rigurosos que la media por bloque, y exige cambio de filtro de combustible en banda de los 30mil KM para asegurar los inyectores."
+       : "Para su bloque de Gasolina, la unidad demuestra conducción con un impacto económico urbano esperado (mantenimiento moderado). Las bujías son un punto de atención constante.";
+
+    let reportHTML = `
+      <h4 class="text-white font-bold mb-4 flex items-center gap-2 border-b border-slate-800 pb-3 text-sm uppercase tracking-widest"><i class="fas fa-file-alt text-indigo-400"></i> Reporte Predictivo</h4>
+      <p class="mb-4 text-slate-300">El taller registra <span class="text-teal-400 font-bold">${disp} de Disponibilidad</span> global. MTBF se sitúa en <b>${mtbf} hs</b>. MTTR promediado en <b>${mttr} hs</b>.</p>
+      
+      <div class="bg-indigo-500/10 p-3 rounded-md border border-indigo-500/20 mb-4 text-xs text-indigo-200">
+         <strong class="block mb-1">Criterio de Unidad Especial (Vehículo ${last.unidad}):</strong>
+         ${explicacionMotor}
+      </div>
+
+      <p class="mb-4 text-slate-300"><b>A nivel de Lubricantes en ${last.km} KM:</b> El fluido actual utilizado por la base exige verificación según el estándar internacional operativo. Recomendamos fuertemente escalado a Aceites Sintéticos si se busca reducir el impacto por detención (permiten rotaciones hasta 30,000 km frente a los minerales de 5,000 km).</p>
+      <p class="mb-4 text-slate-300"><b>Fluidos Complementarios:</b> Aseguran desde gerencia repasar cambios del líquido higroscópico de frenos cada 2 años exactos de operación para asegurar frenado efectivo.</p>
+    `;
+
+    // Resumen alertas
+    let alertas = [];
+    if (last.ta > 105) alertas.push("Alarma Termodinámica inminente.");
+    if (last.vibracion >= 5.0) alertas.push("Desgaste de rodamiento y transmisión latente.");
+    if (last.km >= 60000) alertas.push("Ciclo Crítico de Correa de Distribución atravesado.");
+
+    if (alertas.length > 0) {
+      reportHTML += `<div class="bg-rose-500/10 border-l-[3px] border-rose-500 pl-4 py-3 my-4 rounded-r-lg">
+        <p class="font-bold text-rose-400 tracking-wide uppercase text-[11px] mb-2">Acciones Inmediatas (Alertas):</p>
+        <ul class="list-disc pl-4 space-y-1 text-slate-300 text-xs">` + alertas.map(a => `<li class="text-rose-200">${a}</li>`).join("") + `</ul>
+      </div>`;
+    }
+
+    container.innerHTML = reportHTML;
+  }
+
+  function updateTimelineChart() {
+    const ctx = document.getElementById('timelineChart').getContext('2d');
+    const labels = db.map(d => new Date(d.timestamp).toLocaleDateString('es-ES', { day: '2-digit', month: 'short', hour:'2-digit', minute:'2-digit' }));
+    const uptimeData = db.map(d => d.uptime);
+    const downtimeData = db.map(d => d.downtime);
+    const dispData = db.map(d => (d.uptime + d.downtime) > 0 ? ((d.uptime / (d.uptime + d.downtime)) * 100).toFixed(1) : 0);
+
+    if(timelineChartIns) timelineChartIns.destroy();
+    timelineChartIns = new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels: labels,
+        datasets: [
+          { label: 'Disponibilidad % (Right Axis)', data: dispData, borderColor: '#00d4ff', backgroundColor: 'rgba(0, 212, 255, 0.1)', borderWidth: 3, tension: 0.4, yAxisID: 'y1', fill: true },
+          { label: 'Uptime (hs)', data: uptimeData, borderColor: '#14b8a6', borderDash: [5, 5], borderWidth: 2, tension: 0.2, yAxisID: 'y' },
+          { label: 'Downtime (hs)', data: downtimeData, borderColor: '#f97316', borderWidth: 2, tension: 0.2, yAxisID: 'y' }
+        ]
+      },
+      options: {
+        responsive: true, maintainAspectRatio: false,
+        interaction: { mode: 'index', intersect: false },
+        plugins: { legend: { labels: { color: '#cbd5e1' } } },
+        scales: {
+          x: { ticks: { color: '#64748b' }, grid: { color: '#334155' } },
+          y: { type: 'linear', display: true, position: 'left', title: { display: true, text: 'Horas', color: '#94a3b8' }, ticks: { color: '#94a3b8' }, grid: { color: '#334155' } },
+          y1: { type: 'linear', display: true, position: 'right', title: { display: true, text: 'Disponibilidad %', color: '#00d4ff' }, ticks: { color: '#00d4ff' }, grid: { drawOnChartArea: false } }
+        }
+      }
     });
+  }
+
+  function pearsonCorrelation(x, y) {
+    if (x.length === 0 || y.length === 0) return 0;
+    const n = x.length; let sumX = 0, sumY = 0, sumXY = 0, sumX2 = 0, sumY2 = 0;
+    for (let i = 0; i < n; i++) {
+        sumX += x[i]; sumY += y[i]; sumXY += x[i] * y[i];
+        sumX2 += x[i] * x[i]; sumY2 += y[i] * y[i];
+    }
+    const dt = (n * sumX2 - sumX * sumX) * (n * sumY2 - sumY * sumY);
+    if (dt <= 0) return 0;
+    return ((n * sumXY) - (sumX * sumY)) / Math.sqrt(dt);
+  }
+
+  function updateCorrelationMatrix() {
+    const variables = ['km', 'uptime', 'downtime', 'vibracion', 'ta', 'rpm', 'psiDi'];
+    const labels = ['KM', 'Uptime', 'Downtime', 'Vibración', 'Temp', 'RPM', 'PSI'];
+    
+    let html = '<table class="w-full border-collapse text-sm"><tr><td class="p-2"></td>';
+    html += labels.map(l => `<td class="p-3 font-bold text-slate-300 text-center border-b border-slate-700">${l}</td>`).join('') + '</tr>';
+    
+    for(let i = 0; i < variables.length; i++) {
+        html += `<tr><td class="p-3 font-bold text-slate-300 text-right pr-4 border-r border-slate-700">${labels[i]}</td>`;
+        for(let j = 0; j < variables.length; j++) {
+            const arr1 = db.map(d => d[variables[i]] || 0);
+            const arr2 = db.map(d => d[variables[j]] || 0);
+            const val = pearsonCorrelation(arr1, arr2);
+            let opacity = Math.abs(val);
+            let colorStyle = val > 0 ? `rgba(20, 184, 166, ${opacity})` : `rgba(244, 63, 94, ${opacity})`;
+            
+            if (i === j) {
+                html += `<td class="p-3 border border-slate-800 text-center text-slate-500 cursor-default" style="background-color: rgba(148, 163, 184, 0.1)">1.00</td>`;
+            } else {
+                html += `<td class="p-3 border border-slate-800 text-center font-medium transition-colors hover:border-slate-400" title="Correlación" style="background-color: ${colorStyle}; color: ${opacity > 0.5 ? 'white' : '#94a3b8'}">${val.toFixed(2)}</td>`;
+            }
+        }
+        html += '</tr>';
+    }
+    html += '</table>';
+    document.getElementById('correlation-matrix').innerHTML = html;
   }
 
   function exportData() {
-    let csvContent = "text/csv;charset=utf-8," + dashboardData.map(row => Object.values(row).join(",")).join("\n");
-    const encodedUri = encodeURI(csvContent);
+    if (db.length === 0) return;
+    const headers = Object.keys(db[0]);
+    let csvContent = headers.join(",") + "\n";
+    db.forEach(row => { csvContent += headers.map(h => row[h]).join(",") + "\n"; });
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
     const link = document.createElement("a");
-    link.setAttribute("href", encodedUri);
-    link.setAttribute("download", "NEXO-ART_Dashboard.csv");
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-  }
-
-  function refreshDashboard() { renderContent(); }
-  function showIAInsights() { alert("🤖 IA recomienda:\n• Revisar transmisión V-003 en las próximas 48h\n• Ordenar 12 filtros de aceite\n• Programa preventivo para flota Diesel"); }
-
-  // Notificaciones
-  function toggleNotifications() {
-    const panel = document.getElementById("notification-panel");
-    panel.classList.toggle("hidden");
-    if (!panel.classList.contains("hidden")) {
-      panel.innerHTML = `
-        <div class="p-4 border-b border-slate-700"><p class="font-semibold">Notificaciones</p></div>
-        <div class="p-4 space-y-3 max-h-96 overflow-y-auto">
-          <div class="p-3 bg-slate-800 rounded-2xl"><p class="font-medium text-sm">Mantenimiento preventivo</p><p class="text-xs text-slate-400">V-003 requiere revisión en 48h</p></div>
-          <div class="p-3 bg-slate-800 rounded-2xl"><p class="font-medium text-sm">Stock bajo</p><p class="text-xs text-slate-400">Filtros de aceite: 3 unidades restantes</p></div>
-          <div class="p-3 bg-slate-800 rounded-2xl"><p class="font-medium text-sm">Alerta de vibración</p><p class="text-xs text-slate-400">V-009 supera umbral RMS</p></div>
-        </div>
-      `;
-    }
-  }
-
-  function addNotification(title, message, type = "info") {
-    const badge = document.getElementById("notification-badge");
-    let count = parseInt(badge.textContent) || 0;
-    badge.textContent = count + 1;
+    link.setAttribute("href", URL.createObjectURL(blob));
+    link.setAttribute("download", `ML_Dataset_Predictivo_${new Date().toISOString().slice(0,10)}.csv`);
+    document.body.appendChild(link); link.click(); document.body.removeChild(link);
   }
 
   window.onload = () => {
     initTailwind();
-    renderSidebar();
-    renderContent();
+    calculateKPIs();
+    if(db.length > 0) {
+        updateUnidadCard(db[db.length - 1]);
+        runPredictiveAI(db[db.length - 1]);
+    }
+    updateTimelineChart();
+    updateCorrelationMatrix();
   };
 </script>
 </body>
 </html>
+
