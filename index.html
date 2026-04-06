@@ -33,17 +33,32 @@
       from { opacity: 0; transform: translateX(100%); }
       to { opacity: 1; transform: translateX(0); }
     }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
     .pdf-table th { background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%); }
     .pdf-table tr:hover { background-color: #f8fafc; }
     .pdf-table td { border-color: #e2e8f0; }
     
-    /* Mejoras de diseño global */
     .glass-card {
       background: rgba(30, 41, 59, 0.7);
       backdrop-filter: blur(10px);
       border: 1px solid rgba(71, 85, 105, 0.4);
     }
     .glow-text { text-shadow: 0 0 10px rgba(20, 184, 166, 0.4); }
+    .animate-fade-in { animation: fadeIn 0.4s ease-out; }
+    
+    /* Estilos para inputs mejorados */
+    .form-input:focus {
+      box-shadow: 0 0 0 2px rgba(20, 184, 166, 0.3);
+      background-color: rgba(30, 41, 59, 0.9);
+    }
+    
+    /* Indicador visual de carga de datos */
+    .data-loaded {
+      animation: slideIn 0.3s ease-out;
+    }
   </style>
 </head>
 <body class="bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 text-slate-200 overflow-hidden">
@@ -93,6 +108,9 @@
         </div>
       </div>
       <div class="flex items-center gap-3">
+        <button onclick="exportCSV()" class="flex items-center gap-2 px-4 py-2.5 bg-slate-700 hover:bg-slate-600 rounded-xl text-sm font-bold text-white shadow-lg transition-all transform hover:scale-105 border border-slate-600" title="Exportar datos a CSV">
+          <i class="fas fa-file-csv"></i> CSV
+        </button>
         <button onclick="resetDataset()" class="flex items-center gap-2 px-4 py-2.5 bg-rose-600 hover:bg-rose-500 rounded-xl text-sm font-bold text-white shadow-[0_0_15px_rgba(225,29,72,0.4)] transition-all transform hover:scale-105 animate-shake" title="Borrar todos los datos del dataset">
           <i class="fas fa-trash-alt"></i> RESET
         </button>
@@ -105,40 +123,46 @@
       </div>
     </header>
 
-    <!-- FORMULARIO DE CARGA -->
+    <!-- FORMULARIO DE CARGA DE DATOS - PROCESAR Y ALMACENAR -->
     <div class="bg-slate-900/60 border-b border-slate-800 px-8 py-5 backdrop-blur-sm">
       <div class="max-w-[1400px] mx-auto px-4">
         <div class="flex justify-between mb-4 flex-wrap gap-3 items-center">
-          <h3 class="font-semibold flex items-center gap-2 text-teal-300"><i class="fas fa-database"></i> Ingesta de Datos Raw</h3>
+          <h3 class="font-semibold flex items-center gap-2 text-teal-300 text-lg">
+            <i class="fas fa-database"></i> Ingesta de Datos Raw
+            <span class="text-xs text-slate-400 font-normal bg-slate-800/50 px-2 py-1 rounded-lg">Complete los campos y presione el botón</span>
+          </h3>
           <div class="text-slate-400 text-sm flex items-center gap-2 bg-slate-800/50 px-3 py-1.5 rounded-lg">
-              Memoria de cálculo: <span id="mem-count" class="text-teal-400 font-bold px-2 py-0.5 bg-slate-900 rounded">20/20</span>
+              Memoria de cálculo: <span id="mem-count" class="text-teal-400 font-bold px-2 py-0.5 bg-slate-900 rounded">5/20</span>
           </div>
-          <button onclick="submitData()" class="bg-gradient-to-r from-teal-500 to-cyan-500 hover:from-teal-400 hover:to-cyan-400 text-slate-900 px-6 py-2 rounded-xl flex items-center gap-2 font-bold shadow-lg shadow-teal-500/30 transition-all">
-            <i class="fas fa-microchip"></i> Procesar & Almacenar
+          <button onclick="submitData()" class="bg-gradient-to-r from-teal-500 to-cyan-500 hover:from-teal-400 hover:to-cyan-400 text-slate-900 px-6 py-2 rounded-xl flex items-center gap-2 font-bold shadow-lg shadow-teal-500/30 transition-all hover:scale-105 transform">
+            <i class="fas fa-microchip"></i> PROCESAR & ALMACENAR
           </button>
         </div>
         <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-3 text-sm">
-          <div><label class="text-slate-400 text-[10px] font-bold">UNIDAD</label><input id="input-unidad" type="text" class="bg-slate-800 w-full rounded-lg px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-teal-500 transition-all border border-slate-700" placeholder="Ej: V-021"></div>
-          <div><label class="text-slate-400 text-[10px] font-bold">ID / CÓDIGO</label><input id="input-id" type="text" class="bg-slate-800 w-full rounded-lg px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-teal-500 transition-all border border-slate-700" placeholder="Ej: ID-99"></div>
-          <div>
+          <div class="animate-fade-in" style="animation-delay: 0.1s"><label class="text-slate-400 text-[10px] font-bold">UNIDAD</label><input id="input-unidad" type="text" class="form-input bg-slate-800 w-full rounded-lg px-4 py-3 text-sm focus:outline-none transition-all border border-slate-700" placeholder="Ej: V-021"></div>
+          <div class="animate-fade-in" style="animation-delay: 0.15s"><label class="text-slate-400 text-[10px] font-bold">ID / CÓDIGO</label><input id="input-id" type="text" class="form-input bg-slate-800 w-full rounded-lg px-4 py-3 text-sm focus:outline-none transition-all border border-slate-700" placeholder="Ej: ID-99"></div>
+          <div class="animate-fade-in" style="animation-delay: 0.2s">
             <label class="text-slate-400 text-[10px] font-bold">MOTOR</label>
-            <select id="input-motor" class="bg-slate-800 w-full rounded-lg px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-teal-500 border border-slate-700">
+            <select id="input-motor" class="form-input bg-slate-800 w-full rounded-lg px-4 py-3 text-sm focus:outline-none transition-all border border-slate-700">
               <option value="Nafta">Gasolina (Nafta)</option>
               <option value="Diesel">Diésel</option>
               <option value="Hibrido">Híbrido</option>
               <option value="Electrico">Eléctrico</option>
             </select>
           </div>
-          <div><label class="text-slate-400 text-[10px] font-bold text-teal-400">KILOMETRAJE</label><input id="input-km" type="number" class="bg-slate-800 w-full rounded-lg px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-teal-500 border border-slate-700" placeholder="Ej: 85000"></div>
-          <div><label class="text-slate-400 text-[10px] font-bold text-teal-400">UPTIME (hs)</label><input id="input-uptime" type="number" class="bg-slate-800 w-full rounded-lg px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-teal-500 border border-slate-700" placeholder="Ej: 350"></div>
-          <div><label class="text-slate-400 text-[10px] font-bold text-orange-400">DOWNTIME (hs)</label><input id="input-downtime" type="number" step="0.1" class="bg-slate-800 w-full rounded-lg px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-teal-500 border border-slate-700" placeholder="Ej: 3.5"></div>
-          <div><label class="text-slate-400 text-[10px] font-bold">VIBRACIÓN</label><input id="input-vibracion" type="number" step="0.1" class="bg-slate-800 w-full rounded-lg px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-teal-500 border border-slate-700" placeholder="Ej: 2.4 mm/s"></div>
-          <div><label class="text-slate-400 text-[10px] font-bold">TEMP (°C)</label><input id="input-ta" type="number" class="bg-slate-800 w-full rounded-lg px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-teal-500 border border-slate-700" placeholder="Ej: 92"></div>
-          <div><label class="text-slate-400 text-[10px] font-bold">RPM</label><input id="input-rpm" type="number" class="bg-slate-800 w-full rounded-lg px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-teal-500 border border-slate-700" placeholder="Ej: 2450"></div>
-          <div><label class="text-slate-400 text-[10px] font-bold">PSI DI</label><input id="input-psi-di" type="number" class="bg-slate-800 w-full rounded-lg px-4 py-3 text-sm focus:outline-none border border-slate-700" placeholder="32"></div>
-          <div><label class="text-slate-400 text-[10px] font-bold">PSI DD</label><input id="input-psi-dd" type="number" class="bg-slate-800 w-full rounded-lg px-4 py-3 text-sm focus:outline-none border border-slate-700" placeholder="32"></div>
-          <div><label class="text-slate-400 text-[10px] font-bold">PSI TI</label><input id="input-psi-ti" type="number" class="bg-slate-800 w-full rounded-lg px-4 py-3 text-sm focus:outline-none border border-slate-700" placeholder="28"></div>
-          <div><label class="text-slate-400 text-[10px] font-bold">PSI TD</label><input id="input-psi-td" type="number" class="bg-slate-800 w-full rounded-lg px-4 py-3 text-sm focus:outline-none border border-slate-700" placeholder="32"></div>
+          <div class="animate-fade-in" style="animation-delay: 0.25s"><label class="text-slate-400 text-[10px] font-bold text-teal-400">KILOMETRAJE</label><input id="input-km" type="number" class="form-input bg-slate-800 w-full rounded-lg px-4 py-3 text-sm focus:outline-none transition-all border border-slate-700" placeholder="Ej: 85000"></div>
+          <div class="animate-fade-in" style="animation-delay: 0.3s"><label class="text-slate-400 text-[10px] font-bold text-teal-400">UPTIME (hs)</label><input id="input-uptime" type="number" class="form-input bg-slate-800 w-full rounded-lg px-4 py-3 text-sm focus:outline-none transition-all border border-slate-700" placeholder="Ej: 350"></div>
+          <div class="animate-fade-in" style="animation-delay: 0.35s"><label class="text-slate-400 text-[10px] font-bold text-orange-400">DOWNTIME (hs)</label><input id="input-downtime" type="number" step="0.1" class="form-input bg-slate-800 w-full rounded-lg px-4 py-3 text-sm focus:outline-none transition-all border border-slate-700" placeholder="Ej: 3.5"></div>
+          <div class="animate-fade-in" style="animation-delay: 0.4s"><label class="text-slate-400 text-[10px] font-bold">VIBRACIÓN</label><input id="input-vibracion" type="number" step="0.1" class="form-input bg-slate-800 w-full rounded-lg px-4 py-3 text-sm focus:outline-none transition-all border border-slate-700" placeholder="Ej: 2.4 mm/s"></div>
+          <div class="animate-fade-in" style="animation-delay: 0.45s"><label class="text-slate-400 text-[10px] font-bold">TEMP (°C)</label><input id="input-ta" type="number" class="form-input bg-slate-800 w-full rounded-lg px-4 py-3 text-sm focus:outline-none transition-all border border-slate-700" placeholder="Ej: 92"></div>
+          <div class="animate-fade-in" style="animation-delay: 0.5s"><label class="text-slate-400 text-[10px] font-bold">RPM</label><input id="input-rpm" type="number" class="form-input bg-slate-800 w-full rounded-lg px-4 py-3 text-sm focus:outline-none transition-all border border-slate-700" placeholder="Ej: 2450"></div>
+          <div class="animate-fade-in" style="animation-delay: 0.55s"><label class="text-slate-400 text-[10px] font-bold">PSI DI</label><input id="input-psi-di" type="number" class="form-input bg-slate-800 w-full rounded-lg px-4 py-3 text-sm focus:outline-none border border-slate-700" placeholder="32"></div>
+          <div class="animate-fade-in" style="animation-delay: 0.6s"><label class="text-slate-400 text-[10px] font-bold">PSI DD</label><input id="input-psi-dd" type="number" class="form-input bg-slate-800 w-full rounded-lg px-4 py-3 text-sm focus:outline-none border border-slate-700" placeholder="32"></div>
+          <div class="animate-fade-in" style="animation-delay: 0.65s"><label class="text-slate-400 text-[10px] font-bold">PSI TI</label><input id="input-psi-ti" type="number" class="form-input bg-slate-800 w-full rounded-lg px-4 py-3 text-sm focus:outline-none border border-slate-700" placeholder="28"></div>
+          <div class="animate-fade-in" style="animation-delay: 0.7s"><label class="text-slate-400 text-[10px] font-bold">PSI TD</label><input id="input-psi-td" type="number" class="form-input bg-slate-800 w-full rounded-lg px-4 py-3 text-sm focus:outline-none border border-slate-700" placeholder="32"></div>
+        </div>
+        <div class="mt-3 text-center">
+          <p class="text-xs text-slate-500 italic">💡 Llene los campos requeridos y presione <span class="text-teal-400 font-bold">"PROCESAR & ALMACENAR"</span> para ingresar los datos al sistema</p>
         </div>
       </div>
     </div>
@@ -252,7 +276,7 @@
           </div>
         </div>
 
-        <!-- ✅ RESUMEN EJECUTIVO EXPLICADO (NUEVO) -->
+        <!-- ✅ RESUMEN EJECUTIVO EXPLICADO -->
         <div class="mt-12 bg-slate-900/80 backdrop-blur-sm border border-slate-700 rounded-3xl p-8 shadow-2xl relative overflow-hidden">
           <div class="absolute top-0 left-0 w-full h-1.5 bg-gradient-to-r from-teal-500 via-indigo-500 to-cyan-500"></div>
           <h2 class="text-2xl font-bold text-white mb-6 flex items-center gap-3">
@@ -444,18 +468,22 @@
     document.getElementById("card-rpm").innerText = entrada.rpm;
   }
 
+  // === FUNCIÓN PRINCIPAL: PROCESAR & ALMACENAR DATOS ===
   function submitData() {
+    // Validación de campos requeridos
     const uptime = parseFloat(document.getElementById("input-uptime").value);
     const downtime = parseFloat(document.getElementById("input-downtime").value);
     const km = parseFloat(document.getElementById("input-km").value) || 0;
 
-    if(isNaN(uptime) || isNaN(downtime) || uptime <= 0) {
-      showNotification("⚠️ Error: Valores inválidos en Uptime o Downtime", "error");
+    // Validación estricta
+    if(isNaN(uptime) || isNaN(downtime) || uptime <= 0 || downtime < 0) {
+      showNotification("⚠️ Error: Uptime debe ser mayor a 0 y Downtime no puede ser negativo", "error");
       return;
     }
 
-    const unidad = document.getElementById("input-unidad").value || "VEH-" + Math.floor(Math.random()*1000);
-    const id = document.getElementById("input-id").value || "ID-" + Math.floor(Math.random()*1000);
+    // Obtener valores de todos los campos
+    const unidad = document.getElementById("input-unidad").value.trim() || "VEH-" + Math.floor(Math.random()*1000);
+    const id = document.getElementById("input-id").value.trim() || "ID-" + Math.floor(Math.random()*1000);
     const motor = document.getElementById("input-motor").value;
     const vibracion = parseFloat(document.getElementById("input-vibracion").value) || 0;
     const ta = parseFloat(document.getElementById("input-ta").value) || 0;
@@ -465,23 +493,48 @@
     const psiTi = parseFloat(document.getElementById("input-psi-ti").value) || 0;
     const psiTd = parseFloat(document.getElementById("input-psi-td").value) || 0;
 
+    // Crear nuevo registro
     const nuevaEntrada = {
       unidad, id, motor, km, uptime, downtime, vibracion, ta, rpm, psiDi, psiDd, psiTi, psiTd, timestamp: new Date().toISOString()
     };
 
-    if (db.length >= 20) db.shift();
+    // FIFO: Si hay 20 registros, elimina el más antiguo para mantener el límite
+    if (db.length >= 20) {
+      const eliminado = db.shift();
+      console.log(`🗑️ Registro eliminado por límite FIFO: ${eliminado.unidad}`);
+    }
+    
+    // AGREGA el nuevo dato a la memoria
     db.push(nuevaEntrada); 
+    
+    // GUARDA EN LOCALSTORAGE (persistencia)
     saveToStorage();
+    
+    // Actualiza contador de memoria
     document.getElementById("mem-count").innerText = `${db.length}/20`;
+    
+    // Limpia los inputs del formulario
     document.querySelectorAll('input').forEach(el => el.value = "");
+    
+    // Actualiza toda la interfaz con los nuevos datos
     calculateKPIs();
     updateUnidadCard(nuevaEntrada);
     runPredictiveAI(nuevaEntrada);
     updateTimelineChart();
     updateCorrelationMatrix();
-    showNotification("✅ Datos procesados y guardados", "success");
+    
+    // Feedback visual de éxito
+    showNotification(`✅ Unidad ${nuevaEntrada.unidad} procesada y almacenada exitosamente`, "success");
+    
+    // Efecto visual en el botón
+    const btn = event?.target?.closest('button');
+    if(btn) {
+      btn.classList.add('animate-pulse');
+      setTimeout(() => btn.classList.remove('animate-pulse'), 1000);
+    }
   }
 
+  // === RESET DE DATASET ===
   function resetDataset() {
     if(db.length === 0) {
       showNotification("ℹ️ El dataset ya está vacío", "info");
@@ -509,9 +562,15 @@
     }
   }
 
+  // === SISTEMA DE NOTIFICACIONES ===
   function showNotification(message, type = "info") {
     const notification = document.createElement("div");
-    const colors = { success: "bg-teal-500 border-teal-300 text-white", warning: "bg-amber-500 border-amber-300 text-white", error: "bg-rose-500 border-rose-300 text-white", info: "bg-indigo-500 border-indigo-300 text-white" };
+    const colors = { 
+      success: "bg-teal-500 border-teal-300 text-white", 
+      warning: "bg-amber-500 border-amber-300 text-white", 
+      error: "bg-rose-500 border-rose-300 text-white", 
+      info: "bg-indigo-500 border-indigo-300 text-white" 
+    };
     const icons = { success: "✅", warning: "⚠️", error: "❌", info: "ℹ️" };
     notification.className = `fixed top-4 right-4 z-50 px-6 py-3 rounded-xl border-2 shadow-2xl flex items-center gap-3 animate-[slideIn_0.3s_ease-out] ${colors[type]}`;
     notification.innerHTML = `<span class="text-xl">${icons[type]}</span><span class="font-medium text-sm">${message}</span>`;
@@ -522,6 +581,7 @@
     }, 3000);
   }
 
+  // === CÁLCULO DE KPIs ===
   function calculateKPIs() {
     if (db.length === 0) {
       document.getElementById("kpi-mtbf").innerText = "0";
@@ -548,6 +608,7 @@
     else { trendEl.innerHTML = `<i class="fas fa-arrow-down"></i> Revisar`; trendEl.className = "text-sm font-semibold mt-6 bg-rose-500/10 text-rose-400 px-4 py-1.5 rounded-full border border-rose-500/20"; }
   }
 
+  // === MOTOR PREDICTIVO IA ===
   function runPredictiveAI(ultimaEntrada) {
     const panel = document.getElementById("predictive-panel");
     const statusList = document.getElementById("ml-status-list");
@@ -583,6 +644,7 @@
     statusList.innerHTML = `<li class="flex justify-between items-center border-b border-slate-800 pb-2"><span>Target:</span> <span class="font-bold text-white">${ultimaEntrada.unidad}</span></li><li class="flex justify-between items-center border-b border-slate-800 pb-2"><span>Modelado TA:</span> ${tempStatus}</li><li class="flex justify-between items-center pb-2"><span>Modelado VIB:</span> ${vibStatus}</li>`;
   }
 
+  // === GENERAR INFORME LATERAL ===
   function generateReport() {
     const container = document.getElementById("ai-report-container");
     const placeholder = document.getElementById("ai-report-placeholder");
@@ -603,6 +665,7 @@
     container.innerHTML = reportHTML;
   }
 
+  // === GRÁFICO DE TENDENCIA TEMPORAL ===
   function updateTimelineChart() {
     const ctx = document.getElementById('timelineChart').getContext('2d');
     if(db.length === 0) { if(timelineChartIns) timelineChartIns.destroy(); ctx.canvas.parentNode.innerHTML = '<div class="absolute inset-0 flex items-center justify-center text-slate-500 text-sm">Sin datos para graficar</div>'; return; }
@@ -617,7 +680,7 @@
         labels: labels,
         datasets: [
           { label: 'Disponibilidad % (Right Axis)',  dispData, borderColor: '#00d4ff', backgroundColor: 'rgba(0, 212, 255, 0.1)', borderWidth: 3, tension: 0.4, yAxisID: 'y1', fill: true },
-          { label: 'Uptime (hs)', data: uptimeData, borderColor: '#14b8a6', borderDash: [5, 5], borderWidth: 2, tension: 0.2, yAxisID: 'y' },
+          { label: 'Uptime (hs)',  uptimeData, borderColor: '#14b8a6', borderDash: [5, 5], borderWidth: 2, tension: 0.2, yAxisID: 'y' },
           { label: 'Downtime (hs)',  downtimeData, borderColor: '#f97316', borderWidth: 2, tension: 0.2, yAxisID: 'y' }
         ]
       },
@@ -625,6 +688,7 @@
     });
   }
 
+  // === MATRIZ DE CORRELACIÓN DE PEARSON ===
   function pearsonCorrelation(x, y) {
     if (x.length === 0 || y.length === 0) return 0;
     const n = x.length; let sumX = 0, sumY = 0, sumXY = 0, sumX2 = 0, sumY2 = 0;
@@ -653,6 +717,7 @@
     document.getElementById('correlation-matrix').innerHTML = html;
   }
 
+  // === EXPORTAR CSV ===
   function exportCSV() {
     if (db.length === 0) { showNotification("📭 No hay datos para exportar", "info"); return; }
     const headers = ["Unidad","ID","Motor","KM","Uptime","Downtime","Vibración","Temp°C","RPM","PSI-DI","PSI-DD","PSI-TI","PSI-TD","Timestamp"];
@@ -663,6 +728,7 @@
     showNotification("📥 CSV descargado exitosamente", "success");
   }
 
+  // === FUNCIÓN PRINCIPAL: GENERAR PDF ENRIQUECIDO ===
   async function generateEnhancedPDF() {
     if(db.length === 0) { showNotification("⚠️ No hay datos suficientes para generar el reporte", "warning"); return; }
     showNotification("🔄 Generando reporte PDF...", "info");
@@ -682,12 +748,14 @@
     } catch (error) { console.error("Error generando PDF:", error); showNotification("❌ Error al generar PDF: " + error.message, "error"); }
   }
 
+  // === FUNCIÓN AUXILIAR: ESTADÍSTICAS ===
   function calculateStatistics() {
     if(db.length === 0) return null;
     const getStats = (arr) => { if(arr.length === 0) return { min: 0, max: 0, mean: 0, std: 0 }; const mean = arr.reduce((a,b) => a+b, 0) / arr.length; const variance = arr.reduce((a,b) => a + Math.pow(b - mean, 2), 0) / arr.length; return { min: Math.min(...arr).toFixed(2), max: Math.max(...arr).toFixed(2), mean: mean.toFixed(2), std: Math.sqrt(variance).toFixed(2) }; };
     return { uptime: getStats(db.map(d => d.uptime)), downtime: getStats(db.map(d => d.downtime)), km: getStats(db.map(d => d.km)), vibracion: getStats(db.map(d => d.vibracion)), ta: getStats(db.map(d => d.ta)), rpm: getStats(db.map(d => d.rpm)), disponibilidad: getStats(db.map(d => (d.uptime + d.downtime) > 0 ? (d.uptime / (d.uptime + d.downtime)) * 100 : 0)) };
   }
 
+  // === FUNCIÓN AUXILIAR: OBSERVACIONES DESTACADAS ===
   function generateHighlightedObservations(stats, last) {
     const obs = [];
     if(last.ta >= 105) obs.push({ tipo: 'crítico', icono: '🔥', texto: `Temperatura crítica: ${last.ta}°C - Riesgo de sobrecalentamiento inminente` });
@@ -703,6 +771,7 @@
     return obs;
   }
 
+  // === FUNCIÓN AUXILIAR: GENERAR TABLA DEL DATASET ===
   function generateDatasetTable(data) {
     if(data.length === 0) return '<tr><td colspan="13" class="text-center py-4 text-slate-500">Sin datos disponibles</td></tr>';
     const headers = ['Unidad', 'Motor', 'KM', 'Uptime', 'Downtime', 'Vibración', 'Temp°C', 'RPM', 'PSI-DI', 'PSI-DD', 'PSI-TI', 'PSI-TD', 'Fecha'];
@@ -713,6 +782,7 @@
     html += `</tbody>`; return html;
   }
 
+  // === FUNCIÓN AUXILIAR: ACTUALIZAR TEMPLATE PDF ===
   function updatePDFTemplate({ stats, observaciones, datasetTable, last, now }) {
     document.getElementById('pdf-fecha').innerText = now.toLocaleDateString('es-ES', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute:'2-digit' });
     document.getElementById('pdf-unidad').innerText = last.unidad; document.getElementById('pdf-id').innerText = "ID: " + last.id; document.getElementById('pdf-motor').innerText = last.motor; document.getElementById('pdf-km').innerText = last.km.toLocaleString() + " KM"; document.getElementById('pdf-last-reading').innerText = new Date(last.timestamp).toLocaleString('es-ES');
@@ -723,12 +793,14 @@
     document.getElementById('pdf-dataset-table').innerHTML = datasetTable;
   }
 
+  // === INICIALIZACIÓN ===
   window.onload = () => {
     initTailwind();
     calculateKPIs();
     if(db.length > 0) { updateUnidadCard(db[db.length - 1]); runPredictiveAI(db[db.length - 1]); }
     updateTimelineChart();
     updateCorrelationMatrix();
+    document.getElementById("mem-count").innerText = `${db.length}/20`;
   };
 </script>
 </body>
