@@ -4,10 +4,14 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>NEXO-ART Taller Mecánico - Dashboard Predictivo</title>
+  
+  <!-- Librerías Esenciales -->
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <!-- html2pdf.js para la generación de reportes descargables -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
     body { font-family: 'Inter', sans-serif; }
@@ -16,20 +20,29 @@
     .custom-scrollbar::-webkit-scrollbar-thumb { background-color: #334155; border-radius: 4px; }
     .custom-scrollbar::-webkit-scrollbar-track { background-color: #1e293b; }
     
-    /* Animaciones */
     @keyframes pulse-glow {
       0%, 100% { box-shadow: 0 0 15px rgba(20, 184, 166, 0.3); }
       50% { box-shadow: 0 0 25px rgba(20, 184, 166, 0.6); }
     }
     .animate-glow { animation: pulse-glow 2s infinite; }
-    
-    /* Transiciones suaves */
     .transition-all-smooth { transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
-    
-    /* Estilo para tablas en PDF */
     .pdf-table th { background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%); }
     .pdf-table tr:hover { background-color: #f8fafc; }
     .pdf-table td { border-color: #e2e8f0; }
+    
+    /* Animación para botón reset */
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      25% { transform: translateX(-3px); }
+      75% { transform: translateX(3px); }
+    }
+    .animate-shake:hover { animation: shake 0.3s ease-in-out; }
+    
+    /* Animación de entrada para notificaciones */
+    @keyframes slideIn {
+      from { opacity: 0; transform: translateX(100%); }
+      to { opacity: 1; transform: translateX(0); }
+    }
   </style>
 </head>
 <body class="bg-slate-950 text-slate-200 overflow-hidden">
@@ -76,10 +89,18 @@
       <div class="flex items-center gap-4">
         <div class="text-3xl font-semibold tracking-tight text-white block ml-4">DASHBOARD INTELIGENTE</div>
       </div>
-      <div class="flex items-center gap-4">
+      <div class="flex items-center gap-3">
+        <!-- BOTÓN RESET -->
+        <button onclick="resetDataset()" class="flex items-center gap-2 px-4 py-2.5 bg-rose-600 hover:bg-rose-500 rounded-2xl text-sm font-bold text-white shadow-[0_0_20px_rgba(225,29,72,0.5)] transition-all transform hover:scale-105 animate-shake" title="Borrar todos los datos del dataset">
+          <i class="fas fa-trash-alt"></i> RESET
+        </button>
+        
+        <!-- BOTÓN PDF -->
         <button onclick="generateEnhancedPDF()" class="flex items-center gap-2 px-6 py-2.5 bg-indigo-600 hover:bg-indigo-500 rounded-2xl text-sm font-bold text-white shadow-[0_0_20px_rgba(79,70,229,0.5)] transition-all transform hover:scale-105">
           <i class="fas fa-file-pdf"></i> REPORTE PDF
         </button>
+        
+        <!-- BOTÓN ACTUALIZAR -->
         <button onclick="calculateKPIs()" class="flex items-center gap-2 px-4 py-2.5 bg-teal-500 hover:bg-teal-400 text-black rounded-2xl text-sm font-bold ml-2 transition-all hover:scale-105">
           <i class="fas fa-sync"></i> Actualizar
         </button>
@@ -235,10 +256,8 @@
   </div>
 </div>
 
-<!-- TEMPLATE PDF ENHANCED - Optimizado para Móvil y Escritorio -->
+<!-- TEMPLATE PDF ENHANCED (Oculto hasta exportar) -->
 <div id="pdf-report-template-enhanced" class="hidden w-[794px] bg-white text-slate-800 p-8 font-sans" style="min-height: 1123px; box-sizing: border-box; font-size: 11px;">
-    
-    <!-- HEADER CORPORATIVO -->
     <div class="flex justify-between items-center border-b-4 border-slate-900 pb-4 mb-6">
         <div class="flex items-center gap-3">
             <div class="w-10 h-10 bg-gradient-to-br from-teal-500 to-cyan-600 text-white rounded-lg flex items-center justify-center text-xl font-bold shadow-lg">⚙️</div>
@@ -253,7 +272,6 @@
         </div>
     </div>
     
-    <!-- INFO UNIDAD ACTUAL -->
     <div class="bg-gradient-to-r from-slate-50 to-white rounded-xl p-4 mb-5 border border-slate-200">
         <h2 class="text-[9px] font-black text-slate-400 uppercase tracking-wider mb-3">📋 Unidad en Análisis</h2>
         <div class="grid grid-cols-2 gap-3">
@@ -277,7 +295,6 @@
         </div>
     </div>
     
-    <!-- KPIs PRINCIPALES -->
     <div class="grid grid-cols-3 gap-3 mb-5">
         <div class="bg-indigo-50 border border-indigo-200 rounded-xl p-3 text-center">
             <p class="text-[8px] text-indigo-600 font-black uppercase">Disponibilidad</p>
@@ -293,7 +310,6 @@
         </div>
     </div>
     
-    <!-- 📊 RESUMEN ESTADÍSTICO RÁPIDO -->
     <div class="mb-5">
         <h2 class="text-[9px] font-black text-slate-700 uppercase tracking-wider mb-3 pb-2 border-b border-slate-200 flex items-center gap-2">
             <span>📈</span> Resumen Estadístico de la Flota
@@ -328,30 +344,23 @@
         </div>
     </div>
     
-    <!-- ⚠️ OBSERVACIONES DESTACADAS -->
     <div class="mb-5">
         <h2 class="text-[9px] font-black text-slate-700 uppercase tracking-wider mb-3 pb-2 border-b border-slate-200 flex items-center gap-2">
             <span>🔍</span> Observaciones Destacadas del Sistema
         </h2>
-        <div id="pdf-observaciones" class="space-y-2">
-            <!-- Se llena dinámicamente -->
-        </div>
+        <div id="pdf-observaciones" class="space-y-2"></div>
     </div>
     
-    <!-- 🗃️ DATASET COMPLETO -->
     <div class="mb-4">
         <h2 class="text-[9px] font-black text-slate-700 uppercase tracking-wider mb-3 pb-2 border-b border-slate-200 flex items-center gap-2">
             <span>🗃️</span> ML_Dataset_Predictivo (Últimos 20 registros)
         </h2>
         <div class="overflow-x-auto border border-slate-200 rounded-lg">
-            <table class="pdf-table w-full text-[9px] border-collapse" id="pdf-dataset-table">
-                <!-- Tabla generada dinámicamente -->
-            </table>
+            <table class="pdf-table w-full text-[9px] border-collapse" id="pdf-dataset-table"></table>
         </div>
         <p class="text-[8px] text-slate-400 mt-2 text-center">* Datos almacenados en memoria volátil. Exporta regularmente para respaldo.</p>
     </div>
     
-    <!-- FOOTER -->
     <div class="mt-auto pt-4 border-t-2 border-slate-200 flex justify-between items-center text-[8px] text-slate-400 uppercase tracking-wider font-bold">
         <p><i class="fas fa-shield-alt mr-1"></i> NEXO-ART Motor Intelligence v1.3.0</p>
         <p>Documento generado automáticamente</p>
@@ -359,22 +368,41 @@
 </div>
 
 <script>
+  // === CONFIGURACIÓN INICIAL ===
   function initTailwind() { tailwind.config = { content: [], theme: { extend: {} } }; }
   
-  // Base de datos (Memoria RAM con Kilometraje)
-  const now = Date.now();
-  const dayMs = 86400000;
+  // === PERSISTENCIA (LOCALSTORAGE) ===
+  const STORAGE_KEY = 'nexoart_data_v1';
+  let db = [];
   
-  let db = [
-    {unidad:"V-001", id:"V-001", motor:"Diesel", km: 82000, uptime: 420, downtime: 3.5, vibracion: 2.4, ta: 92, rpm: 2450, psiDi: 32, psiDd: 32, psiTi: 28, psiTd: 32, timestamp: new Date(now - 19*dayMs).toISOString()},
-    {unidad:"V-002", id:"V-002", motor:"Nafta", km: 45000, uptime: 380, downtime: 4.1, vibracion: 3.1, ta: 88, rpm: 2380, psiDi: 31, psiDd: 31, psiTi: 29, psiTd: 31, timestamp: new Date(now - 18*dayMs).toISOString()},
-    {unidad:"V-003", id:"V-003", motor:"Diesel", km: 110000, uptime: 310, downtime: 5.2, vibracion: 3.8, ta: 95, rpm: 2200, psiDi: 30, psiDd: 30, psiTi: 27, psiTd: 30, timestamp: new Date(now - 17*dayMs).toISOString()},
-    {unidad:"V-004", id:"V-004", motor:"Nafta", km: 38000, uptime: 455, downtime: 2.8, vibracion: 1.9, ta: 85, rpm: 2520, psiDi: 33, psiDd: 33, psiTi: 30, psiTd: 33, timestamp: new Date(now - 16*dayMs).toISOString()},
-    {unidad:"V-005", id:"V-005", motor:"Diesel", km: 65000, uptime: 290, downtime: 6.1, vibracion: 4.3, ta: 90, rpm: 2150, psiDi: 29, psiDd: 29, psiTi: 26, psiTd: 29, timestamp: new Date(now - 15*dayMs).toISOString()}
-  ];
+  // Función para cargar datos del almacenamiento
+  function loadFromStorage() {
+    const stored = localStorage.getItem(STORAGE_KEY);
+    if (stored) {
+      try {
+        db = JSON.parse(stored);
+        console.log("✅ Datos cargados desde memoria local:", db.length, "registros.");
+      } catch (e) {
+        console.error("❌ Error al leer datos guardados", e);
+        db = [];
+      }
+    }
+    return db;
+  }
+
+  // Función para guardar datos en almacenamiento
+  function saveToStorage() {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(db));
+  }
+
+  // Cargar datos al inicio
+  loadFromStorage();
+
   let timelineChartIns = null;
 
+  // === FUNCIONES DE UI ===
   function updateUnidadCard(entrada) {
+    if (!entrada) return;
     document.getElementById("card-unidad").innerText = entrada.unidad;
     document.getElementById("card-motor").innerText = "Motor " + entrada.motor;
     document.getElementById("card-km").innerHTML = `<i class="fas fa-road text-[10px]"></i> ${entrada.km.toLocaleString()} KM`;
@@ -387,7 +415,7 @@
     const km = parseFloat(document.getElementById("input-km").value) || 0;
 
     if(isNaN(uptime) || isNaN(downtime) || uptime <= 0) {
-      alert("⚠️ Error: Se requieren valores numéricos mayores a 0 para el Uptime y Downtime.");
+      showNotification("⚠️ Error: Valores inválidos en Uptime o Downtime", "error");
       return;
     }
 
@@ -406,21 +434,104 @@
       unidad, id, motor, km, uptime, downtime, vibracion, ta, rpm, psiDi, psiDd, psiTi, psiTd, timestamp: new Date().toISOString()
     };
 
+    // FIFO: Si hay 20 registros, elimina el más antiguo
     if (db.length >= 20) db.shift();
+    
+    // AGREGA el nuevo dato a la memoria
     db.push(nuevaEntrada); 
+    
+    // GUARDA EN LOCALSTORAGE
+    saveToStorage();
+    
     document.getElementById("mem-count").innerText = `${db.length}/20`;
     
+    // Limpia los inputs del formulario
     document.querySelectorAll('input').forEach(el => el.value = "");
     
+    // Actualiza toda la interfaz
     calculateKPIs();
     updateUnidadCard(nuevaEntrada);
     runPredictiveAI(nuevaEntrada);
     updateTimelineChart();
     updateCorrelationMatrix();
+    
+    showNotification("✅ Datos procesados y guardados", "success");
   }
 
+  // === RESET DE DATASET ===
+  function resetDataset() {
+    if(db.length === 0) {
+      showNotification("ℹ️ El dataset ya está vacío", "info");
+      return;
+    }
+    
+    if(confirm("⚠️ ¿BORRAR todos los datos de memoria? Esta acción es irreversible.")) {
+      // Limpia la base de datos
+      db = [];
+      
+      // Limpia el almacenamiento local
+      localStorage.removeItem(STORAGE_KEY);
+      
+      // Resetea la interfaz
+      document.getElementById("mem-count").innerText = `0/20`;
+      document.getElementById("card-unidad").innerText = "--";
+      document.getElementById("card-motor").innerText = "Motor --";
+      document.getElementById("card-km").innerHTML = `<i class="fas fa-road text-[10px]"></i> -- KM`;
+      document.getElementById("card-rpm").innerText = "--";
+      document.getElementById("kpi-mtbf").innerText = "0";
+      document.getElementById("kpi-mttr").innerText = "0";
+      document.getElementById("kpi-disp").innerText = "0.0%";
+      document.getElementById("svg-disp").setAttribute("stroke-dasharray", `0 282.7`);
+      document.getElementById("trend-disp").innerHTML = `<i class="fas fa-arrow-down"></i> Sin datos`;
+      document.getElementById("trend-disp").className = "text-sm font-semibold mt-6 bg-slate-700/10 text-slate-400 px-4 py-1.5 rounded-full";
+      
+      if(timelineChartIns) { timelineChartIns.destroy(); timelineChartIns = null; }
+      document.getElementById("correlation-matrix").innerHTML = '<p class="text-slate-500 text-center py-8">Sin datos para mostrar</p>';
+      document.getElementById("predictive-panel").innerHTML = '<p class="text-slate-400 text-sm">Ingresa datos para activar el motor de predicción</p>';
+      document.getElementById("ml-status-list").innerHTML = '';
+      
+      showNotification("🗑️ Dataset y memoria limpiados", "warning");
+    }
+  }
+
+  // === NOTIFICACIONES ===
+  function showNotification(message, type = "info") {
+    const notification = document.createElement("div");
+    const colors = {
+      success: "bg-teal-500 border-teal-300 text-white",
+      warning: "bg-amber-500 border-amber-300 text-white",
+      error: "bg-rose-500 border-rose-300 text-white",
+      info: "bg-indigo-500 border-indigo-300 text-white"
+    };
+    const icons = {
+      success: "✅",
+      warning: "⚠️",
+      error: "❌",
+      info: "ℹ️"
+    };
+    
+    notification.className = `fixed top-4 right-4 z-50 px-6 py-3 rounded-xl border-2 shadow-2xl flex items-center gap-3 animate-[slideIn_0.3s_ease-out] ${colors[type]}`;
+    notification.innerHTML = `<span class="text-xl">${icons[type]}</span><span class="font-medium text-sm">${message}</span>`;
+    document.body.appendChild(notification);
+    
+    setTimeout(() => {
+      notification.style.opacity = "0";
+      notification.style.transform = "translateX(100%)";
+      notification.style.transition = "all 0.3s ease-in";
+      setTimeout(() => notification.remove(), 300);
+    }, 3000);
+  }
+
+  // === CÁLCULO DE KPIs ===
   function calculateKPIs() {
-    if (db.length === 0) return;
+    if (db.length === 0) {
+      document.getElementById("kpi-mtbf").innerText = "0";
+      document.getElementById("kpi-mttr").innerText = "0";
+      document.getElementById("kpi-disp").innerText = "0.0%";
+      document.getElementById("svg-disp").setAttribute("stroke-dasharray", `0 282.7`);
+      return;
+    }
+    
     let totalUptime = 0, totalDowntime = 0;
     db.forEach(row => { totalUptime += row.uptime; totalDowntime += row.downtime; });
 
@@ -436,8 +547,21 @@
     const circ = 2 * Math.PI * 45;
     const length = (disponibilidad / 100) * circ;
     document.getElementById("svg-disp").setAttribute("stroke-dasharray", `${length} ${circ}`);
+    
+    const trendEl = document.getElementById("trend-disp");
+    if(disponibilidad >= 95) {
+      trendEl.innerHTML = `<i class="fas fa-arrow-up"></i> Óptimo`;
+      trendEl.className = "text-sm font-semibold mt-6 bg-teal-500/10 text-teal-400 px-4 py-1.5 rounded-full";
+    } else if(disponibilidad >= 85) {
+      trendEl.innerHTML = `<i class="fas fa-arrow-right"></i> Estable`;
+      trendEl.className = "text-sm font-semibold mt-6 bg-amber-500/10 text-amber-400 px-4 py-1.5 rounded-full";
+    } else {
+      trendEl.innerHTML = `<i class="fas fa-arrow-down"></i> Revisar`;
+      trendEl.className = "text-sm font-semibold mt-6 bg-rose-500/10 text-rose-400 px-4 py-1.5 rounded-full";
+    }
   }
 
+  // === MOTOR PREDICTIVO ===
   function runPredictiveAI(ultimaEntrada) {
     const panel = document.getElementById("predictive-panel");
     const statusList = document.getElementById("ml-status-list");
@@ -506,6 +630,7 @@
     `;
   }
 
+  // === GENERAR INFORME LATERAL ===
   function generateReport() {
     const container = document.getElementById("ai-report-container");
     const placeholder = document.getElementById("ai-report-placeholder");
@@ -555,14 +680,23 @@
     container.innerHTML = reportHTML;
   }
 
+  // === GRÁFICO DE LÍNEA TEMPORAL ===
   function updateTimelineChart() {
     const ctx = document.getElementById('timelineChart').getContext('2d');
+    
+    if(db.length === 0) {
+      if(timelineChartIns) timelineChartIns.destroy();
+      ctx.canvas.parentNode.innerHTML = '<div class="absolute inset-0 flex items-center justify-center text-slate-500 text-sm">Sin datos para graficar</div>';
+      return;
+    }
+    
     const labels = db.map(d => new Date(d.timestamp).toLocaleDateString('es-ES', { day: '2-digit', month: 'short', hour:'2-digit', minute:'2-digit' }));
     const uptimeData = db.map(d => d.uptime);
     const downtimeData = db.map(d => d.downtime);
     const dispData = db.map(d => (d.uptime + d.downtime) > 0 ? ((d.uptime / (d.uptime + d.downtime)) * 100).toFixed(1) : 0);
 
     if(timelineChartIns) timelineChartIns.destroy();
+    
     timelineChartIns = new Chart(ctx, {
       type: 'line',
       data: {
@@ -586,6 +720,7 @@
     });
   }
 
+  // === CORRELACIÓN DE PEARSON ===
   function pearsonCorrelation(x, y) {
     if (x.length === 0 || y.length === 0) return 0;
     const n = x.length; let sumX = 0, sumY = 0, sumXY = 0, sumX2 = 0, sumY2 = 0;
@@ -599,6 +734,11 @@
   }
 
   function updateCorrelationMatrix() {
+    if(db.length < 2) {
+      document.getElementById('correlation-matrix').innerHTML = '<p class="text-slate-500 text-center py-8">Se requieren al menos 2 registros para calcular correlaciones</p>';
+      return;
+    }
+    
     const variables = ['km', 'uptime', 'downtime', 'vibracion', 'ta', 'rpm', 'psiDi'];
     const labels = ['KM', 'Uptime', 'Downtime', 'Vibración', 'Temp', 'RPM', 'PSI'];
     
@@ -626,9 +766,10 @@
     document.getElementById('correlation-matrix').innerHTML = html;
   }
 
+  // === EXPORTAR CSV ===
   function exportCSV() {
     if (db.length === 0) {
-        alert("📭 No hay datos para exportar");
+        showNotification("📭 No hay datos para exportar", "info");
         return;
     }
     const headers = ["Unidad","ID","Motor","KM","Uptime","Downtime","Vibración","Temp°C","RPM","PSI-DI","PSI-DD","PSI-TI","PSI-TD","Timestamp"];
@@ -659,50 +800,65 @@
     link.href = URL.createObjectURL(blob);
     link.download = `ML_Dataset_Predictivo_${new Date().toISOString().slice(0,10)}.csv`;
     link.click();
+    showNotification("📥 CSV descargado exitosamente", "success");
   }
 
-  // === FUNCIÓN PRINCIPAL: Generar PDF Enriquecido ===
-  function generateEnhancedPDF() {
+  // === FUNCIÓN PRINCIPAL: GENERAR PDF ENRIQUECIDO ===
+  async function generateEnhancedPDF() {
     if(db.length === 0) {
-        alert("⚠️ No hay datos suficientes en memoria para construir el reporte.");
+        showNotification("⚠️ No hay datos suficientes para generar el reporte", "warning");
         return;
     }
+    
+    showNotification("🔄 Generando reporte PDF...", "info");
     
     const last = db[db.length - 1];
     const now = new Date();
     
-    // === CÁLCULO DE ESTADÍSTICAS ===
-    const stats = calculateStatistics();
-    
-    // === GENERACIÓN DE OBSERVACIONES DESTACADAS ===
-    const observaciones = generateHighlightedObservations(stats, last);
-    
-    // === PREPARAR TABLA DEL DATASET ===
-    const datasetTable = generateDatasetTable(db);
-    
-    // === ACTUALIZAR TEMPLATE PDF ===
-    updatePDFTemplate({ stats, observaciones, datasetTable, last, now });
-    
-    // === CONFIGURACIÓN DE EXPORTACIÓN ===
-    const template = document.getElementById('pdf-report-template-enhanced');
-    template.classList.remove('hidden');
-    template.classList.add('absolute', '-left-[9999px]');
-
-    const opt = {
-        margin: 10,
-        filename: `NEXO-ART_Reporte_Completo_${last.unidad}_${now.toISOString().slice(0,10)}.pdf`,
-        image: { type: 'jpeg', quality: 0.98 },
-        html2canvas: { scale: 3, useCORS: true, windowWidth: 794, logging: false },
-        jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
-    };
-    
-    html2pdf().set(opt).from(template).save().then(() => {
+    try {
+        const stats = calculateStatistics();
+        const observaciones = generateHighlightedObservations(stats, last);
+        const datasetTable = generateDatasetTable(db);
+        
+        updatePDFTemplate({ stats, observaciones, datasetTable, last, now });
+        
+        const template = document.getElementById('pdf-report-template-enhanced');
+        template.classList.remove('hidden');
+        
+        // Pequeña pausa para asegurar renderizado
+        await new Promise(resolve => setTimeout(resolve, 100));
+        
+        const opt = {
+            margin: 10,
+            filename: `NEXO-ART_Reporte_Completo_${last.unidad}_${now.toISOString().slice(0,10)}.pdf`,
+            image: { type: 'jpeg', quality: 1.0 },
+            html2canvas: { 
+                scale: 3, 
+                useCORS: true, 
+                windowWidth: 794, 
+                logging: false,
+                backgroundColor: '#ffffff'
+            },
+            jsPDF: { 
+                unit: 'mm', 
+                format: 'a4', 
+                orientation: 'portrait',
+                compress: true
+            }
+        };
+        
+        await html2pdf().set(opt).from(template).save();
+        
         template.classList.add('hidden');
-        template.classList.remove('absolute', '-left-[9999px]');
-    });
+        showNotification("✅ PDF generado y descargado exitosamente", "success");
+        
+    } catch (error) {
+        console.error("Error generando PDF:", error);
+        showNotification("❌ Error al generar PDF: " + error.message, "error");
+    }
   }
 
-  // === FUNCIÓN AUXILIAR: Cálculo de Estadísticas ===
+  // === FUNCIÓN AUXILIAR: ESTADÍSTICAS ===
   function calculateStatistics() {
     if(db.length === 0) return null;
     
@@ -729,31 +885,26 @@
     };
   }
 
-  // === FUNCIÓN AUXILIAR: Observaciones Destacadas ===
+  // === FUNCIÓN AUXILIAR: OBSERVACIONES DESTACADAS ===
   function generateHighlightedObservations(stats, last) {
     const obs = [];
     
-    // Alertas por valores críticos
     if(last.ta >= 105) obs.push({ tipo: 'crítico', icono: '🔥', texto: `Temperatura crítica: ${last.ta}°C - Riesgo de sobrecalentamiento inminente` });
     else if(last.ta >= 95) obs.push({ tipo: 'advertencia', icono: '⚠️', texto: `Temperatura elevada: ${last.ta}°C - Monitorear sistema de refrigeración` });
     
     if(last.vibracion >= 5.0) obs.push({ tipo: 'crítico', icono: '〰️', texto: `Vibración peligrosa: ${last.vibracion} mm/s - Revisión de rodamientos urgente` });
     else if(last.vibracion >= 3.5) obs.push({ tipo: 'advertencia', icono: '📊', texto: `Vibración moderada: ${last.vibracion} mm/s - Programar alineación preventiva` });
     
-    // Alertas por kilometraje
     if(last.km >= 60000) obs.push({ tipo: 'mantenimiento', icono: '🔧', texto: `Kilometraje crítico: ${last.km.toLocaleString()} KM - Verificar correa de distribución` });
     if(last.km % 10000 < 2000 && last.km >= 10000) obs.push({ tipo: 'mantenimiento', icono: '💨', texto: `Próximo servicio: Filtro de aire recomendado en los próximos 2,000 KM` });
     
-    // Alertas por motor
     if(last.motor.toLowerCase().includes('diesel') && last.km % 30000 < 5000 && last.km >= 30000) {
         obs.push({ tipo: 'mantenimiento', icono: '⛽', texto: `Motor Diésel: Cambio de filtro de combustible requerido (ciclo 30,000 KM)` });
     }
     
-    // Alertas por disponibilidad
     const dispActual = (last.uptime / (last.uptime + last.downtime)) * 100;
     if(dispActual < 85) obs.push({ tipo: 'operativo', icono: '📉', texto: `Disponibilidad baja: ${dispActual.toFixed(1)}% - Evaluar causas de downtime` });
     
-    // Si no hay alertas, mensaje positivo
     if(obs.length === 0) {
         obs.push({ tipo: 'ok', icono: '✅', texto: 'Todos los parámetros dentro de rangos óptimos - Unidad operativa sin restricciones' });
     }
@@ -761,7 +912,7 @@
     return obs;
   }
 
-  // === FUNCIÓN AUXILIAR: Generar Tabla del Dataset ===
+  // === FUNCIÓN AUXILIAR: TABLA DATASET ===
   function generateDatasetTable(data) {
     if(data.length === 0) return '<tr><td colspan="13" class="text-center py-4 text-slate-500">Sin datos disponibles</td></tr>';
     
@@ -794,9 +945,8 @@
     return html;
   }
 
-  // === FUNCIÓN AUXILIAR: Actualizar Template PDF ===
+  // === FUNCIÓN AUXILIAR: ACTUALIZAR TEMPLATE PDF ===
   function updatePDFTemplate({ stats, observaciones, datasetTable, last, now }) {
-    // Datos básicos
     document.getElementById('pdf-fecha').innerText = now.toLocaleDateString('es-ES', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute:'2-digit' });
     document.getElementById('pdf-unidad').innerText = last.unidad;
     document.getElementById('pdf-id').innerText = "ID: " + last.id;
@@ -804,12 +954,10 @@
     document.getElementById('pdf-km').innerText = last.km.toLocaleString() + " KM";
     document.getElementById('pdf-last-reading').innerText = new Date(last.timestamp).toLocaleString('es-ES');
     
-    // KPIs principales
     document.getElementById('pdf-disp-val').innerText = document.getElementById('kpi-disp').innerText;
     document.getElementById('pdf-mtbf-val').innerText = document.getElementById('kpi-mtbf').innerText + " hs";
     document.getElementById('pdf-mttr-val').innerText = document.getElementById('kpi-mttr').innerText + " hs";
     
-    // Resumen estadístico
     if(stats) {
         document.getElementById('stat-uptime-mean').innerText = stats.uptime.mean;
         document.getElementById('stat-uptime-range').innerText = `${stats.uptime.min} - ${stats.uptime.max}`;
@@ -821,7 +969,6 @@
         document.getElementById('stat-disp-mean').innerText = stats.disponibilidad.mean + "%";
     }
     
-    // Observaciones destacadas
     const obsContainer = document.getElementById('pdf-observaciones');
     obsContainer.innerHTML = observaciones.map(obs => {
         const colors = {
@@ -837,10 +984,10 @@
         </div>`;
     }).join('');
     
-    // Tabla del dataset
     document.getElementById('pdf-dataset-table').innerHTML = datasetTable;
   }
 
+  // === INICIALIZACIÓN ===
   window.onload = () => {
     initTailwind();
     calculateKPIs();
