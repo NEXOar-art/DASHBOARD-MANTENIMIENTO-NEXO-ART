@@ -150,6 +150,9 @@
         <button onclick="generateEnhancedPDF()" class="flex items-center gap-1 md:gap-2 px-3 md:px-6 py-2 bg-indigo-600 hover:bg-indigo-500 rounded-lg md:rounded-xl text-[10px] md:text-sm font-bold text-white shadow-[0_0_20px_rgba(99,102,241,0.5)] transition-all transform hover:scale-105 touch-target">
           <i class="fas fa-file-pdf text-xs md:text-sm"></i> <span class="hidden xs:inline">PDF</span>
         </button>
+        <button onclick="exportCSV()" class="flex items-center gap-1 md:gap-2 px-3 md:px-6 py-2 bg-emerald-600 hover:bg-emerald-500 rounded-lg md:rounded-xl text-[10px] md:text-sm font-bold text-white shadow-[0_0_20px_rgba(16,185,129,0.5)] transition-all transform hover:scale-105 touch-target">
+          <i class="fas fa-file-csv text-xs md:text-sm"></i> <span class="hidden xs:inline">CSV</span>
+        </button>
         <button onclick="calculateKPIs()" class="flex items-center gap-1 md:gap-2 px-2 md:px-4 py-2 bg-teal-500 hover:bg-teal-400 text-slate-900 rounded-lg md:rounded-xl text-[10px] md:text-sm font-bold ml-1 transition-all hover:scale-105 shadow-lg shadow-teal-500/20 touch-target">
           <i class="fas fa-sync text-xs md:text-sm"></i> <span class="hidden xs:inline">Actualizar</span>
         </button>
@@ -242,7 +245,8 @@
                 <circle id="svg-disp" cx="50" cy="50" r="45" fill="none" stroke="#06b6d4" stroke-width="8" stroke-dasharray="0 282.7" stroke-linecap="round" class="transition-all duration-1000 ease-out"/>
               </svg>
               <div class="absolute inset-0 flex flex-col items-center justify-center text-center">
-                <span id="kpi-disp" class="text-3xl md:text-4xl lg:text-6xl font-black text-cyan-400 mt-1 md:mt-2">0.0%</span>
+                <!-- 🔹 NÚMERO MÁS PEQUEÑO PARA MEJOR UX -->
+                <span id="kpi-disp" class="text-2xl md:text-3xl lg:text-4xl font-black text-cyan-400 mt-1 md:mt-2">0.0%</span>
               </div>
             </div>
             <p id="trend-disp" class="text-[10px] md:text-sm font-semibold mt-3 md:mt-6 bg-teal-500/10 text-teal-400 px-3 md:px-4 py-1 md:py-1.5 rounded-full border border-teal-500/20"><i class="fas fa-arrow-up"></i> <span class="hidden xs:inline">Óptimo</span></p>
@@ -290,6 +294,49 @@
              <div class="flex items-center gap-1"><div class="w-3 h-3 md:w-4 md:h-4 bg-rose-500 rounded-sm"></div><span class="hidden xs:inline">Inversa</span></div>
              <div class="flex items-center gap-1"><div class="w-3 h-3 md:w-4 md:h-4 bg-slate-800 border border-slate-600 rounded-sm"></div><span class="hidden xs:inline">Nula</span></div>
              <div class="flex items-center gap-1"><div class="w-3 h-3 md:w-4 md:h-4 bg-teal-500 rounded-sm"></div><span class="hidden xs:inline">Directa</span></div>
+          </div>
+        </div>
+
+        <!-- 🔹 NUEVA SECCIÓN: DATASET ACUMULADO + DESCRIBE() -->
+        <div class="mt-6 md:mt-10">
+          <h2 class="text-lg md:text-xl font-bold text-white mb-4 md:mb-6 flex items-center gap-2">
+            <i class="fas fa-table text-cyan-400"></i> <span class="hidden xs:inline">Dataset Acumulado en Memoria</span><span class="xs:hidden">Dataset</span>
+          </h2>
+          
+          <!-- Tabla del Dataset -->
+          <div class="glass-card rounded-2xl md:rounded-3xl p-3 md:p-6 shadow-lg mb-4 md:mb-6">
+            <div class="flex justify-between items-center mb-3 md:mb-4">
+              <h3 class="text-teal-400 font-bold text-sm"><i class="fas fa-database mr-1"></i> Registros Almacenados (<span id="dataset-count">0</span>/20)</h3>
+              <div class="flex gap-2">
+                <button onclick="exportCSV()" class="bg-emerald-600 hover:bg-emerald-500 text-white text-[10px] md:text-xs px-3 py-1.5 rounded-lg flex items-center gap-1 touch-target">
+                  <i class="fas fa-file-csv"></i> <span class="hidden xs:inline">CSV</span>
+                </button>
+                <button onclick="generateEnhancedPDF()" class="bg-indigo-600 hover:bg-indigo-500 text-white text-[10px] md:text-xs px-3 py-1.5 rounded-lg flex items-center gap-1 touch-target">
+                  <i class="fas fa-file-pdf"></i> <span class="hidden xs:inline">PDF</span>
+                </button>
+              </div>
+            </div>
+            <div class="overflow-x-auto custom-scrollbar">
+              <table class="w-full border-collapse text-[9px] md:text-xs" id="dataset-table">
+                <!-- Se llena dinámicamente con JS -->
+              </table>
+            </div>
+            <p class="text-[9px] text-slate-500 mt-2 text-center">* Los datos persisten en memoria. Usa RESET para borrar.</p>
+          </div>
+
+          <!-- Tabla DESCRIBE() estilo pandas -->
+          <div class="glass-card rounded-2xl md:rounded-3xl p-3 md:p-6 shadow-lg">
+            <h3 class="text-indigo-400 font-bold text-sm mb-3 md:mb-4 flex items-center gap-2">
+              <i class="fas fa-calculator mr-1"></i> DESCRIBE() - Estadísticas del Dataset
+            </h3>
+            <p class="text-[9px] md:text-xs text-slate-400 mb-3 md:mb-4">
+              <i class="fas fa-info-circle mr-1"></i> 
+              <span class="hidden xs:inline">Estadísticas básicas por columna numérica: count, mean, std, min, 25%, 50%, 75%, max. Útil para detectar outliers y calidad de datos.</span>
+              <span class="xs:hidden">Estadísticas básicas para análisis de datos.</span>
+            </p>
+            <div id="describe-table-container" class="overflow-x-auto custom-scrollbar">
+              <!-- Se llena dinámicamente con JS -->
+            </div>
           </div>
         </div>
 
@@ -462,22 +509,17 @@
 <script>
   // === CONFIGURACIÓN ===
   const STORAGE_KEY = 'nexoart_data_v1';
-  const MAX_RECORDS = 20; // 🔹 Capacidad máxima de registros
+  const MAX_RECORDS = 20;
   let db = [];
   let timelineChartIns = null;
   let isSidebarOpen = false;
 
-  // === PERSISTENCIA CON LOCALSTORAGE ===
+  // === PERSISTENCIA ===
   function loadFromStorage() {
     const stored = localStorage.getItem(STORAGE_KEY);
     if (stored) {
-      try { 
-        db = JSON.parse(stored); 
-      } catch (e) { 
-        db = []; 
-      }
+      try { db = JSON.parse(stored); } catch (e) { db = []; }
     } else {
-      // Datos demo iniciales SOLO si es la primera vez
       const now = Date.now();
       const dayMs = 86400000;
       db = [
@@ -489,20 +531,18 @@
       ];
       saveToStorage();
     }
-    // 🔹 Actualizar contador al cargar (muestra espacios DISPONIBLES)
     updateMemoryCounter();
   }
 
   function saveToStorage() {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(db));
-    // 🔹 Actualizar contador después de guardar
     updateMemoryCounter();
   }
 
-  // 🔹 Función para actualizar el contador de memoria (espacios disponibles)
   function updateMemoryCounter() {
     const remaining = MAX_RECORDS - db.length;
     document.getElementById("mem-count").innerText = `${remaining}/${MAX_RECORDS}`;
+    document.getElementById("dataset-count").innerText = db.length;
   }
 
   loadFromStorage();
@@ -558,17 +598,11 @@
       unidad, id, motor, km, uptime, downtime, vibracion, ta, rpm, psiDi, psiDd, psiTi, psiTd, timestamp: new Date().toISOString()
     };
 
-    // 🔹 Lógica de acumulación con límite de 20 registros (FIFO)
-    if (db.length >= MAX_RECORDS) {
-      db.shift(); // Elimina el más antiguo para hacer espacio
-    }
-    db.push(nuevaEntrada); // 🔹 Agrega el nuevo registro (acumulación)
-    
-    saveToStorage(); // 🔹 Guarda en localStorage para persistencia
+    if (db.length >= MAX_RECORDS) db.shift();
+    db.push(nuevaEntrada);
+    saveToStorage();
     
     document.querySelectorAll('input, select').forEach(el => { if(el.type !== 'button') el.value = ""; });
-    
-    // Cerrar sidebar en móvil después de enviar
     if (window.innerWidth < 768 && isSidebarOpen) toggleSidebar();
     
     calculateKPIs();
@@ -576,18 +610,18 @@
     runPredictiveAI(nuevaEntrada);
     updateTimelineChart();
     updateCorrelationMatrix();
+    renderDatasetTable();
+    renderDescribeTable();
     showNotification("✅ Datos acumulados en memoria", "success");
   }
 
   function resetDataset() {
     if(db.length === 0) { showNotification("ℹ️ Dataset ya vacío", "info"); return; }
-    if(confirm("⚠️ ¿BORRAR permanentemente todos los datos de memoria? Esta acción NO se puede deshacer.")) {
-      // 🔹 ÚNICA FORMA de eliminar los datos: RESET borra localStorage
+    if(confirm("⚠️ ¿BORRAR permanentemente todos los datos de memoria?")) {
       db = [];
-      localStorage.removeItem(STORAGE_KEY); // 🔹 Eliminación permanente de la memoria del navegador
-      updateMemoryCounter(); // 🔹 Actualiza contador a 20/20
+      localStorage.removeItem(STORAGE_KEY);
+      updateMemoryCounter();
       
-      // Resetear UI
       document.getElementById("card-unidad").innerText = "--";
       document.getElementById("card-motor").innerText = "Motor --";
       document.getElementById("card-km").innerHTML = `<i class="fas fa-road"></i> -- KM`;
@@ -602,6 +636,8 @@
       document.getElementById("correlation-matrix").innerHTML = '<p class="text-slate-500 text-center py-4 md:py-8 text-[10px]">Sin datos</p>';
       document.getElementById("predictive-panel").innerHTML = '<p class="text-slate-400 text-[10px] md:text-sm">Ingresa datos para activar IA</p>';
       document.getElementById("ml-status-list").innerHTML = '';
+      renderDatasetTable();
+      renderDescribeTable();
       showNotification("🗑️ Memoria borrada permanentemente", "warning");
     }
   }
@@ -654,6 +690,164 @@
       trendEl.innerHTML = `<i class="fas fa-arrow-down"></i> <span class="hidden xs:inline">Revisar</span>`; 
       trendEl.className = "text-[10px] md:text-sm font-semibold mt-3 md:mt-6 bg-rose-500/10 text-rose-400 px-3 md:px-4 py-1 md:py-1.5 rounded-full border border-rose-500/20"; 
     }
+  }
+
+  // 🔹 FUNCIÓN: Renderizar tabla del dataset acumulado
+  function renderDatasetTable() {
+    const container = document.getElementById('dataset-table');
+    if (!container) return;
+    
+    if (db.length === 0) {
+      container.innerHTML = '<tr><td colspan="11" class="text-center py-6 text-slate-500 text-[10px]">📭 Sin datos acumulados aún. Ingresa registros o usa los datos de demostración.</td></tr>';
+      return;
+    }
+    
+    const headers = ['Unidad', 'Motor', 'KM', 'UP(h)', 'DOWN(h)', 'VIB', 'TEMP', 'RPM', 'PSI-DI', 'PSI-DD', 'Fecha'];
+    let html = `<thead><tr class="bg-slate-800 text-teal-400">`;
+    headers.forEach(h => { html += `<th class="p-2 text-left font-bold border-b border-slate-700 text-[9px] md:text-xs sticky top-0 bg-slate-800 z-10">${h}</th>`; });
+    html += `</tr></thead><tbody>`;
+    
+    // Mostrar últimos registros primero
+    [...db].reverse().forEach((row, idx) => {
+      const fecha = new Date(row.timestamp).toLocaleDateString('es-ES', {day:'2-digit', month:'2-digit', hour:'2-digit'});
+      const isLast = idx === 0;
+      html += `<tr class="${isLast ? 'bg-teal-500/10 border-l-2 border-teal-500' : 'border-b border-slate-800'} hover:bg-slate-800/30 transition-colors">`;
+      html += `<td class="p-2 font-medium text-[9px] md:text-xs">${row.unidad}</td>`;
+      html += `<td class="p-2 text-[9px] md:text-xs">${row.motor}</td>`;
+      html += `<td class="p-2 text-right text-[9px] md:text-xs">${row.km?.toLocaleString()}</td>`;
+      html += `<td class="p-2 text-right text-[9px] md:text-xs">${row.uptime}</td>`;
+      html += `<td class="p-2 text-right text-[9px] md:text-xs">${row.downtime}</td>`;
+      html += `<td class="p-2 text-right text-[9px] md:text-xs">${row.vibracion}</td>`;
+      html += `<td class="p-2 text-right text-[9px] md:text-xs">${row.ta}°</td>`;
+      html += `<td class="p-2 text-right text-[9px] md:text-xs">${row.rpm}</td>`;
+      html += `<td class="p-2 text-right text-[9px] md:text-xs">${row.psiDi}</td>`;
+      html += `<td class="p-2 text-right text-[9px] md:text-xs">${row.psiDd}</td>`;
+      html += `<td class="p-2 text-[9px] md:text-xs text-slate-400">${fecha}</td>`;
+      html += `</tr>`;
+    });
+    html += `</tbody>`;
+    container.innerHTML = html;
+  }
+
+  // 🔹 FUNCIÓN: Calcular estadísticas estilo pandas.describe()
+  function calculateDescribeStats() {
+    if (db.length === 0) return null;
+    
+    const numericColumns = [
+      {key: 'km', label: 'KM'},
+      {key: 'uptime', label: 'Uptime'},
+      {key: 'downtime', label: 'Downtime'},
+      {key: 'vibracion', label: 'Vibración'},
+      {key: 'ta', label: 'Temp°C'},
+      {key: 'rpm', label: 'RPM'},
+      {key: 'psiDi', label: 'PSI-DI'},
+      {key: 'psiDd', label: 'PSI-DD'},
+      {key: 'psiTi', label: 'PSI-TI'},
+      {key: 'psiTd', label: 'PSI-TD'}
+    ];
+    
+    const stats = {};
+    
+    numericColumns.forEach(col => {
+      const values = db.map(d => d[col.key]).filter(v => v !== undefined && v !== null && !isNaN(v));
+      if (values.length === 0) return;
+      
+      values.sort((a, b) => a - b);
+      const n = values.length;
+      const sum = values.reduce((a, b) => a + b, 0);
+      const mean = sum / n;
+      const variance = values.reduce((acc, val) => acc + Math.pow(val - mean, 2), 0) / n;
+      const std = Math.sqrt(variance);
+      
+      // Percentiles
+      const percentile = (p) => {
+        const idx = (n - 1) * p;
+        const lower = Math.floor(idx);
+        const upper = Math.ceil(idx);
+        if (lower === upper) return values[lower];
+        return values[lower] + (values[upper] - values[lower]) * (idx - lower);
+      };
+      
+      stats[col.key] = {
+        label: col.label,
+        count: n,
+        mean: mean.toFixed(2),
+        std: std.toFixed(2),
+        min: values[0].toFixed(2),
+        '25%': percentile(0.25).toFixed(2),
+        '50%': percentile(0.50).toFixed(2),
+        '75%': percentile(0.75).toFixed(2),
+        max: values[n-1].toFixed(2)
+      };
+    });
+    
+    return stats;
+  }
+
+  // 🔹 FUNCIÓN: Renderizar tabla DESCRIBE()
+  function renderDescribeTable() {
+    const container = document.getElementById('describe-table-container');
+    if (!container) return;
+    
+    if (db.length === 0) {
+      container.innerHTML = '<p class="text-slate-500 text-center py-4 text-[10px]">📊 Sin datos para calcular estadísticas</p>';
+      return;
+    }
+    
+    const stats = calculateDescribeStats();
+    if (!stats || Object.keys(stats).length === 0) {
+      container.innerHTML = '<p class="text-slate-500 text-center py-4 text-[10px]">⚠️ No hay columnas numéricas válidas</p>';
+      return;
+    }
+    
+    const metrics = [
+      {key: 'count', label: 'count', color: 'text-slate-300'},
+      {key: 'mean', label: 'mean', color: 'text-teal-400 font-bold'},
+      {key: 'std', label: 'std', color: 'text-indigo-400'},
+      {key: 'min', label: 'min', color: 'text-rose-400'},
+      {key: '25%', label: '25%', color: 'text-amber-400'},
+      {key: '50%', label: '50%', color: 'text-cyan-400'},
+      {key: '75%', label: '75%', color: 'text-amber-400'},
+      {key: 'max', label: 'max', color: 'text-rose-400'}
+    ];
+    
+    const columns = Object.keys(stats);
+    
+    let html = '<div class="overflow-x-auto"><table class="w-full border-collapse text-[9px] md:text-xs">';
+    
+    // Header
+    html += '<thead><tr class="bg-slate-800"><th class="p-2 text-left font-bold text-teal-400 border border-slate-700 sticky left-0 bg-slate-800 z-10">Estadística</th>';
+    columns.forEach(col => {
+      html += `<th class="p-2 text-center font-bold text-slate-300 border border-slate-700 min-w-[70px]">${stats[col].label}</th>`;
+    });
+    html += '</tr></thead><tbody>';
+    
+    // Rows
+    metrics.forEach(metric => {
+      html += `<tr class="border-b border-slate-800 hover:bg-slate-800/30 transition-colors">`;
+      html += `<td class="p-2 font-bold ${metric.color} border border-slate-700 sticky left-0 bg-slate-900/80 z-10">${metric.label}</td>`;
+      columns.forEach(col => {
+        const value = stats[col][metric.key];
+        let cellClass = 'text-slate-300';
+        if (metric.key === 'min' || metric.key === 'max') cellClass = 'text-rose-400';
+        if (metric.key === 'mean') cellClass = 'text-teal-400 font-bold';
+        if (metric.key === 'std') cellClass = 'text-indigo-400';
+        html += `<td class="p-2 text-center border border-slate-700 ${cellClass}">${value}</td>`;
+      });
+      html += '</tr>';
+    });
+    
+    html += '</tbody></table></div>';
+    
+    // Leyenda
+    html += '<div class="mt-3 flex flex-wrap gap-2 text-[8px] md:text-[9px] text-slate-400">';
+    html += '<span><span class="text-teal-400 font-bold">● mean</span>=promedio</span>';
+    html += '<span><span class="text-indigo-400">● std</span>=desviación</span>';
+    html += '<span><span class="text-rose-400">● min/max</span>=extremos</span>';
+    html += '<span><span class="text-cyan-400">● 50%</span>=mediana</span>';
+    html += '</div>';
+    
+    container.innerHTML = html;
   }
 
   function runPredictiveAI(ultimaEntrada) {
@@ -766,7 +960,6 @@
     });
   }
 
-  // Redibujar chart al redimensionar
   let resizeTimeout;
   window.addEventListener('resize', () => {
     clearTimeout(resizeTimeout);
@@ -809,9 +1002,34 @@
     document.getElementById('correlation-matrix').innerHTML = html;
   }
 
+  // 🔹 FUNCIÓN: Exportar CSV (funciona con datos acumulados, sin necesidad de ingresar nuevos)
+  function exportCSV() {
+    if (db.length === 0) { showNotification("📭 No hay datos para exportar", "info"); return; }
+    
+    const headers = ["Unidad","ID","Motor","KM","Uptime","Downtime","Vibración","Temp°C","RPM","PSI-DI","PSI-DD","PSI-TI","PSI-TD","Timestamp"];
+    let csv = headers.join(";") + "\n";
+    
+    db.forEach(row => { 
+      csv += [
+        row.unidad, row.id, row.motor, row.km, row.uptime, row.downtime, 
+        row.vibracion, row.ta, row.rpm, row.psiDi, row.psiDd, row.psiTi, row.psiTd, 
+        new Date(row.timestamp).toLocaleString('es-ES')
+      ].join(";") + "\n"; 
+    });
+    
+    const blob = new Blob(["\uFEFF" + csv], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement("a"); 
+    link.href = URL.createObjectURL(blob); 
+    link.download = `NEXO-ART_Dataset_${new Date().toISOString().slice(0,10)}.csv`; 
+    link.click();
+    
+    showNotification("📥 CSV descargado exitosamente", "success");
+  }
+
+  // 🔹 FUNCIÓN: Exportar PDF (funciona con datos acumulados, sin necesidad de ingresar nuevos)
   async function generateEnhancedPDF() {
-    if(db.length === 0) { showNotification("⚠️ Sin datos para PDF", "warning"); return; }
-    showNotification("🔄 Generando PDF...", "info");
+    if(db.length === 0) { showNotification("⚠️ No hay datos suficientes para generar el reporte", "warning"); return; }
+    showNotification("🔄 Generando reporte PDF...", "info");
     const last = db[db.length - 1]; const now = new Date();
     try {
         const stats = calculateStatistics();
@@ -823,14 +1041,14 @@
         await new Promise(resolve => setTimeout(resolve, 100));
         const opt = { 
           margin: 10, 
-          filename: `NEXO-ART_${last.unidad}_${now.toISOString().slice(0,10)}.pdf`, 
+          filename: `NEXO-ART_Reporte_${last.unidad}_${now.toISOString().slice(0,10)}.pdf`, 
           image: { type: 'jpeg', quality: 1.0 }, 
           html2canvas: { scale: 3, useCORS: true, windowWidth: 794, logging: false, backgroundColor: '#ffffff' }, 
           jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait', compress: true } 
         };
         await html2pdf().set(opt).from(template).save();
         template.classList.add('hidden');
-        showNotification("✅ PDF descargado", "success");
+        showNotification("✅ PDF generado y descargado", "success");
     } catch (error) { 
       console.error("Error PDF:", error); 
       showNotification("❌ Error: " + error.message, "error"); 
@@ -914,8 +1132,9 @@
     }
     updateTimelineChart();
     updateCorrelationMatrix();
+    renderDatasetTable();    // 🔹 Renderizar tabla dataset al cargar
+    renderDescribeTable();   // 🔹 Renderizar tabla DESCRIBE() al cargar
     
-    // Cerrar sidebar al cambiar orientación en móvil
     window.addEventListener('orientationchange', () => {
       if (window.innerWidth < 768 && isSidebarOpen) toggleSidebar();
     });
