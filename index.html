@@ -6,6 +6,7 @@
   <title>NEXO-ART Taller Mecánico - Dashboard Predictivo</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
@@ -13,13 +14,29 @@
     .gauge-circle { position: relative; width: 240px; height: 240px; margin: 0 auto; }
     .custom-scrollbar::-webkit-scrollbar { width: 6px; }
     .custom-scrollbar::-webkit-scrollbar-thumb { background-color: #334155; border-radius: 4px; }
+    .custom-scrollbar::-webkit-scrollbar-track { background-color: #1e293b; }
+    
+    /* Animaciones */
+    @keyframes pulse-glow {
+      0%, 100% { box-shadow: 0 0 15px rgba(20, 184, 166, 0.3); }
+      50% { box-shadow: 0 0 25px rgba(20, 184, 166, 0.6); }
+    }
+    .animate-glow { animation: pulse-glow 2s infinite; }
+    
+    /* Transiciones suaves */
+    .transition-all-smooth { transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+    
+    /* Estilo para tablas en PDF */
+    .pdf-table th { background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%); }
+    .pdf-table tr:hover { background-color: #f8fafc; }
+    .pdf-table td { border-color: #e2e8f0; }
   </style>
 </head>
 <body class="bg-slate-950 text-slate-200 overflow-hidden">
 
 <div class="flex h-screen">
 
-  <!-- SIDEBAR (Rediseñado para Informe IA) -->
+  <!-- SIDEBAR -->
   <aside class="w-[22rem] bg-slate-900 border-r border-slate-700 flex flex-col relative z-20 shadow-2xl">
     <div class="p-6 border-b border-slate-700 flex items-center gap-3 shrink-0 bg-slate-950/50">
       <div class="w-10 h-10 bg-teal-500 rounded-xl flex items-center justify-center text-white font-bold text-2xl shadow-lg shadow-teal-500/20">⚙️</div>
@@ -59,11 +76,11 @@
       <div class="flex items-center gap-4">
         <div class="text-3xl font-semibold tracking-tight text-white block ml-4">DASHBOARD INTELIGENTE</div>
       </div>
-      <div class="flex items-center gap-6">
-        <button onclick="exportData()" class="flex items-center gap-2 px-5 py-2 bg-slate-800 hover:bg-slate-700 rounded-2xl text-sm">
-          <i class="fas fa-download"></i> Exportar (ML Dataset)
+      <div class="flex items-center gap-4">
+        <button onclick="generateEnhancedPDF()" class="flex items-center gap-2 px-6 py-2.5 bg-indigo-600 hover:bg-indigo-500 rounded-2xl text-sm font-bold text-white shadow-[0_0_20px_rgba(79,70,229,0.5)] transition-all transform hover:scale-105">
+          <i class="fas fa-file-pdf"></i> REPORTE PDF
         </button>
-        <button onclick="calculateKPIs()" class="flex items-center gap-2 px-5 py-2 bg-teal-500 hover:bg-teal-600 text-black rounded-2xl text-sm font-semibold">
+        <button onclick="calculateKPIs()" class="flex items-center gap-2 px-4 py-2.5 bg-teal-500 hover:bg-teal-400 text-black rounded-2xl text-sm font-bold ml-2 transition-all hover:scale-105">
           <i class="fas fa-sync"></i> Actualizar
         </button>
       </div>
@@ -80,7 +97,6 @@
           <i class="fas fa-microchip"></i> Procesar & Almacenar
         </button>
       </div>
-      <!-- Agregamos KM aquí y ajustamos la grilla -->
       <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-4 text-sm">
         <div><label class="text-slate-400 text-[10px] font-bold">UNIDAD</label><input id="input-unidad" type="text" class="bg-slate-800 w-full rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-teal-500 transition-all" placeholder="Ej: V-021"></div>
         <div><label class="text-slate-400 text-[10px] font-bold">ID / CÓDIGO</label><input id="input-id" type="text" class="bg-slate-800 w-full rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-teal-500 transition-all" placeholder="Ej: ID-99"></div>
@@ -106,20 +122,16 @@
       </div>
     </div>
 
-    <!-- DASHBOARD PRINCIPAL Y MÉTRICAS COMPUTADAS -->
+    <!-- DASHBOARD PRINCIPAL -->
     <div class="flex-1 overflow-auto p-8 bg-slate-950" id="content-area">
       <div class="max-w-screen-2xl mx-auto">
 
-        <!-- Tarjeta de Unidad en Análisis Robusta (NUEVO) -->
+        <!-- Tarjeta de Unidad en Análisis -->
         <div class="mb-8">
           <div class="bg-gradient-to-r from-slate-900 via-slate-900 to-slate-800 border-l-[6px] border-teal-500 border-t border-r border-b border-slate-700/50 p-6 rounded-2xl flex flex-col md:flex-row items-center gap-6 shadow-[0_10px_30px_rgba(0,0,0,0.5)] relative overflow-hidden">
-             
-             <!-- Icono y decoración -->
              <div class="w-20 h-20 bg-gradient-to-br from-teal-500/20 to-teal-500/5 text-teal-400 border border-teal-500/30 rounded-2xl flex items-center justify-center text-4xl shrink-0 z-10 shadow-inner">
                  <i class="fas fa-truck-pickup"></i>
              </div>
-             
-             <!-- Contenido Dinámico Motor -->
              <div class="flex-1 z-10 w-full text-center md:text-left">
                <p class="text-slate-400 text-xs font-bold uppercase tracking-widest mb-1 flex items-center md:justify-start justify-center gap-2">
                  <span class="w-2 h-2 rounded-full bg-teal-500 animate-pulse"></span> Sistema Seleccionado
@@ -130,8 +142,6 @@
                  <span id="card-km" class="text-slate-400 bg-slate-900 px-3 py-1.5 rounded-full text-sm font-bold tracking-widest shadow-inner"><i class="fas fa-road"></i> -- KM</span>
                </div>
              </div>
-
-             <!-- Mini Stats al costado derecho -->
              <div class="flex gap-4 z-10 w-full md:w-auto justify-center">
                  <div class="bg-slate-950/50 rounded-xl p-3 border border-slate-800 text-center min-w-[100px]">
                      <p class="text-[10px] text-slate-400 uppercase font-bold tracking-widest mb-1">Últ. RPM</p>
@@ -142,8 +152,6 @@
                      <p class="text-base font-bold text-teal-400 mt-1"><i class="fas fa-check-circle"></i> Online</p>
                  </div>
              </div>
-
-             <!-- Fondo decorativo CSS -->
              <div class="hidden md:block absolute right-0 top-0 h-full w-96 bg-gradient-to-l from-teal-500/10 to-transparent pointer-events-none"></div>
              <i class="fas fa-cogs absolute -right-4 -bottom-4 text-9xl text-slate-800/30 pointer-events-none"></i>
           </div>
@@ -151,7 +159,6 @@
 
         <h2 class="text-xl font-bold text-white mb-6"><i class="fas fa-chart-line text-teal-500 mr-2"></i> Rendimiento Matemático de la Flota</h2>
         <div class="grid grid-cols-12 gap-6">
-          
           <!-- Gauge Disponibilidad -->
           <div class="col-span-12 lg:col-span-4 bg-slate-900 border border-slate-700/50 rounded-3xl p-8 flex flex-col items-center justify-center shadow-[0_0_40px_rgba(20,184,166,0.05)]">
             <h3 class="uppercase text-teal-400 text-[11px] font-bold tracking-widest mb-6 text-center">DISPONIBILIDAD TOTAL</h3>
@@ -215,28 +222,146 @@
         <h2 class="text-xl font-bold text-white mb-6 mt-10"><i class="fas fa-robot text-indigo-500 mr-2"></i> Motor de Recomendaciones y Explicación</h2>
         <div class="bg-slate-900 border border-indigo-500/30 rounded-3xl p-6 shadow-lg relative overflow-hidden">
           <div class="absolute top-0 left-0 w-1.5 h-full bg-indigo-500"></div>
-          
           <div class="flex flex-col md:flex-row gap-8">
-            <div class="flex-1 flex flex-col justify-between" id="predictive-panel">
-               <!-- Panel Dinamico -->
-            </div>
-            
+            <div class="flex-1 flex flex-col justify-between" id="predictive-panel"></div>
             <div class="w-full md:w-1/3 bg-slate-950 p-5 rounded-2xl border border-slate-800 shrink-0">
                <h4 class="text-slate-300 font-bold mb-3 text-sm">Análisis de Última Ingesta</h4>
                <ul id="ml-status-list" class="space-y-3 text-xs text-slate-400"></ul>
             </div>
           </div>
         </div>
-        
       </div>
     </div>
   </div>
 </div>
 
+<!-- TEMPLATE PDF ENHANCED - Optimizado para Móvil y Escritorio -->
+<div id="pdf-report-template-enhanced" class="hidden w-[794px] bg-white text-slate-800 p-8 font-sans" style="min-height: 1123px; box-sizing: border-box; font-size: 11px;">
+    
+    <!-- HEADER CORPORATIVO -->
+    <div class="flex justify-between items-center border-b-4 border-slate-900 pb-4 mb-6">
+        <div class="flex items-center gap-3">
+            <div class="w-10 h-10 bg-gradient-to-br from-teal-500 to-cyan-600 text-white rounded-lg flex items-center justify-center text-xl font-bold shadow-lg">⚙️</div>
+            <div>
+                <h1 class="text-2xl font-black text-slate-900 tracking-tighter">NEXO-ART</h1>
+                <p class="text-[9px] font-bold text-slate-500 uppercase tracking-wider">Reporte Predictivo Integral</p>
+            </div>
+        </div>
+        <div class="text-right">
+            <p class="text-[9px] text-slate-400 font-bold uppercase">Generado</p>
+            <p id="pdf-fecha" class="text-[10px] font-bold text-indigo-700">--</p>
+        </div>
+    </div>
+    
+    <!-- INFO UNIDAD ACTUAL -->
+    <div class="bg-gradient-to-r from-slate-50 to-white rounded-xl p-4 mb-5 border border-slate-200">
+        <h2 class="text-[9px] font-black text-slate-400 uppercase tracking-wider mb-3">📋 Unidad en Análisis</h2>
+        <div class="grid grid-cols-2 gap-3">
+            <div>
+                <p class="text-[9px] text-slate-400 uppercase">Identificador</p>
+                <p id="pdf-unidad" class="text-lg font-black text-slate-900">--</p>
+                <p id="pdf-id" class="text-[10px] font-bold text-slate-500">ID: --</p>
+            </div>
+            <div class="text-right">
+                <p class="text-[9px] text-slate-400 uppercase">Configuración</p>
+                <p id="pdf-motor" class="text-base font-black text-indigo-600 bg-indigo-50 px-3 py-1 rounded-lg inline-block">--</p>
+            </div>
+            <div>
+                <p class="text-[9px] text-slate-400 uppercase">Kilometraje</p>
+                <p id="pdf-km" class="text-base font-black text-teal-700">-- KM</p>
+            </div>
+            <div class="text-right">
+                <p class="text-[9px] text-slate-400 uppercase">Última Lectura</p>
+                <p class="text-[10px] font-bold text-slate-600" id="pdf-last-reading">--</p>
+            </div>
+        </div>
+    </div>
+    
+    <!-- KPIs PRINCIPALES -->
+    <div class="grid grid-cols-3 gap-3 mb-5">
+        <div class="bg-indigo-50 border border-indigo-200 rounded-xl p-3 text-center">
+            <p class="text-[8px] text-indigo-600 font-black uppercase">Disponibilidad</p>
+            <p id="pdf-disp-val" class="text-xl font-black text-indigo-900">--</p>
+        </div>
+        <div class="bg-teal-50 border border-teal-200 rounded-xl p-3 text-center">
+            <p class="text-[8px] text-teal-600 font-black uppercase">MTBF Prom.</p>
+            <p id="pdf-mtbf-val" class="text-xl font-black text-teal-900">--</p>
+        </div>
+        <div class="bg-orange-50 border border-orange-200 rounded-xl p-3 text-center">
+            <p class="text-[8px] text-orange-600 font-black uppercase">MTTR Prom.</p>
+            <p id="pdf-mttr-val" class="text-xl font-black text-orange-900">--</p>
+        </div>
+    </div>
+    
+    <!-- 📊 RESUMEN ESTADÍSTICO RÁPIDO -->
+    <div class="mb-5">
+        <h2 class="text-[9px] font-black text-slate-700 uppercase tracking-wider mb-3 pb-2 border-b border-slate-200 flex items-center gap-2">
+            <span>📈</span> Resumen Estadístico de la Flota
+        </h2>
+        <div class="grid grid-cols-2 gap-2 text-[10px]">
+            <div class="bg-slate-50 rounded-lg p-2">
+                <p class="font-bold text-slate-600 mb-1">Uptime (horas)</p>
+                <p>Media: <span id="stat-uptime-mean" class="font-black text-slate-900">--</span>h</p>
+                <p class="text-[9px] text-slate-500">Rango: <span id="stat-uptime-range">--</span></p>
+            </div>
+            <div class="bg-slate-50 rounded-lg p-2">
+                <p class="font-bold text-slate-600 mb-1">Downtime (horas)</p>
+                <p>Media: <span id="stat-downtime-mean" class="font-black text-slate-900">--</span>h</p>
+            </div>
+            <div class="bg-slate-50 rounded-lg p-2">
+                <p class="font-bold text-slate-600 mb-1">Kilometraje</p>
+                <p>Media: <span id="stat-km-mean" class="font-black text-slate-900">--</span> KM</p>
+                <p class="text-[9px] text-slate-500">Rango: <span id="stat-km-range">--</span></p>
+            </div>
+            <div class="bg-slate-50 rounded-lg p-2">
+                <p class="font-bold text-slate-600 mb-1">Temperatura</p>
+                <p>Media: <span id="stat-temp-mean" class="font-black text-slate-900">--</span></p>
+            </div>
+            <div class="bg-slate-50 rounded-lg p-2">
+                <p class="font-bold text-slate-600 mb-1">Vibración</p>
+                <p>Media: <span id="stat-vib-mean" class="font-black text-slate-900">--</span></p>
+            </div>
+            <div class="bg-slate-50 rounded-lg p-2">
+                <p class="font-bold text-slate-600 mb-1">Disponibilidad</p>
+                <p>Media: <span id="stat-disp-mean" class="font-black text-slate-900">--</span></p>
+            </div>
+        </div>
+    </div>
+    
+    <!-- ⚠️ OBSERVACIONES DESTACADAS -->
+    <div class="mb-5">
+        <h2 class="text-[9px] font-black text-slate-700 uppercase tracking-wider mb-3 pb-2 border-b border-slate-200 flex items-center gap-2">
+            <span>🔍</span> Observaciones Destacadas del Sistema
+        </h2>
+        <div id="pdf-observaciones" class="space-y-2">
+            <!-- Se llena dinámicamente -->
+        </div>
+    </div>
+    
+    <!-- 🗃️ DATASET COMPLETO -->
+    <div class="mb-4">
+        <h2 class="text-[9px] font-black text-slate-700 uppercase tracking-wider mb-3 pb-2 border-b border-slate-200 flex items-center gap-2">
+            <span>🗃️</span> ML_Dataset_Predictivo (Últimos 20 registros)
+        </h2>
+        <div class="overflow-x-auto border border-slate-200 rounded-lg">
+            <table class="pdf-table w-full text-[9px] border-collapse" id="pdf-dataset-table">
+                <!-- Tabla generada dinámicamente -->
+            </table>
+        </div>
+        <p class="text-[8px] text-slate-400 mt-2 text-center">* Datos almacenados en memoria volátil. Exporta regularmente para respaldo.</p>
+    </div>
+    
+    <!-- FOOTER -->
+    <div class="mt-auto pt-4 border-t-2 border-slate-200 flex justify-between items-center text-[8px] text-slate-400 uppercase tracking-wider font-bold">
+        <p><i class="fas fa-shield-alt mr-1"></i> NEXO-ART Motor Intelligence v1.3.0</p>
+        <p>Documento generado automáticamente</p>
+    </div>
+</div>
+
 <script>
   function initTailwind() { tailwind.config = { content: [], theme: { extend: {} } }; }
   
-  // Base de datos (Memoria RAM con Kilometraje Añadido)
+  // Base de datos (Memoria RAM con Kilometraje)
   const now = Date.now();
   const dayMs = 86400000;
   
@@ -319,7 +444,6 @@
     let predicciones = [];
     let reportKM = [];
 
-    // LÓGICA DE EXPLICACIÓN EN VACIO Y CONTEXTO
     let explicacionContexto = "";
     if (ultimaEntrada.motor.toLowerCase().includes("diesel")) {
         explicacionContexto = `<strong>Análisis de Diagnóstico Diésel:</strong> Opera por encendido por compresión (ofreciendo 20%-30% mayor eficiencia por litro). Diseñado para largas distancias y alto torque. <span class="text-rose-400">Atención: Sus averías son entre un 20%-25% más elevadas en costo</span> por la alta complejidad del sistema de emisiones.`;
@@ -333,7 +457,6 @@
         }
     }
 
-    // Reglas universales por Kilometraje
     if (ultimaEntrada.km >= 10000 && ultimaEntrada.km % 10000 < 2000) {
         reportKM.push("Cambio Preventivo: Filtro de aire aproximándose a recambio (ciclo cada 10k-15k km).");
     }
@@ -344,7 +467,6 @@
         reportKM.push("Distribución (Aviso Constante): Correa crítica. Si ha superado los 60,000 km, rotura puede causar daño irreparable. Considere reducción 20% del límite si es de uso primariamente urbano (<120,000 km máximo real vs 150k teórico).");
     }
 
-    // Temperatura y Vibración Básica
     let tempStatus = `<span class="text-teal-400"><i class="fas fa-check"></i> Normal</span>`;
     if (ultimaEntrada.ta > 105) {
       tempStatus = `<span class="text-rose-400"><i class="fas fa-times"></i> ${ultimaEntrada.ta}°C</span>`;
@@ -366,7 +488,6 @@
       predicciones.push(`<div class="p-4 bg-teal-500/10 border border-teal-500/40 rounded-xl"><p class="font-bold text-teal-400"><i class="fas fa-shield-alt mr-2"></i> Parámetros de Sensores Físicos Óptimos</p></div>`);
     }
 
-    // Unimos las explicaciones dinámicas
     let HTML = `
        <div class="bg-slate-950 p-4 rounded-xl border border-slate-800 text-slate-300 text-xs leading-relaxed mb-4">
          ${explicacionContexto}
@@ -419,7 +540,6 @@
       <p class="mb-4 text-slate-300"><b>Fluidos Complementarios:</b> Aseguran desde gerencia repasar cambios del líquido higroscópico de frenos cada 2 años exactos de operación para asegurar frenado efectivo.</p>
     `;
 
-    // Resumen alertas
     let alertas = [];
     if (last.ta > 105) alertas.push("Alarma Termodinámica inminente.");
     if (last.vibracion >= 5.0) alertas.push("Desgaste de rodamiento y transmisión latente.");
@@ -506,16 +626,219 @@
     document.getElementById('correlation-matrix').innerHTML = html;
   }
 
-  function exportData() {
-    if (db.length === 0) return;
-    const headers = Object.keys(db[0]);
-    let csvContent = headers.join(",") + "\n";
-    db.forEach(row => { csvContent += headers.map(h => row[h]).join(",") + "\n"; });
-    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+  function exportCSV() {
+    if (db.length === 0) {
+        alert("📭 No hay datos para exportar");
+        return;
+    }
+    const headers = ["Unidad","ID","Motor","KM","Uptime","Downtime","Vibración","Temp°C","RPM","PSI-DI","PSI-DD","PSI-TI","PSI-TD","Timestamp"];
+    let csv = headers.join(";") + "\n";
+    
+    db.forEach(row => {
+        csv += [
+            row.unidad, row.id, row.motor, row.km, row.uptime, row.downtime,
+            row.vibracion, row.ta, row.rpm, row.psiDi, row.psiDd, row.psiTi, row.psiTd,
+            new Date(row.timestamp).toLocaleString('es-ES')
+        ].join(";") + "\n";
+    });
+    
+    const stats = calculateStatistics();
+    if(stats) {
+        csv += "\n=== RESUMEN ESTADÍSTICO ===\n";
+        csv += `Métrica;Media;Mínimo;Máximo;Desv.Estándar\n`;
+        csv += `Uptime;${stats.uptime.mean};${stats.uptime.min};${stats.uptime.max};${stats.uptime.std}\n`;
+        csv += `Downtime;${stats.downtime.mean};${stats.downtime.min};${stats.downtime.max};${stats.downtime.std}\n`;
+        csv += `Kilometraje;${stats.km.mean};${stats.km.min};${stats.km.max};${stats.km.std}\n`;
+        csv += `Temperatura;${stats.ta.mean};${stats.ta.min};${stats.ta.max};${stats.ta.std}\n`;
+        csv += `Vibración;${stats.vibracion.mean};${stats.vibracion.min};${stats.vibracion.max};${stats.vibracion.std}\n`;
+        csv += `Disponibilidad;${stats.disponibilidad.mean}%;${stats.disponibilidad.min}%;${stats.disponibilidad.max}%;${stats.disponibilidad.std}%\n`;
+    }
+    
+    const blob = new Blob(["\uFEFF" + csv], { type: 'text/csv;charset=utf-8;' });
     const link = document.createElement("a");
-    link.setAttribute("href", URL.createObjectURL(blob));
-    link.setAttribute("download", `ML_Dataset_Predictivo_${new Date().toISOString().slice(0,10)}.csv`);
-    document.body.appendChild(link); link.click(); document.body.removeChild(link);
+    link.href = URL.createObjectURL(blob);
+    link.download = `ML_Dataset_Predictivo_${new Date().toISOString().slice(0,10)}.csv`;
+    link.click();
+  }
+
+  // === FUNCIÓN PRINCIPAL: Generar PDF Enriquecido ===
+  function generateEnhancedPDF() {
+    if(db.length === 0) {
+        alert("⚠️ No hay datos suficientes en memoria para construir el reporte.");
+        return;
+    }
+    
+    const last = db[db.length - 1];
+    const now = new Date();
+    
+    // === CÁLCULO DE ESTADÍSTICAS ===
+    const stats = calculateStatistics();
+    
+    // === GENERACIÓN DE OBSERVACIONES DESTACADAS ===
+    const observaciones = generateHighlightedObservations(stats, last);
+    
+    // === PREPARAR TABLA DEL DATASET ===
+    const datasetTable = generateDatasetTable(db);
+    
+    // === ACTUALIZAR TEMPLATE PDF ===
+    updatePDFTemplate({ stats, observaciones, datasetTable, last, now });
+    
+    // === CONFIGURACIÓN DE EXPORTACIÓN ===
+    const template = document.getElementById('pdf-report-template-enhanced');
+    template.classList.remove('hidden');
+    template.classList.add('absolute', '-left-[9999px]');
+
+    const opt = {
+        margin: 10,
+        filename: `NEXO-ART_Reporte_Completo_${last.unidad}_${now.toISOString().slice(0,10)}.pdf`,
+        image: { type: 'jpeg', quality: 0.98 },
+        html2canvas: { scale: 3, useCORS: true, windowWidth: 794, logging: false },
+        jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+    };
+    
+    html2pdf().set(opt).from(template).save().then(() => {
+        template.classList.add('hidden');
+        template.classList.remove('absolute', '-left-[9999px]');
+    });
+  }
+
+  // === FUNCIÓN AUXILIAR: Cálculo de Estadísticas ===
+  function calculateStatistics() {
+    if(db.length === 0) return null;
+    
+    const getStats = (arr) => {
+        if(arr.length === 0) return { min: 0, max: 0, mean: 0, std: 0 };
+        const mean = arr.reduce((a,b) => a+b, 0) / arr.length;
+        const variance = arr.reduce((a,b) => a + Math.pow(b - mean, 2), 0) / arr.length;
+        return {
+            min: Math.min(...arr).toFixed(2),
+            max: Math.max(...arr).toFixed(2),
+            mean: mean.toFixed(2),
+            std: Math.sqrt(variance).toFixed(2)
+        };
+    };
+    
+    return {
+        uptime: getStats(db.map(d => d.uptime)),
+        downtime: getStats(db.map(d => d.downtime)),
+        km: getStats(db.map(d => d.km)),
+        vibracion: getStats(db.map(d => d.vibracion)),
+        ta: getStats(db.map(d => d.ta)),
+        rpm: getStats(db.map(d => d.rpm)),
+        disponibilidad: getStats(db.map(d => (d.uptime + d.downtime) > 0 ? (d.uptime / (d.uptime + d.downtime)) * 100 : 0))
+    };
+  }
+
+  // === FUNCIÓN AUXILIAR: Observaciones Destacadas ===
+  function generateHighlightedObservations(stats, last) {
+    const obs = [];
+    
+    // Alertas por valores críticos
+    if(last.ta >= 105) obs.push({ tipo: 'crítico', icono: '🔥', texto: `Temperatura crítica: ${last.ta}°C - Riesgo de sobrecalentamiento inminente` });
+    else if(last.ta >= 95) obs.push({ tipo: 'advertencia', icono: '⚠️', texto: `Temperatura elevada: ${last.ta}°C - Monitorear sistema de refrigeración` });
+    
+    if(last.vibracion >= 5.0) obs.push({ tipo: 'crítico', icono: '〰️', texto: `Vibración peligrosa: ${last.vibracion} mm/s - Revisión de rodamientos urgente` });
+    else if(last.vibracion >= 3.5) obs.push({ tipo: 'advertencia', icono: '📊', texto: `Vibración moderada: ${last.vibracion} mm/s - Programar alineación preventiva` });
+    
+    // Alertas por kilometraje
+    if(last.km >= 60000) obs.push({ tipo: 'mantenimiento', icono: '🔧', texto: `Kilometraje crítico: ${last.km.toLocaleString()} KM - Verificar correa de distribución` });
+    if(last.km % 10000 < 2000 && last.km >= 10000) obs.push({ tipo: 'mantenimiento', icono: '💨', texto: `Próximo servicio: Filtro de aire recomendado en los próximos 2,000 KM` });
+    
+    // Alertas por motor
+    if(last.motor.toLowerCase().includes('diesel') && last.km % 30000 < 5000 && last.km >= 30000) {
+        obs.push({ tipo: 'mantenimiento', icono: '⛽', texto: `Motor Diésel: Cambio de filtro de combustible requerido (ciclo 30,000 KM)` });
+    }
+    
+    // Alertas por disponibilidad
+    const dispActual = (last.uptime / (last.uptime + last.downtime)) * 100;
+    if(dispActual < 85) obs.push({ tipo: 'operativo', icono: '📉', texto: `Disponibilidad baja: ${dispActual.toFixed(1)}% - Evaluar causas de downtime` });
+    
+    // Si no hay alertas, mensaje positivo
+    if(obs.length === 0) {
+        obs.push({ tipo: 'ok', icono: '✅', texto: 'Todos los parámetros dentro de rangos óptimos - Unidad operativa sin restricciones' });
+    }
+    
+    return obs;
+  }
+
+  // === FUNCIÓN AUXILIAR: Generar Tabla del Dataset ===
+  function generateDatasetTable(data) {
+    if(data.length === 0) return '<tr><td colspan="13" class="text-center py-4 text-slate-500">Sin datos disponibles</td></tr>';
+    
+    const headers = ['Unidad', 'Motor', 'KM', 'Uptime', 'Downtime', 'Vibración', 'Temp°C', 'RPM', 'PSI-DI', 'PSI-DD', 'PSI-TI', 'PSI-TD', 'Fecha'];
+    
+    let html = `<thead><tr class="bg-slate-100">`;
+    headers.forEach(h => { html += `<th class="border border-slate-300 px-2 py-2 text-left font-bold text-slate-700">${h}</th>`; });
+    html += `</tr></thead><tbody>`;
+    
+    data.forEach(row => {
+        const fecha = new Date(row.timestamp).toLocaleDateString('es-ES');
+        html += `<tr class="hover:bg-slate-50 transition-colors">
+            <td class="border border-slate-200 px-2 py-2 font-medium">${row.unidad}</td>
+            <td class="border border-slate-200 px-2 py-2">${row.motor}</td>
+            <td class="border border-slate-200 px-2 py-2 text-right">${row.km?.toLocaleString()}</td>
+            <td class="border border-slate-200 px-2 py-2 text-right">${row.uptime}</td>
+            <td class="border border-slate-200 px-2 py-2 text-right">${row.downtime}</td>
+            <td class="border border-slate-200 px-2 py-2 text-right">${row.vibracion}</td>
+            <td class="border border-slate-200 px-2 py-2 text-right">${row.ta}</td>
+            <td class="border border-slate-200 px-2 py-2 text-right">${row.rpm}</td>
+            <td class="border border-slate-200 px-2 py-2 text-right">${row.psiDi}</td>
+            <td class="border border-slate-200 px-2 py-2 text-right">${row.psiDd}</td>
+            <td class="border border-slate-200 px-2 py-2 text-right">${row.psiTi}</td>
+            <td class="border border-slate-200 px-2 py-2 text-right">${row.psiTd}</td>
+            <td class="border border-slate-200 px-2 py-2">${fecha}</td>
+        </tr>`;
+    });
+    
+    html += `</tbody>`;
+    return html;
+  }
+
+  // === FUNCIÓN AUXILIAR: Actualizar Template PDF ===
+  function updatePDFTemplate({ stats, observaciones, datasetTable, last, now }) {
+    // Datos básicos
+    document.getElementById('pdf-fecha').innerText = now.toLocaleDateString('es-ES', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute:'2-digit' });
+    document.getElementById('pdf-unidad').innerText = last.unidad;
+    document.getElementById('pdf-id').innerText = "ID: " + last.id;
+    document.getElementById('pdf-motor').innerText = last.motor;
+    document.getElementById('pdf-km').innerText = last.km.toLocaleString() + " KM";
+    document.getElementById('pdf-last-reading').innerText = new Date(last.timestamp).toLocaleString('es-ES');
+    
+    // KPIs principales
+    document.getElementById('pdf-disp-val').innerText = document.getElementById('kpi-disp').innerText;
+    document.getElementById('pdf-mtbf-val').innerText = document.getElementById('kpi-mtbf').innerText + " hs";
+    document.getElementById('pdf-mttr-val').innerText = document.getElementById('kpi-mttr').innerText + " hs";
+    
+    // Resumen estadístico
+    if(stats) {
+        document.getElementById('stat-uptime-mean').innerText = stats.uptime.mean;
+        document.getElementById('stat-uptime-range').innerText = `${stats.uptime.min} - ${stats.uptime.max}`;
+        document.getElementById('stat-downtime-mean').innerText = stats.downtime.mean;
+        document.getElementById('stat-km-mean').innerText = parseFloat(stats.km.mean).toLocaleString();
+        document.getElementById('stat-km-range').innerText = `${parseFloat(stats.km.min).toLocaleString()} - ${parseFloat(stats.km.max).toLocaleString()}`;
+        document.getElementById('stat-temp-mean').innerText = stats.ta.mean + "°C";
+        document.getElementById('stat-vib-mean').innerText = stats.vibracion.mean + " mm/s";
+        document.getElementById('stat-disp-mean').innerText = stats.disponibilidad.mean + "%";
+    }
+    
+    // Observaciones destacadas
+    const obsContainer = document.getElementById('pdf-observaciones');
+    obsContainer.innerHTML = observaciones.map(obs => {
+        const colors = {
+            'crítico': 'bg-rose-50 border-rose-300 text-rose-800',
+            'advertencia': 'bg-orange-50 border-orange-300 text-orange-800',
+            'mantenimiento': 'bg-indigo-50 border-indigo-300 text-indigo-800',
+            'operativo': 'bg-amber-50 border-amber-300 text-amber-800',
+            'ok': 'bg-teal-50 border-teal-300 text-teal-800'
+        };
+        return `<div class="flex items-start gap-3 p-3 rounded-lg border-l-4 ${colors[obs.tipo]}">
+            <span class="text-lg shrink-0">${obs.icono}</span>
+            <p class="text-[11px] leading-relaxed font-medium">${obs.texto}</p>
+        </div>`;
+    }).join('');
+    
+    // Tabla del dataset
+    document.getElementById('pdf-dataset-table').innerHTML = datasetTable;
   }
 
   window.onload = () => {
