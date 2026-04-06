@@ -4,10 +4,13 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>NEXO-ART Taller Mecánico - Dashboard Predictivo</title>
+  
+  <!-- Librerías Esenciales -->
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
     body { font-family: 'Inter', sans-serif; }
@@ -15,17 +18,32 @@
     .custom-scrollbar::-webkit-scrollbar { width: 6px; }
     .custom-scrollbar::-webkit-scrollbar-thumb { background-color: #475569; border-radius: 4px; }
     .custom-scrollbar::-webkit-scrollbar-track { background-color: #0f172a; }
-    @keyframes slideIn { from { opacity:0; transform:translateX(100%); } to { opacity:1; transform:translateX(0); } }
-    @keyframes fadeIn { from { opacity:0; transform:translateY(10px); } to { opacity:1; transform:translateY(0); } }
-    @keyframes shake { 0%,100%{transform:translateX(0);} 25%{transform:translateX(-3px);} 75%{transform:translateX(3px);} }
+    
+    @keyframes pulse-glow {
+      0%, 100% { box-shadow: 0 0 15px rgba(20, 184, 166, 0.3); }
+      50% { box-shadow: 0 0 25px rgba(20, 184, 166, 0.6); }
+    }
     .animate-shake:hover { animation: shake 0.3s ease-in-out; }
-    .animate-fade-in { animation: fadeIn 0.4s ease-out both; }
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      25% { transform: translateX(-3px); }
+      75% { transform: translateX(3px); }
+    }
+    @keyframes slideIn {
+      from { opacity: 0; transform: translateX(100%); }
+      to { opacity: 1; transform: translateX(0); }
+    }
     .pdf-table th { background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%); }
     .pdf-table tr:hover { background-color: #f8fafc; }
     .pdf-table td { border-color: #e2e8f0; }
-    .glass-card { background: rgba(30,41,59,0.7); backdrop-filter: blur(10px); border: 1px solid rgba(71,85,105,0.4); }
-    .glow-text { text-shadow: 0 0 10px rgba(20,184,166,0.4); }
-    .form-input:focus { box-shadow: 0 0 0 2px rgba(20,184,166,0.3); background-color: rgba(30,41,59,0.9); }
+    
+    /* Mejoras de diseño global */
+    .glass-card {
+      background: rgba(30, 41, 59, 0.7);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(71, 85, 105, 0.4);
+    }
+    .glow-text { text-shadow: 0 0 10px rgba(20, 184, 166, 0.4); }
   </style>
 </head>
 <body class="bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 text-slate-200 overflow-hidden">
@@ -41,20 +59,26 @@
         <p class="text-[10px] uppercase font-bold text-slate-500 tracking-widest -mt-1">Motor Intelligence</p>
       </div>
     </div>
+    
     <div class="flex-1 overflow-hidden flex flex-col p-5 bg-gradient-to-b from-slate-900/50 to-slate-950 relative">
       <div class="absolute top-10 -right-20 w-40 h-40 bg-teal-500/10 rounded-full blur-3xl pointer-events-none"></div>
+      
       <button onclick="generateReport()" class="w-full bg-indigo-600 hover:bg-indigo-500 text-white font-bold py-3.5 px-4 rounded-xl shadow-[0_0_20px_rgba(99,102,241,0.4)] transition-all flex items-center justify-center gap-2 shrink-0 border border-indigo-400/30 hover:scale-[1.02]">
         <i class="fas fa-file-signature text-xl"></i> Exportar Informe de KPIs
       </button>
-      <div id="ai-report-container" class="mt-5 flex-1 overflow-y-auto bg-slate-950/80 rounded-xl p-5 border border-slate-800 text-sm text-slate-300 hidden leading-relaxed shadow-inner backdrop-blur-sm z-10 custom-scrollbar"></div>
+      
+      <div id="ai-report-container" class="mt-5 flex-1 overflow-y-auto bg-slate-950/80 rounded-xl p-5 border border-slate-800 text-sm text-slate-300 hidden leading-relaxed shadow-inner backdrop-blur-sm z-10 custom-scrollbar">
+      </div>
+      
       <div id="ai-report-placeholder" class="mt-8 text-center px-2 flex flex-col items-center justify-center flex-1 z-10">
          <i class="fas fa-robot text-5xl text-slate-800 mb-4"></i>
          <p class="text-slate-500 text-sm">Presiona el botón superior para sintetizar un informe técnico con la situación actual de la flota y dictámenes del algoritmo.</p>
       </div>
     </div>
+    
     <div class="p-4 border-t border-slate-800 text-slate-500 text-xs flex items-center justify-between bg-slate-950/60">
       <span><i class="fas fa-server mr-1"></i> Data Server: Online</span>
-      <span class="text-teal-400 font-bold">V 2.0</span>
+      <span class="text-teal-400 font-bold">V 1.3.0</span>
     </div>
   </aside>
 
@@ -68,17 +92,14 @@
           <i class="fas fa-tachometer-alt text-teal-400"></i> DASHBOARD INTELIGENTE
         </div>
       </div>
-      <div class="flex items-center gap-3 flex-wrap">
-        <button onclick="exportCSV()" class="flex items-center gap-2 px-4 py-2.5 bg-slate-700 hover:bg-slate-600 rounded-xl text-sm font-bold text-white shadow-lg transition-all transform hover:scale-105 border border-slate-600" title="Descargar Dataset completo en CSV">
-          <i class="fas fa-file-csv"></i> <span class="hidden sm:inline">DESCARGAR DATOS</span>
-        </button>
-        <button onclick="resetDataset()" class="flex items-center gap-2 px-4 py-2.5 bg-rose-600 hover:bg-rose-500 rounded-xl text-sm font-bold text-white shadow-[0_0_15px_rgba(225,29,72,0.4)] transition-all transform hover:scale-105 animate-shake" title="Borrar todos los datos">
-          <i class="fas fa-trash-alt"></i> <span class="hidden sm:inline">RESET</span>
+      <div class="flex items-center gap-3">
+        <button onclick="resetDataset()" class="flex items-center gap-2 px-4 py-2.5 bg-rose-600 hover:bg-rose-500 rounded-xl text-sm font-bold text-white shadow-[0_0_15px_rgba(225,29,72,0.4)] transition-all transform hover:scale-105 animate-shake" title="Borrar todos los datos del dataset">
+          <i class="fas fa-trash-alt"></i> RESET
         </button>
         <button onclick="generateEnhancedPDF()" class="flex items-center gap-2 px-6 py-2.5 bg-indigo-600 hover:bg-indigo-500 rounded-xl text-sm font-bold text-white shadow-[0_0_20px_rgba(99,102,241,0.5)] transition-all transform hover:scale-105">
           <i class="fas fa-file-pdf"></i> REPORTE PDF
         </button>
-        <button onclick="calculateKPIs()" class="flex items-center gap-2 px-4 py-2.5 bg-teal-500 hover:bg-teal-400 text-slate-900 rounded-xl text-sm font-bold transition-all hover:scale-105 shadow-lg shadow-teal-500/20">
+        <button onclick="calculateKPIs()" class="flex items-center gap-2 px-4 py-2.5 bg-teal-500 hover:bg-teal-400 text-slate-900 rounded-xl text-sm font-bold ml-2 transition-all hover:scale-105 shadow-lg shadow-teal-500/20">
           <i class="fas fa-sync"></i> Actualizar
         </button>
       </div>
@@ -88,49 +109,54 @@
     <div class="bg-slate-900/60 border-b border-slate-800 px-8 py-5 backdrop-blur-sm">
       <div class="max-w-[1400px] mx-auto px-4">
         <div class="flex justify-between mb-4 flex-wrap gap-3 items-center">
-          <h3 class="font-semibold flex items-center gap-2 text-teal-300 text-lg">
-            <i class="fas fa-database"></i> Ingesta de Datos Raw
-          </h3>
+          <h3 class="font-semibold flex items-center gap-2 text-teal-300"><i class="fas fa-database"></i> Ingesta de Datos Raw</h3>
           <div class="text-slate-400 text-sm flex items-center gap-2 bg-slate-800/50 px-3 py-1.5 rounded-lg">
-              Memoria: <span id="mem-count" class="text-teal-400 font-bold px-2 py-0.5 bg-slate-900 rounded">0/20</span>
+              Memoria de cálculo: <span id="mem-count" class="text-teal-400 font-bold px-2 py-0.5 bg-slate-900 rounded">20/20</span>
           </div>
-          <button onclick="submitData()" class="bg-gradient-to-r from-teal-500 to-cyan-500 hover:from-teal-400 hover:to-cyan-400 text-slate-900 px-6 py-2 rounded-xl flex items-center gap-2 font-bold shadow-lg shadow-teal-500/30 transition-all hover:scale-105 transform">
-            <i class="fas fa-microchip"></i> PROCESAR & ALMACENAR
+          <button onclick="submitData()" class="bg-gradient-to-r from-teal-500 to-cyan-500 hover:from-teal-400 hover:to-cyan-400 text-slate-900 px-6 py-2 rounded-xl flex items-center gap-2 font-bold shadow-lg shadow-teal-500/30 transition-all">
+            <i class="fas fa-microchip"></i> Procesar & Almacenar
           </button>
         </div>
         <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-3 text-sm">
-          <div class="animate-fade-in" style="animation-delay:0.1s"><label class="text-slate-400 text-[10px] font-bold">UNIDAD</label><input id="input-unidad" type="text" class="form-input bg-slate-800 w-full rounded-lg px-4 py-3 text-sm focus:outline-none transition-all border border-slate-700" placeholder="Ej: V-021"></div>
-          <div class="animate-fade-in" style="animation-delay:0.15s"><label class="text-slate-400 text-[10px] font-bold">ID</label><input id="input-id" type="text" class="form-input bg-slate-800 w-full rounded-lg px-4 py-3 text-sm focus:outline-none transition-all border border-slate-700" placeholder="Ej: ID-99"></div>
-          <div class="animate-fade-in" style="animation-delay:0.2s">
+          <div><label class="text-slate-400 text-[10px] font-bold">UNIDAD</label><input id="input-unidad" type="text" class="bg-slate-800 w-full rounded-lg px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-teal-500 transition-all border border-slate-700" placeholder="Ej: V-021"></div>
+          <div><label class="text-slate-400 text-[10px] font-bold">ID / CÓDIGO</label><input id="input-id" type="text" class="bg-slate-800 w-full rounded-lg px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-teal-500 transition-all border border-slate-700" placeholder="Ej: ID-99"></div>
+          <div>
             <label class="text-slate-400 text-[10px] font-bold">MOTOR</label>
-            <select id="input-motor" class="form-input bg-slate-800 w-full rounded-lg px-4 py-3 text-sm focus:outline-none transition-all border border-slate-700">
-              <option value="Nafta">Gasolina</option><option value="Diesel">Diésel</option><option value="Hibrido">Híbrido</option><option value="Electrico">Eléctrico</option>
+            <select id="input-motor" class="bg-slate-800 w-full rounded-lg px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-teal-500 border border-slate-700">
+              <option value="Nafta">Gasolina (Nafta)</option>
+              <option value="Diesel">Diésel</option>
+              <option value="Hibrido">Híbrido</option>
+              <option value="Electrico">Eléctrico</option>
             </select>
           </div>
-          <div class="animate-fade-in" style="animation-delay:0.25s"><label class="text-slate-400 text-[10px] font-bold text-teal-400">KILOMETRAJE</label><input id="input-km" type="number" class="form-input bg-slate-800 w-full rounded-lg px-4 py-3 text-sm focus:outline-none transition-all border border-slate-700" placeholder="85000"></div>
-          <div class="animate-fade-in" style="animation-delay:0.3s"><label class="text-slate-400 text-[10px] font-bold text-teal-400">UPTIME (hs)</label><input id="input-uptime" type="number" class="form-input bg-slate-800 w-full rounded-lg px-4 py-3 text-sm focus:outline-none transition-all border border-slate-700" placeholder="350"></div>
-          <div class="animate-fade-in" style="animation-delay:0.35s"><label class="text-slate-400 text-[10px] font-bold text-orange-400">DOWNTIME (hs)</label><input id="input-downtime" type="number" step="0.1" class="form-input bg-slate-800 w-full rounded-lg px-4 py-3 text-sm focus:outline-none transition-all border border-slate-700" placeholder="3.5"></div>
-          <div class="animate-fade-in" style="animation-delay:0.4s"><label class="text-slate-400 text-[10px] font-bold">VIBRACIÓN</label><input id="input-vibracion" type="number" step="0.1" class="form-input bg-slate-800 w-full rounded-lg px-4 py-3 text-sm focus:outline-none transition-all border border-slate-700" placeholder="2.4"></div>
-          <div class="animate-fade-in" style="animation-delay:0.45s"><label class="text-slate-400 text-[10px] font-bold">TEMP (°C)</label><input id="input-ta" type="number" class="form-input bg-slate-800 w-full rounded-lg px-4 py-3 text-sm focus:outline-none transition-all border border-slate-700" placeholder="92"></div>
-          <div class="animate-fade-in" style="animation-delay:0.5s"><label class="text-slate-400 text-[10px] font-bold">RPM</label><input id="input-rpm" type="number" class="form-input bg-slate-800 w-full rounded-lg px-4 py-3 text-sm focus:outline-none transition-all border border-slate-700" placeholder="2450"></div>
-          <div class="animate-fade-in" style="animation-delay:0.55s"><label class="text-slate-400 text-[10px] font-bold">PSI DI</label><input id="input-psi-di" type="number" class="form-input bg-slate-800 w-full rounded-lg px-4 py-3 text-sm focus:outline-none border border-slate-700" placeholder="32"></div>
-          <div class="animate-fade-in" style="animation-delay:0.6s"><label class="text-slate-400 text-[10px] font-bold">PSI DD</label><input id="input-psi-dd" type="number" class="form-input bg-slate-800 w-full rounded-lg px-4 py-3 text-sm focus:outline-none border border-slate-700" placeholder="32"></div>
-          <div class="animate-fade-in" style="animation-delay:0.65s"><label class="text-slate-400 text-[10px] font-bold">PSI TI</label><input id="input-psi-ti" type="number" class="form-input bg-slate-800 w-full rounded-lg px-4 py-3 text-sm focus:outline-none border border-slate-700" placeholder="28"></div>
-          <div class="animate-fade-in" style="animation-delay:0.7s"><label class="text-slate-400 text-[10px] font-bold">PSI TD</label><input id="input-psi-td" type="number" class="form-input bg-slate-800 w-full rounded-lg px-4 py-3 text-sm focus:outline-none border border-slate-700" placeholder="32"></div>
+          <div><label class="text-slate-400 text-[10px] font-bold text-teal-400">KILOMETRAJE</label><input id="input-km" type="number" class="bg-slate-800 w-full rounded-lg px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-teal-500 border border-slate-700" placeholder="Ej: 85000"></div>
+          <div><label class="text-slate-400 text-[10px] font-bold text-teal-400">UPTIME (hs)</label><input id="input-uptime" type="number" class="bg-slate-800 w-full rounded-lg px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-teal-500 border border-slate-700" placeholder="Ej: 350"></div>
+          <div><label class="text-slate-400 text-[10px] font-bold text-orange-400">DOWNTIME (hs)</label><input id="input-downtime" type="number" step="0.1" class="bg-slate-800 w-full rounded-lg px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-teal-500 border border-slate-700" placeholder="Ej: 3.5"></div>
+          <div><label class="text-slate-400 text-[10px] font-bold">VIBRACIÓN</label><input id="input-vibracion" type="number" step="0.1" class="bg-slate-800 w-full rounded-lg px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-teal-500 border border-slate-700" placeholder="Ej: 2.4 mm/s"></div>
+          <div><label class="text-slate-400 text-[10px] font-bold">TEMP (°C)</label><input id="input-ta" type="number" class="bg-slate-800 w-full rounded-lg px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-teal-500 border border-slate-700" placeholder="Ej: 92"></div>
+          <div><label class="text-slate-400 text-[10px] font-bold">RPM</label><input id="input-rpm" type="number" class="bg-slate-800 w-full rounded-lg px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-teal-500 border border-slate-700" placeholder="Ej: 2450"></div>
+          <div><label class="text-slate-400 text-[10px] font-bold">PSI DI</label><input id="input-psi-di" type="number" class="bg-slate-800 w-full rounded-lg px-4 py-3 text-sm focus:outline-none border border-slate-700" placeholder="32"></div>
+          <div><label class="text-slate-400 text-[10px] font-bold">PSI DD</label><input id="input-psi-dd" type="number" class="bg-slate-800 w-full rounded-lg px-4 py-3 text-sm focus:outline-none border border-slate-700" placeholder="32"></div>
+          <div><label class="text-slate-400 text-[10px] font-bold">PSI TI</label><input id="input-psi-ti" type="number" class="bg-slate-800 w-full rounded-lg px-4 py-3 text-sm focus:outline-none border border-slate-700" placeholder="28"></div>
+          <div><label class="text-slate-400 text-[10px] font-bold">PSI TD</label><input id="input-psi-td" type="number" class="bg-slate-800 w-full rounded-lg px-4 py-3 text-sm focus:outline-none border border-slate-700" placeholder="32"></div>
         </div>
       </div>
     </div>
 
-    <!-- DASHBOARD -->
+    <!-- DASHBOARD PRINCIPAL CENTRADO Y MEJORADO -->
     <div class="flex-1 overflow-auto p-8 bg-transparent" id="content-area">
       <div class="max-w-[1400px] mx-auto px-4 pb-12">
 
-        <!-- Tarjeta Unidad -->
+        <!-- Tarjeta de Unidad en Análisis -->
         <div class="mb-8">
           <div class="glass-card border-l-[6px] border-teal-500 p-6 rounded-2xl flex flex-col md:flex-row items-center gap-6 shadow-[0_10px_40px_rgba(0,0,0,0.4)] relative overflow-hidden">
-             <div class="w-20 h-20 bg-gradient-to-br from-teal-500/20 to-teal-500/5 text-teal-400 border border-teal-500/30 rounded-2xl flex items-center justify-center text-4xl shrink-0 z-10 shadow-inner"><i class="fas fa-truck-pickup"></i></div>
+             <div class="w-20 h-20 bg-gradient-to-br from-teal-500/20 to-teal-500/5 text-teal-400 border border-teal-500/30 rounded-2xl flex items-center justify-center text-4xl shrink-0 z-10 shadow-inner">
+                 <i class="fas fa-truck-pickup"></i>
+             </div>
              <div class="flex-1 z-10 w-full text-center md:text-left">
-               <p class="text-slate-400 text-xs font-bold uppercase tracking-widest mb-1 flex items-center md:justify-start justify-center gap-2"><span class="w-2 h-2 rounded-full bg-teal-500 animate-pulse"></span> Sistema Seleccionado</p>
+               <p class="text-slate-400 text-xs font-bold uppercase tracking-widest mb-1 flex items-center md:justify-start justify-center gap-2">
+                 <span class="w-2 h-2 rounded-full bg-teal-500 animate-pulse"></span> Sistema Seleccionado
+               </p>
                <div class="flex flex-col md:flex-row items-center md:items-baseline gap-4 mt-1">
                  <h3 id="card-unidad" class="text-4xl lg:text-5xl font-black text-white drop-shadow-md tracking-tight glow-text">--</h3>
                  <span id="card-motor" class="text-teal-400 border border-teal-500/30 bg-teal-500/10 px-4 py-1.5 rounded-full text-sm font-bold uppercase tracking-wide">Motor --</span>
@@ -138,16 +164,23 @@
                </div>
              </div>
              <div class="flex gap-4 z-10 w-full md:w-auto justify-center">
-                 <div class="bg-slate-950/60 rounded-xl p-3 border border-slate-800 text-center min-w-[100px]"><p class="text-[10px] text-slate-400 uppercase font-bold tracking-widest mb-1">Últ. RPM</p><p id="card-rpm" class="text-xl font-bold text-white">--</p></div>
-                 <div class="bg-slate-950/60 rounded-xl p-3 border border-slate-800 text-center min-w-[100px]"><p class="text-[10px] text-slate-400 uppercase font-bold tracking-widest mb-1">Estado</p><p class="text-base font-bold text-teal-400 mt-1"><i class="fas fa-check-circle"></i> Online</p></div>
+                 <div class="bg-slate-950/60 rounded-xl p-3 border border-slate-800 text-center min-w-[100px]">
+                     <p class="text-[10px] text-slate-400 uppercase font-bold tracking-widest mb-1">Últ. RPM</p>
+                     <p id="card-rpm" class="text-xl font-bold text-white">--</p>
+                 </div>
+                 <div class="bg-slate-950/60 rounded-xl p-3 border border-slate-800 text-center min-w-[100px]">
+                     <p class="text-[10px] text-slate-400 uppercase font-bold tracking-widest mb-1">Estado</p>
+                     <p class="text-base font-bold text-teal-400 mt-1"><i class="fas fa-check-circle"></i> Online</p>
+                 </div>
              </div>
+             <div class="hidden md:block absolute right-0 top-0 h-full w-96 bg-gradient-to-l from-teal-500/10 to-transparent pointer-events-none"></div>
              <i class="fas fa-cogs absolute -right-4 -bottom-4 text-9xl text-slate-800/40 pointer-events-none"></i>
           </div>
         </div>
 
-        <!-- KPIs -->
         <h2 class="text-xl font-bold text-white mb-6 flex items-center gap-2"><i class="fas fa-chart-line text-teal-400"></i> Rendimiento Matemático de la Flota</h2>
         <div class="grid grid-cols-12 gap-6">
+          <!-- Gauge Disponibilidad -->
           <div class="col-span-12 lg:col-span-4 glass-card rounded-3xl p-8 flex flex-col items-center justify-center shadow-[0_0_40px_rgba(20,184,166,0.08)]">
             <h3 class="uppercase text-teal-400 text-[11px] font-bold tracking-widest mb-6 text-center">DISPONIBILIDAD TOTAL</h3>
             <div class="gauge-circle mt-2">
@@ -155,298 +188,548 @@
                 <circle cx="50" cy="50" r="45" fill="none" stroke="#1e293b" stroke-width="8"/>
                 <circle id="svg-disp" cx="50" cy="50" r="45" fill="none" stroke="#06b6d4" stroke-width="8" stroke-dasharray="0 282.7" stroke-linecap="round" class="transition-all duration-1000 ease-out"/>
               </svg>
-              <div class="absolute inset-0 flex flex-col items-center justify-center text-center"><span id="kpi-disp" class="text-4xl lg:text-6xl font-black text-cyan-400 mt-2">0.0%</span></div>
+              <div class="absolute inset-0 flex flex-col items-center justify-center text-center">
+                <span id="kpi-disp" class="text-4xl lg:text-6xl font-black text-cyan-400 mt-2">0.0%</span>
+              </div>
             </div>
             <p id="trend-disp" class="text-sm font-semibold mt-6 bg-teal-500/10 text-teal-400 px-4 py-1.5 rounded-full border border-teal-500/20"><i class="fas fa-arrow-up"></i> Óptimo</p>
           </div>
+
           <div class="col-span-12 lg:col-span-8 grid grid-cols-1 md:grid-cols-2 gap-6">
+            <!-- MTBF -->
             <div class="glass-card rounded-3xl p-6 flex flex-col items-center justify-center text-center shadow-lg relative overflow-hidden group">
               <div class="absolute top-0 right-0 w-32 h-32 bg-teal-500/5 rounded-bl-full transition-all group-hover:scale-110 pointer-events-none"></div>
               <div class="w-16 h-16 rounded-2xl bg-slate-800/80 flex items-center justify-center text-teal-400 text-3xl shadow-inner border border-slate-700 mb-4 z-10"><i class="fas fa-clock"></i></div>
-              <div class="z-10"><h4 class="text-slate-400 text-lg font-bold tracking-wider uppercase">Prom. MTBF</h4><p class="text-xs text-slate-500 mb-4">Mean Time Between Failures</p><p class="text-6xl font-black text-white"><span id="kpi-mtbf">0</span><span class="text-3xl text-slate-500 font-medium ml-2">hs</span></p></div>
+              <div class="z-10">
+                <h4 class="text-slate-400 text-lg font-bold tracking-wider uppercase">Prom. MTBF</h4>
+                <p class="text-xs text-slate-500 mb-4">Mean Time Between Failures</p>
+                <p class="text-6xl font-black text-white"><span id="kpi-mtbf">0</span><span class="text-3xl text-slate-500 font-medium ml-2">hs</span></p>
+              </div>
             </div>
+            <!-- MTTR -->
             <div class="glass-card rounded-3xl p-6 flex flex-col items-center justify-center text-center shadow-lg relative overflow-hidden group">
               <div class="absolute top-0 right-0 w-32 h-32 bg-orange-500/5 rounded-bl-full transition-all group-hover:scale-110 pointer-events-none"></div>
               <div class="w-16 h-16 rounded-2xl bg-slate-800/80 flex items-center justify-center text-orange-400 text-3xl shadow-inner border border-slate-700 mb-4 z-10"><i class="fas fa-tools"></i></div>
-              <div class="z-10"><h4 class="text-slate-400 text-lg font-bold tracking-wider uppercase">Prom. MTTR</h4><p class="text-xs text-slate-500 mb-4">Mean Time To Repair</p><p class="text-6xl font-black text-white"><span id="kpi-mttr">0</span><span class="text-3xl text-slate-500 font-medium ml-2">hs</span></p></div>
+              <div class="z-10">
+                <h4 class="text-slate-400 text-lg font-bold tracking-wider uppercase">Prom. MTTR</h4>
+                <p class="text-xs text-slate-500 mb-4">Mean Time To Repair</p>
+                <p class="text-6xl font-black text-white"><span id="kpi-mttr">0</span><span class="text-3xl text-slate-500 font-medium ml-2">hs</span></p>
+              </div>
             </div>
           </div>
         </div>
         
-        <!-- Gráfico Temporal -->
+        <!-- GRÁFICOS DE LÓGICA TEMPORAL -->
         <h2 class="text-xl font-bold text-white mb-6 mt-10 flex items-center gap-2"><i class="fas fa-chart-area text-purple-400"></i> Análisis de Tendencia Temporal</h2>
-        <div class="glass-card rounded-3xl p-6 shadow-lg"><div class="relative h-[400px] w-full"><canvas id="timelineChart"></canvas></div></div>
+        <div class="glass-card rounded-3xl p-6 shadow-lg">
+          <div class="relative h-[400px] w-full">
+            <canvas id="timelineChart"></canvas>
+          </div>
+        </div>
 
-        <!-- Matriz Correlación -->
+        <!-- Matriz de Correlación -->
         <h2 class="text-xl font-bold text-white mb-6 mt-10 flex items-center gap-2"><i class="fas fa-th text-green-400"></i> Matriz de Correlación de Variables</h2>
         <div class="glass-card rounded-3xl p-6 shadow-lg overflow-x-auto">
           <div id="correlation-matrix" class="min-w-[600px] text-white"></div>
           <div class="mt-6 flex justify-end items-center gap-2 text-xs text-slate-400 flex-wrap">
-             <span>Escala:</span><div class="flex items-center gap-1"><div class="w-4 h-4 bg-rose-500 rounded-sm"></div><span>Inversa</span></div><div class="flex items-center gap-1"><div class="w-4 h-4 bg-slate-800 border border-slate-600 rounded-sm"></div><span>Nula</span></div><div class="flex items-center gap-1"><div class="w-4 h-4 bg-teal-500 rounded-sm"></div><span>Directa</span></div>
+             <span>Escala de Correlación:</span>
+             <div class="flex items-center gap-1"><div class="w-4 h-4 bg-rose-500 rounded-sm"></div><span>Inversa Fuerte (-1)</span></div>
+             <div class="flex items-center gap-1"><div class="w-4 h-4 bg-slate-800 border border-slate-600 rounded-sm"></div><span>Nula (0)</span></div>
+             <div class="flex items-center gap-1"><div class="w-4 h-4 bg-teal-500 rounded-sm"></div><span>Directa Fuerte (+1)</span></div>
           </div>
         </div>
 
-        <!-- IA Predictiva -->
+        <!-- Predicciones IA -->
         <h2 class="text-xl font-bold text-white mb-6 mt-10 flex items-center gap-2"><i class="fas fa-robot text-indigo-400"></i> Motor de Recomendaciones y Explicación</h2>
         <div class="glass-card border-indigo-500/30 rounded-3xl p-6 shadow-lg relative overflow-hidden">
           <div class="absolute top-0 left-0 w-1.5 h-full bg-indigo-500"></div>
           <div class="flex flex-col md:flex-row gap-8">
             <div class="flex-1 flex flex-col justify-between" id="predictive-panel"></div>
-            <div class="w-full md:w-1/3 bg-slate-950/60 p-5 rounded-2xl border border-slate-800 shrink-0"><h4 class="text-slate-300 font-bold mb-3 text-sm">Análisis de Última Ingesta</h4><ul id="ml-status-list" class="space-y-3 text-xs text-slate-400"></ul></div>
+            <div class="w-full md:w-1/3 bg-slate-950/60 p-5 rounded-2xl border border-slate-800 shrink-0">
+               <h4 class="text-slate-300 font-bold mb-3 text-sm">Análisis de Última Ingesta</h4>
+               <ul id="ml-status-list" class="space-y-3 text-xs text-slate-400"></ul>
+            </div>
           </div>
         </div>
 
-        <!-- RESUMEN EJECUTIVO -->
+        <!-- ✅ RESUMEN EJECUTIVO EXPLICADO (NUEVO) -->
         <div class="mt-12 bg-slate-900/80 backdrop-blur-sm border border-slate-700 rounded-3xl p-8 shadow-2xl relative overflow-hidden">
           <div class="absolute top-0 left-0 w-full h-1.5 bg-gradient-to-r from-teal-500 via-indigo-500 to-cyan-500"></div>
-          <h2 class="text-2xl font-bold text-white mb-6 flex items-center gap-3"><i class="fas fa-book-open text-cyan-400"></i> Resumen Ejecutivo Explicado</h2>
+          <h2 class="text-2xl font-bold text-white mb-6 flex items-center gap-3">
+            <i class="fas fa-book-open text-cyan-400"></i> Resumen Ejecutivo Explicado
+          </h2>
           <div class="grid grid-cols-1 md:grid-cols-2 gap-6 text-slate-300 text-sm leading-relaxed">
             <div class="bg-slate-800/50 p-5 rounded-xl border border-slate-700/50">
-              <h3 class="text-teal-400 font-bold mb-3 flex items-center gap-2 text-base"><i class="fas fa-chart-pie"></i> 1. KPIs Principales</h3>
-              <p class="mb-2"><span class="text-white font-semibold bg-slate-900 px-2 py-0.5 rounded">Disponibilidad:</span> % de tiempo operativo. 100% = cero paradas no programadas.</p>
-              <p class="mb-2"><span class="text-white font-semibold bg-slate-900 px-2 py-0.5 rounded">MTBF:</span> Horas promedio entre fallas. Más alto = mayor confiabilidad.</p>
-              <p><span class="text-white font-semibold bg-slate-900 px-2 py-0.5 rounded">MTTR:</span> Horas promedio para reparar. Más bajo = taller más ágil.</p>
+              <h3 class="text-teal-400 font-bold mb-3 flex items-center gap-2 text-base"><i class="fas fa-chart-pie"></i> 1. ¿Qué significan los KPIs principales?</h3>
+              <p class="mb-2"><span class="text-white font-semibold bg-slate-900 px-2 py-0.5 rounded">Disponibilidad:</span> Es el porcentaje de tiempo que tus vehículos están listos para trabajar. Un valor cercano al 100% significa que casi nunca están parados por fallas.</p>
+              <p class="mb-2"><span class="text-white font-semibold bg-slate-900 px-2 py-0.5 rounded">MTBF (Tiempo Medio Entre Fallas):</span> Indica cada cuántas horas, en promedio, un vehículo se rompe. <strong>Cuanto más alto, más confiable es tu flota.</strong></p>
+              <p><span class="text-white font-semibold bg-slate-900 px-2 py-0.5 rounded">MTTR (Tiempo Medio de Reparación):</span> Muestra cuánto tardas en arreglar un fallo. <strong>Un valor bajo significa que el taller es rápido y eficiente.</strong></p>
             </div>
             <div class="bg-slate-800/50 p-5 rounded-xl border border-slate-700/50">
-              <h3 class="text-indigo-400 font-bold mb-3 flex items-center gap-2 text-base"><i class="fas fa-brain"></i> 2. IA Predictiva</h3>
-              <p class="mb-2">Monitorea <span class="text-rose-400 font-semibold">Temperatura (>105°C)</span> y <span class="text-orange-400 font-semibold">Vibración (>5 mm/s)</span>. Alerta sobre riesgos antes de que fallen.</p>
-              <p>Cruza sensores con <strong>kilometraje</strong> para programar cambios preventivos.</p>
+              <h3 class="text-indigo-400 font-bold mb-3 flex items-center gap-2 text-base"><i class="fas fa-brain"></i> 2. ¿Qué detectó la IA Predictiva?</h3>
+              <p class="mb-2">El sistema monitorea sensores reales. Si la <span class="text-rose-400 font-semibold">temperatura supera los 105°C</span> o la <span class="text-orange-400 font-semibold">vibración es mayor a 5 mm/s</span>, alerta de riesgos graves (como rotura de junta de culata o desgaste de rodamientos).</p>
+              <p>También cruza estos datos con el <strong>kilometraje acumulado</strong> para anticipar cuándo toca cambios preventivos (correa, filtros, bujías) antes de que fallen en ruta.</p>
             </div>
             <div class="bg-slate-800/50 p-5 rounded-xl border border-slate-700/50">
-              <h3 class="text-cyan-400 font-bold mb-3 flex items-center gap-2 text-base"><i class="fas fa-project-diagram"></i> 3. Matriz de Correlación</h3>
-              <p class="mb-2">Muestra relaciones matemáticas entre variables. <span class="text-teal-400 font-semibold">Verde (+1)</span> = suben juntas. <span class="text-rose-400 font-semibold">Rojo (-1)</span> = una sube y otra baja.</p>
+              <h3 class="text-cyan-400 font-bold mb-3 flex items-center gap-2 text-base"><i class="fas fa-project-diagram"></i> 3. ¿Para qué sirve la Matriz de Correlación?</h3>
+              <p class="mb-2">Es un mapa matemático que muestra si dos variables se mueven juntas. Un <span class="text-teal-400 font-semibold">color verde</span> indica relación directa (si uno sube, el otro también). Un <span class="text-rose-400 font-semibold">color rojo</span> indica relación inversa.</p>
+              <p>Esto elimina las suposiciones: te dice con números exactos si el calor está subiendo con las RPM, o si el desgaste de neumáticos afecta la vibración del chasis.</p>
             </div>
             <div class="bg-slate-800/50 p-5 rounded-xl border border-slate-700/50">
               <h3 class="text-amber-400 font-bold mb-3 flex items-center gap-2 text-base"><i class="fas fa-lightbulb"></i> 4. Recomendación Final</h3>
-              <p class="mb-2">Priorice mantenimiento preventivo en unidades con alertas. Use <strong>aceites sintéticos</strong> y mantenga el registro actualizado.</p>
-              <p class="text-slate-400 italic">La detección temprana evita costos elevados y prolonga la vida del motor.</p>
+              <p class="mb-2">Basado en el análisis integral: prioriza el mantenimiento de las unidades con alertas activas, utiliza <strong>aceites sintéticos</strong> para reducir fricción interna y mantén los registros actualizados.</p>
+              <p class="text-slate-400 italic">La detección temprana evita paradas costosas, alarga la vida útil de los motores y garantiza la seguridad operativa de toda la flota.</p>
             </div>
           </div>
         </div>
+
       </div>
     </div>
   </div>
 </div>
 
-<!-- TEMPLATE PDF ENHANCED -->
+<!-- TEMPLATE PDF ENHANCED (Oculto hasta exportar) -->
 <div id="pdf-report-template-enhanced" class="hidden w-[794px] bg-white text-slate-800 p-8 font-sans" style="min-height: 1123px; box-sizing: border-box; font-size: 11px;">
     <div class="flex justify-between items-center border-b-4 border-slate-900 pb-4 mb-6">
-        <div class="flex items-center gap-3"><div class="w-10 h-10 bg-gradient-to-br from-teal-500 to-cyan-600 text-white rounded-lg flex items-center justify-center text-xl font-bold shadow-lg">⚙️</div><div><h1 class="text-2xl font-black text-slate-900 tracking-tighter">NEXO-ART</h1><p class="text-[9px] font-bold text-slate-500 uppercase tracking-wider">Reporte Predictivo Integral</p></div></div>
-        <div class="text-right"><p class="text-[9px] text-slate-400 font-bold uppercase">Generado</p><p id="pdf-fecha" class="text-[10px] font-bold text-indigo-700">--</p></div>
+        <div class="flex items-center gap-3">
+            <div class="w-10 h-10 bg-gradient-to-br from-teal-500 to-cyan-600 text-white rounded-lg flex items-center justify-center text-xl font-bold shadow-lg">⚙️</div>
+            <div>
+                <h1 class="text-2xl font-black text-slate-900 tracking-tighter">NEXO-ART</h1>
+                <p class="text-[9px] font-bold text-slate-500 uppercase tracking-wider">Reporte Predictivo Integral</p>
+            </div>
+        </div>
+        <div class="text-right">
+            <p class="text-[9px] text-slate-400 font-bold uppercase">Generado</p>
+            <p id="pdf-fecha" class="text-[10px] font-bold text-indigo-700">--</p>
+        </div>
     </div>
+    
     <div class="bg-gradient-to-r from-slate-50 to-white rounded-xl p-4 mb-5 border border-slate-200">
         <h2 class="text-[9px] font-black text-slate-400 uppercase tracking-wider mb-3">📋 Unidad en Análisis</h2>
-        <div class="grid grid-cols-2 gap-3"><div><p class="text-[9px] text-slate-400 uppercase">Identificador</p><p id="pdf-unidad" class="text-lg font-black text-slate-900">--</p><p id="pdf-id" class="text-[10px] font-bold text-slate-500">ID: --</p></div><div class="text-right"><p class="text-[9px] text-slate-400 uppercase">Configuración</p><p id="pdf-motor" class="text-base font-black text-indigo-600 bg-indigo-50 px-3 py-1 rounded-lg inline-block">--</p></div><div><p class="text-[9px] text-slate-400 uppercase">Kilometraje</p><p id="pdf-km" class="text-base font-black text-teal-700">-- KM</p></div><div class="text-right"><p class="text-[9px] text-slate-400 uppercase">Última Lectura</p><p class="text-[10px] font-bold text-slate-600" id="pdf-last-reading">--</p></div></div>
+        <div class="grid grid-cols-2 gap-3">
+            <div>
+                <p class="text-[9px] text-slate-400 uppercase">Identificador</p>
+                <p id="pdf-unidad" class="text-lg font-black text-slate-900">--</p>
+                <p id="pdf-id" class="text-[10px] font-bold text-slate-500">ID: --</p>
+            </div>
+            <div class="text-right">
+                <p class="text-[9px] text-slate-400 uppercase">Configuración</p>
+                <p id="pdf-motor" class="text-base font-black text-indigo-600 bg-indigo-50 px-3 py-1 rounded-lg inline-block">--</p>
+            </div>
+            <div>
+                <p class="text-[9px] text-slate-400 uppercase">Kilometraje</p>
+                <p id="pdf-km" class="text-base font-black text-teal-700">-- KM</p>
+            </div>
+            <div class="text-right">
+                <p class="text-[9px] text-slate-400 uppercase">Última Lectura</p>
+                <p class="text-[10px] font-bold text-slate-600" id="pdf-last-reading">--</p>
+            </div>
+        </div>
     </div>
-    <div class="grid grid-cols-3 gap-3 mb-5"><div class="bg-indigo-50 border border-indigo-200 rounded-xl p-3 text-center"><p class="text-[8px] text-indigo-600 font-black uppercase">Disponibilidad</p><p id="pdf-disp-val" class="text-xl font-black text-indigo-900">--</p></div><div class="bg-teal-50 border border-teal-200 rounded-xl p-3 text-center"><p class="text-[8px] text-teal-600 font-black uppercase">MTBF Prom.</p><p id="pdf-mtbf-val" class="text-xl font-black text-teal-900">--</p></div><div class="bg-orange-50 border border-orange-200 rounded-xl p-3 text-center"><p class="text-[8px] text-orange-600 font-black uppercase">MTTR Prom.</p><p id="pdf-mttr-val" class="text-xl font-black text-orange-900">--</p></div></div>
-    <div class="mb-5"><h2 class="text-[9px] font-black text-slate-700 uppercase tracking-wider mb-3 pb-2 border-b border-slate-200 flex items-center gap-2"><span>📈</span> Resumen Estadístico</h2>
-      <div class="grid grid-cols-2 gap-2 text-[10px]">
-        <div class="bg-slate-50 rounded-lg p-2"><p class="font-bold text-slate-600 mb-1">Uptime</p><p>Media: <span id="stat-uptime-mean" class="font-black">--</span>h</p><p class="text-[9px] text-slate-500">Rango: <span id="stat-uptime-range">--</span></p></div>
-        <div class="bg-slate-50 rounded-lg p-2"><p class="font-bold text-slate-600 mb-1">Downtime</p><p>Media: <span id="stat-downtime-mean" class="font-black">--</span>h</p></div>
-        <div class="bg-slate-50 rounded-lg p-2"><p class="font-bold text-slate-600 mb-1">Kilometraje</p><p>Media: <span id="stat-km-mean" class="font-black">--</span> KM</p><p class="text-[9px] text-slate-500">Rango: <span id="stat-km-range">--</span></p></div>
-        <div class="bg-slate-50 rounded-lg p-2"><p class="font-bold text-slate-600 mb-1">Temperatura</p><p>Media: <span id="stat-temp-mean" class="font-black">--</span></p></div>
-        <div class="bg-slate-50 rounded-lg p-2"><p class="font-bold text-slate-600 mb-1">Vibración</p><p>Media: <span id="stat-vib-mean" class="font-black">--</span></p></div>
-        <div class="bg-slate-50 rounded-lg p-2"><p class="font-bold text-slate-600 mb-1">Disponibilidad</p><p>Media: <span id="stat-disp-mean" class="font-black">--</span></p></div>
-      </div>
+    
+    <div class="grid grid-cols-3 gap-3 mb-5">
+        <div class="bg-indigo-50 border border-indigo-200 rounded-xl p-3 text-center">
+            <p class="text-[8px] text-indigo-600 font-black uppercase">Disponibilidad</p>
+            <p id="pdf-disp-val" class="text-xl font-black text-indigo-900">--</p>
+        </div>
+        <div class="bg-teal-50 border border-teal-200 rounded-xl p-3 text-center">
+            <p class="text-[8px] text-teal-600 font-black uppercase">MTBF Prom.</p>
+            <p id="pdf-mtbf-val" class="text-xl font-black text-teal-900">--</p>
+        </div>
+        <div class="bg-orange-50 border border-orange-200 rounded-xl p-3 text-center">
+            <p class="text-[8px] text-orange-600 font-black uppercase">MTTR Prom.</p>
+            <p id="pdf-mttr-val" class="text-xl font-black text-orange-900">--</p>
+        </div>
     </div>
-    <div class="mb-5"><h2 class="text-[9px] font-black text-slate-700 uppercase tracking-wider mb-3 pb-2 border-b border-slate-200 flex items-center gap-2"><span>🔍</span> Observaciones</h2><div id="pdf-observaciones" class="space-y-2"></div></div>
-    <div class="mb-4"><h2 class="text-[9px] font-black text-slate-700 uppercase tracking-wider mb-3 pb-2 border-b border-slate-200 flex items-center gap-2"><span>🗃️</span> ML_Dataset_Predictivo</h2><div class="overflow-x-auto border border-slate-200 rounded-lg"><table class="pdf-table w-full text-[9px] border-collapse" id="pdf-dataset-table"></table></div><p class="text-[8px] text-slate-400 mt-2 text-center">* Exporte regularmente para respaldo.</p></div>
-    <div class="mt-auto pt-4 border-t-2 border-slate-200 flex justify-between items-center text-[8px] text-slate-400 uppercase tracking-wider font-bold"><p><i class="fas fa-shield-alt mr-1"></i> NEXO-ART Motor Intelligence</p><p>Documento generado automáticamente</p></div>
+    
+    <div class="mb-5">
+        <h2 class="text-[9px] font-black text-slate-700 uppercase tracking-wider mb-3 pb-2 border-b border-slate-200 flex items-center gap-2">
+            <span>📈</span> Resumen Estadístico de la Flota
+        </h2>
+        <div class="grid grid-cols-2 gap-2 text-[10px]">
+            <div class="bg-slate-50 rounded-lg p-2">
+                <p class="font-bold text-slate-600 mb-1">Uptime (horas)</p>
+                <p>Media: <span id="stat-uptime-mean" class="font-black text-slate-900">--</span>h</p>
+                <p class="text-[9px] text-slate-500">Rango: <span id="stat-uptime-range">--</span></p>
+            </div>
+            <div class="bg-slate-50 rounded-lg p-2">
+                <p class="font-bold text-slate-600 mb-1">Downtime (horas)</p>
+                <p>Media: <span id="stat-downtime-mean" class="font-black text-slate-900">--</span>h</p>
+            </div>
+            <div class="bg-slate-50 rounded-lg p-2">
+                <p class="font-bold text-slate-600 mb-1">Kilometraje</p>
+                <p>Media: <span id="stat-km-mean" class="font-black text-slate-900">--</span> KM</p>
+                <p class="text-[9px] text-slate-500">Rango: <span id="stat-km-range">--</span></p>
+            </div>
+            <div class="bg-slate-50 rounded-lg p-2">
+                <p class="font-bold text-slate-600 mb-1">Temperatura</p>
+                <p>Media: <span id="stat-temp-mean" class="font-black text-slate-900">--</span></p>
+            </div>
+            <div class="bg-slate-50 rounded-lg p-2">
+                <p class="font-bold text-slate-600 mb-1">Vibración</p>
+                <p>Media: <span id="stat-vib-mean" class="font-black text-slate-900">--</span></p>
+            </div>
+            <div class="bg-slate-50 rounded-lg p-2">
+                <p class="font-bold text-slate-600 mb-1">Disponibilidad</p>
+                <p>Media: <span id="stat-disp-mean" class="font-black text-slate-900">--</span></p>
+            </div>
+        </div>
+    </div>
+    
+    <div class="mb-5">
+        <h2 class="text-[9px] font-black text-slate-700 uppercase tracking-wider mb-3 pb-2 border-b border-slate-200 flex items-center gap-2">
+            <span>🔍</span> Observaciones Destacadas del Sistema
+        </h2>
+        <div id="pdf-observaciones" class="space-y-2"></div>
+    </div>
+    
+    <div class="mb-4">
+        <h2 class="text-[9px] font-black text-slate-700 uppercase tracking-wider mb-3 pb-2 border-b border-slate-200 flex items-center gap-2">
+            <span>🗃️</span> ML_Dataset_Predictivo (Últimos 20 registros)
+        </h2>
+        <div class="overflow-x-auto border border-slate-200 rounded-lg">
+            <table class="pdf-table w-full text-[9px] border-collapse" id="pdf-dataset-table"></table>
+        </div>
+        <p class="text-[8px] text-slate-400 mt-2 text-center">* Datos almacenados en memoria volátil. Exporta regularmente para respaldo.</p>
+    </div>
+    
+    <div class="mt-auto pt-4 border-t-2 border-slate-200 flex justify-between items-center text-[8px] text-slate-400 uppercase tracking-wider font-bold">
+        <p><i class="fas fa-shield-alt mr-1"></i> NEXO-ART Motor Intelligence v1.3.0</p>
+        <p>Documento generado automáticamente</p>
+    </div>
 </div>
 
 <script>
-function initTailwind() { tailwind.config = { content: [], theme: { extend: {} } }; }
+  // === CONFIGURACIÓN INICIAL ===
+  function initTailwind() { tailwind.config = { content: [], theme: { extend: {} } }; }
+  
+  // === PERSISTENCIA (LOCALSTORAGE) ===
+  const STORAGE_KEY = 'nexoart_data_v1';
+  let db = [];
+  
+  function loadFromStorage() {
+    const stored = localStorage.getItem(STORAGE_KEY);
+    if (stored) {
+      try {
+        db = JSON.parse(stored);
+      } catch (e) { db = []; }
+    } else {
+      // Datos iniciales de demostración si no hay nada guardado
+      const now = Date.now();
+      const dayMs = 86400000;
+      db = [
+        {unidad:"V-001", id:"V-001", motor:"Diesel", km: 82000, uptime: 420, downtime: 3.5, vibracion: 2.4, ta: 92, rpm: 2450, psiDi: 32, psiDd: 32, psiTi: 28, psiTd: 32, timestamp: new Date(now - 19*dayMs).toISOString()},
+        {unidad:"V-002", id:"V-002", motor:"Nafta", km: 45000, uptime: 380, downtime: 4.1, vibracion: 3.1, ta: 88, rpm: 2380, psiDi: 31, psiDd: 31, psiTi: 29, psiTd: 31, timestamp: new Date(now - 18*dayMs).toISOString()},
+        {unidad:"V-003", id:"V-003", motor:"Diesel", km: 110000, uptime: 310, downtime: 5.2, vibracion: 3.8, ta: 95, rpm: 2200, psiDi: 30, psiDd: 30, psiTi: 27, psiTd: 30, timestamp: new Date(now - 17*dayMs).toISOString()},
+        {unidad:"V-004", id:"V-004", motor:"Nafta", km: 38000, uptime: 455, downtime: 2.8, vibracion: 1.9, ta: 85, rpm: 2520, psiDi: 33, psiDd: 33, psiTi: 30, psiTd: 33, timestamp: new Date(now - 16*dayMs).toISOString()},
+        {unidad:"V-005", id:"V-005", motor:"Diesel", km: 65000, uptime: 290, downtime: 6.1, vibracion: 4.3, ta: 90, rpm: 2150, psiDi: 29, psiDd: 29, psiTi: 26, psiTd: 29, timestamp: new Date(now - 15*dayMs).toISOString()}
+      ];
+      saveToStorage();
+    }
+  }
 
-// === PERSISTENCIA ===
-const STORAGE_KEY = 'nexoart_data_v2';
-let db = [];
-function loadFromStorage() {
-  const s = localStorage.getItem(STORAGE_KEY);
-  if (s) { try { db = JSON.parse(s); } catch(e) { db = []; } }
-  else {
-    const now = Date.now(), d = 86400000;
-    db = [
-      {unidad:"V-001",id:"V-001",motor:"Diesel",km:82000,uptime:420,downtime:3.5,vibracion:2.4,ta:92,rpm:2450,psiDi:32,psiDd:32,psiTi:28,psiTd:32,timestamp:new Date(now-19*d).toISOString()},
-      {unidad:"V-002",id:"V-002",motor:"Nafta",km:45000,uptime:380,downtime:4.1,vibracion:3.1,ta:88,rpm:2380,psiDi:31,psiDd:31,psiTi:29,psiTd:31,timestamp:new Date(now-18*d).toISOString()},
-      {unidad:"V-003",id:"V-003",motor:"Diesel",km:110000,uptime:310,downtime:5.2,vibracion:3.8,ta:95,rpm:2200,psiDi:30,psiDd:30,psiTi:27,psiTd:30,timestamp:new Date(now-17*d).toISOString()},
-      {unidad:"V-004",id:"V-004",motor:"Nafta",km:38000,uptime:455,downtime:2.8,vibracion:1.9,ta:85,rpm:2520,psiDi:33,psiDd:33,psiTi:30,psiTd:33,timestamp:new Date(now-16*d).toISOString()},
-      {unidad:"V-005",id:"V-005",motor:"Diesel",km:65000,uptime:290,downtime:6.1,vibracion:4.3,ta:90,rpm:2150,psiDi:29,psiDd:29,psiTi:26,psiTd:29,timestamp:new Date(now-15*d).toISOString()}
-    ];
+  function saveToStorage() {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(db));
+  }
+
+  loadFromStorage();
+  let timelineChartIns = null;
+
+  // === FUNCIONES DE UI ===
+  function updateUnidadCard(entrada) {
+    if (!entrada) return;
+    document.getElementById("card-unidad").innerText = entrada.unidad;
+    document.getElementById("card-motor").innerText = "Motor " + entrada.motor;
+    document.getElementById("card-km").innerHTML = `<i class="fas fa-road text-[10px]"></i> ${entrada.km.toLocaleString()} KM`;
+    document.getElementById("card-rpm").innerText = entrada.rpm;
+  }
+
+  function submitData() {
+    const uptime = parseFloat(document.getElementById("input-uptime").value);
+    const downtime = parseFloat(document.getElementById("input-downtime").value);
+    const km = parseFloat(document.getElementById("input-km").value) || 0;
+
+    if(isNaN(uptime) || isNaN(downtime) || uptime <= 0) {
+      showNotification("⚠️ Error: Valores inválidos en Uptime o Downtime", "error");
+      return;
+    }
+
+    const unidad = document.getElementById("input-unidad").value || "VEH-" + Math.floor(Math.random()*1000);
+    const id = document.getElementById("input-id").value || "ID-" + Math.floor(Math.random()*1000);
+    const motor = document.getElementById("input-motor").value;
+    const vibracion = parseFloat(document.getElementById("input-vibracion").value) || 0;
+    const ta = parseFloat(document.getElementById("input-ta").value) || 0;
+    const rpm = parseFloat(document.getElementById("input-rpm").value) || 0;
+    const psiDi = parseFloat(document.getElementById("input-psi-di").value) || 0;
+    const psiDd = parseFloat(document.getElementById("input-psi-dd").value) || 0;
+    const psiTi = parseFloat(document.getElementById("input-psi-ti").value) || 0;
+    const psiTd = parseFloat(document.getElementById("input-psi-td").value) || 0;
+
+    const nuevaEntrada = {
+      unidad, id, motor, km, uptime, downtime, vibracion, ta, rpm, psiDi, psiDd, psiTi, psiTd, timestamp: new Date().toISOString()
+    };
+
+    if (db.length >= 20) db.shift();
+    db.push(nuevaEntrada); 
     saveToStorage();
+    document.getElementById("mem-count").innerText = `${db.length}/20`;
+    document.querySelectorAll('input').forEach(el => el.value = "");
+    calculateKPIs();
+    updateUnidadCard(nuevaEntrada);
+    runPredictiveAI(nuevaEntrada);
+    updateTimelineChart();
+    updateCorrelationMatrix();
+    showNotification("✅ Datos procesados y guardados", "success");
   }
-}
-function saveToStorage() { localStorage.setItem(STORAGE_KEY, JSON.stringify(db)); }
-loadFromStorage();
-let timelineChartIns = null;
 
-// === PROCESAR Y ALMACENAR ===
-function submitData() {
-  const u = parseFloat(document.getElementById("input-uptime").value);
-  const d = parseFloat(document.getElementById("input-downtime").value);
-  if(isNaN(u) || isNaN(d) || u <= 0 || d < 0) { notify("⚠️ Uptime debe ser > 0 y Downtime ≥ 0", "error"); return; }
-  const entry = {
-    unidad: document.getElementById("input-unidad").value.trim() || "VEH-"+Math.floor(Math.random()*1000),
-    id: document.getElementById("input-id").value.trim() || "ID-"+Math.floor(Math.random()*1000),
-    motor: document.getElementById("input-motor").value,
-    km: parseFloat(document.getElementById("input-km").value)||0,
-    uptime: u, downtime: d, vibracion: parseFloat(document.getElementById("input-vibracion").value)||0,
-    ta: parseFloat(document.getElementById("input-ta").value)||0, rpm: parseFloat(document.getElementById("input-rpm").value)||0,
-    psiDi: parseFloat(document.getElementById("input-psi-di").value)||0, psiDd: parseFloat(document.getElementById("input-psi-dd").value)||0,
-    psiTi: parseFloat(document.getElementById("input-psi-ti").value)||0, psiTd: parseFloat(document.getElementById("input-psi-td").value)||0,
-    timestamp: new Date().toISOString()
+  function resetDataset() {
+    if(db.length === 0) {
+      showNotification("ℹ️ El dataset ya está vacío", "info");
+      return;
+    }
+    if(confirm("⚠️ ¿BORRAR todos los datos de memoria? Esta acción es irreversible.")) {
+      db = [];
+      localStorage.removeItem(STORAGE_KEY);
+      document.getElementById("mem-count").innerText = `0/20`;
+      document.getElementById("card-unidad").innerText = "--";
+      document.getElementById("card-motor").innerText = "Motor --";
+      document.getElementById("card-km").innerHTML = `<i class="fas fa-road text-[10px]"></i> -- KM`;
+      document.getElementById("card-rpm").innerText = "--";
+      document.getElementById("kpi-mtbf").innerText = "0";
+      document.getElementById("kpi-mttr").innerText = "0";
+      document.getElementById("kpi-disp").innerText = "0.0%";
+      document.getElementById("svg-disp").setAttribute("stroke-dasharray", `0 282.7`);
+      document.getElementById("trend-disp").innerHTML = `<i class="fas fa-arrow-down"></i> Sin datos`;
+      document.getElementById("trend-disp").className = "text-sm font-semibold mt-6 bg-slate-700/10 text-slate-400 px-4 py-1.5 rounded-full";
+      if(timelineChartIns) { timelineChartIns.destroy(); timelineChartIns = null; }
+      document.getElementById("correlation-matrix").innerHTML = '<p class="text-slate-500 text-center py-8">Sin datos para mostrar</p>';
+      document.getElementById("predictive-panel").innerHTML = '<p class="text-slate-400 text-sm">Ingresa datos para activar el motor de predicción</p>';
+      document.getElementById("ml-status-list").innerHTML = '';
+      showNotification("🗑️ Dataset y memoria limpiados", "warning");
+    }
+  }
+
+  function showNotification(message, type = "info") {
+    const notification = document.createElement("div");
+    const colors = { success: "bg-teal-500 border-teal-300 text-white", warning: "bg-amber-500 border-amber-300 text-white", error: "bg-rose-500 border-rose-300 text-white", info: "bg-indigo-500 border-indigo-300 text-white" };
+    const icons = { success: "✅", warning: "⚠️", error: "❌", info: "ℹ️" };
+    notification.className = `fixed top-4 right-4 z-50 px-6 py-3 rounded-xl border-2 shadow-2xl flex items-center gap-3 animate-[slideIn_0.3s_ease-out] ${colors[type]}`;
+    notification.innerHTML = `<span class="text-xl">${icons[type]}</span><span class="font-medium text-sm">${message}</span>`;
+    document.body.appendChild(notification);
+    setTimeout(() => {
+      notification.style.opacity = "0"; notification.style.transform = "translateX(100%)"; notification.style.transition = "all 0.3s ease-in";
+      setTimeout(() => notification.remove(), 300);
+    }, 3000);
+  }
+
+  function calculateKPIs() {
+    if (db.length === 0) {
+      document.getElementById("kpi-mtbf").innerText = "0";
+      document.getElementById("kpi-mttr").innerText = "0";
+      document.getElementById("kpi-disp").innerText = "0.0%";
+      document.getElementById("svg-disp").setAttribute("stroke-dasharray", `0 282.7`);
+      return;
+    }
+    let totalUptime = 0, totalDowntime = 0;
+    db.forEach(row => { totalUptime += row.uptime; totalDowntime += row.downtime; });
+    const mtbf = totalUptime / db.length;
+    const mttr = totalDowntime / db.length;
+    let disponibilidad = 0;
+    if ((mtbf + mttr) > 0) disponibilidad = (mtbf / (mtbf + mttr)) * 100;
+    document.getElementById("kpi-mtbf").innerText = mtbf.toFixed(1);
+    document.getElementById("kpi-mttr").innerText = mttr.toFixed(1);
+    document.getElementById("kpi-disp").innerText = disponibilidad.toFixed(1) + "%";
+    const circ = 2 * Math.PI * 45;
+    const length = (disponibilidad / 100) * circ;
+    document.getElementById("svg-disp").setAttribute("stroke-dasharray", `${length} ${circ}`);
+    const trendEl = document.getElementById("trend-disp");
+    if(disponibilidad >= 95) { trendEl.innerHTML = `<i class="fas fa-arrow-up"></i> Óptimo`; trendEl.className = "text-sm font-semibold mt-6 bg-teal-500/10 text-teal-400 px-4 py-1.5 rounded-full border border-teal-500/20"; }
+    else if(disponibilidad >= 85) { trendEl.innerHTML = `<i class="fas fa-arrow-right"></i> Estable`; trendEl.className = "text-sm font-semibold mt-6 bg-amber-500/10 text-amber-400 px-4 py-1.5 rounded-full border border-amber-500/20"; }
+    else { trendEl.innerHTML = `<i class="fas fa-arrow-down"></i> Revisar`; trendEl.className = "text-sm font-semibold mt-6 bg-rose-500/10 text-rose-400 px-4 py-1.5 rounded-full border border-rose-500/20"; }
+  }
+
+  function runPredictiveAI(ultimaEntrada) {
+    const panel = document.getElementById("predictive-panel");
+    const statusList = document.getElementById("ml-status-list");
+    let predicciones = []; let reportKM = [];
+    let explicacionContexto = "";
+    if (ultimaEntrada.motor.toLowerCase().includes("diesel")) {
+        explicacionContexto = `<strong>Análisis de Diagnóstico Diésel:</strong> Opera por encendido por compresión (ofreciendo 20%-30% mayor eficiencia por litro). Diseñado para largas distancias y alto torque. <span class="text-rose-400">Atención: Sus averías son entre un 20%-25% más elevadas en costo</span> por la alta complejidad del sistema de emisiones.`;
+        if (ultimaEntrada.km >= 30000 && ultimaEntrada.km % 30000 < 5000) reportKM.push("Cambio Crítico: Filtro de Combustible requerido. Es vital para evitar dañar los inyectores de alta presión.");
+    } else {
+        explicacionContexto = `<strong>Análisis de Diagnóstico Gasolina/Nafta:</strong> Opera con bujías de ignición, característico por su conducción más suave y deportiva. Es ideal para trayectos cortos o urbanos debido a su menor costo de adquisición y mantenimiento.`;
+        if (ultimaEntrada.km >= 15000 && ultimaEntrada.km % 15000 < 3000) reportKM.push("Cambio Crítico: Las Bujías pueden estar desgastadas. Su falla provoca pérdida de potencia y aumento de consumo de gasolina.");
+    }
+    if (ultimaEntrada.km >= 10000 && ultimaEntrada.km % 10000 < 2000) reportKM.push("Cambio Preventivo: Filtro de aire aproximándose a recambio (ciclo cada 10k-15k km).");
+    if (ultimaEntrada.km >= 40000 && ultimaEntrada.km % 40000 < 2000) reportKM.push("Refrigerante: Peligro de baja eficiencia térmica. Se recomienda renovación del líquido para evitar corrosión interna sistemática.");
+    if (ultimaEntrada.km >= 60000) reportKM.push("Distribución (Aviso Constante): Correa crítica. Si ha superado los 60,000 km, rotura puede causar daño irreparable. Considere reducción 20% del límite si es de uso primariamente urbano (<120,000 km máximo real vs 150k teórico).");
+
+    let tempStatus = `<span class="text-teal-400"><i class="fas fa-check"></i> Normal</span>`;
+    if (ultimaEntrada.ta > 105) {
+      tempStatus = `<span class="text-rose-400"><i class="fas fa-times"></i> ${ultimaEntrada.ta}°C</span>`;
+      predicciones.push(`<div class="p-3 bg-rose-500/10 border border-rose-500/40 rounded-xl flex items-start gap-4 mb-2"><div class="text-rose-500 text-xl"><i class="fas fa-temperature-high"></i></div><div><p class="font-bold text-rose-400 text-xs">Riesgo de Sobrecalentamiento</p><p class="text-[11px] text-slate-300">Alta probabilidad de ruptura en junta estanco debido a calor térmico (${ultimaEntrada.ta}°C).</p></div></div>`);
+    }
+    let vibStatus = `<span class="text-teal-400"><i class="fas fa-check"></i> Normal</span>`;
+    if (ultimaEntrada.vibracion >= 5.0) {
+      vibStatus = `<span class="text-rose-400"><i class="fas fa-times"></i> ${ultimaEntrada.vibracion} mm/s</span>`;
+      predicciones.push(`<div class="p-3 bg-orange-500/10 border border-orange-500/40 rounded-xl flex items-start gap-4 mb-2"><div class="text-orange-500 text-xl"><i class="fas fa-wave-square"></i></div><div><p class="font-bold text-orange-400 text-xs">Anomalía Cinemática</p><p class="text-[11px] text-slate-300">Desgaste asincrónico progresivo detectado por vibraciones altas (${ultimaEntrada.vibracion} mm/s).</p></div></div>`);
+    }
+    if (reportKM.length > 0) {
+       let repList = reportKM.map(r => `<li>- ${r}</li>`).join("");
+       predicciones.push(`<div class="p-3 bg-indigo-500/10 border border-indigo-500/40 rounded-xl mb-2"><p class="font-bold text-indigo-400 text-xs"><i class="fas fa-road"></i> Alertas por Kilometraje Acumulado (${ultimaEntrada.km} KM)</p><ul class="text-[10px] text-slate-300 mt-1">${repList}</ul></div>`);
+    }
+    if (predicciones.length === 0) predicciones.push(`<div class="p-4 bg-teal-500/10 border border-teal-500/40 rounded-xl"><p class="font-bold text-teal-400"><i class="fas fa-shield-alt mr-2"></i> Parámetros de Sensores Físicos Óptimos</p></div>`);
+    panel.innerHTML = `<div class="bg-slate-950 p-4 rounded-xl border border-slate-800 text-slate-300 text-xs leading-relaxed mb-4">${explicacionContexto}</div><div class="flex-1">${predicciones.join("")}</div>`;
+    statusList.innerHTML = `<li class="flex justify-between items-center border-b border-slate-800 pb-2"><span>Target:</span> <span class="font-bold text-white">${ultimaEntrada.unidad}</span></li><li class="flex justify-between items-center border-b border-slate-800 pb-2"><span>Modelado TA:</span> ${tempStatus}</li><li class="flex justify-between items-center pb-2"><span>Modelado VIB:</span> ${vibStatus}</li>`;
+  }
+
+  function generateReport() {
+    const container = document.getElementById("ai-report-container");
+    const placeholder = document.getElementById("ai-report-placeholder");
+    container.classList.remove("hidden");
+    if(placeholder) placeholder.classList.add("hidden");
+    if(db.length === 0) { container.innerHTML = "<p class='text-rose-400'>Ingresa datos para redactar informe.</p>"; return; }
+    const last = db[db.length - 1];
+    const mtbf = document.getElementById("kpi-mtbf").innerText;
+    const mttr = document.getElementById("kpi-mttr").innerText;
+    const disp = document.getElementById("kpi-disp").innerText;
+    let explicacionMotor = last.motor.toLowerCase().includes("diesel") ? "Dado su Motor Diésel, advertimos a la gerencia que los costos de reparación prospectados serán 20-25% más rigurosos que la media por bloque, y exige cambio de filtro de combustible en banda de los 30mil KM para asegurar los inyectores." : "Para su bloque de Gasolina, la unidad demuestra conducción con un impacto económico urbano esperado (mantenimiento moderado). Las bujías son un punto de atención constante.";
+    let reportHTML = `<h4 class="text-white font-bold mb-4 flex items-center gap-2 border-b border-slate-800 pb-3 text-sm uppercase tracking-widest"><i class="fas fa-file-alt text-indigo-400"></i> Reporte Predictivo</h4><p class="mb-4 text-slate-300">El taller registra <span class="text-teal-400 font-bold">${disp} de Disponibilidad</span> global. MTBF se sitúa en <b>${mtbf} hs</b>. MTTR promediado en <b>${mttr} hs</b>.</p><div class="bg-indigo-500/10 p-3 rounded-md border border-indigo-500/20 mb-4 text-xs text-indigo-200"><strong class="block mb-1">Criterio de Unidad Especial (Vehículo ${last.unidad}):</strong>${explicacionMotor}</div><p class="mb-4 text-slate-300"><b>A nivel de Lubricantes en ${last.km} KM:</b> El fluido actual utilizado por la base exige verificación según el estándar internacional operativo. Recomendamos fuertemente escalado a Aceites Sintéticos si se busca reducir el impacto por detención (permiten rotaciones hasta 30,000 km frente a los minerales de 5,000 km).</p><p class="mb-4 text-slate-300"><b>Fluidos Complementarios:</b> Aseguran desde gerencia repasar cambios del líquido higroscópico de frenos cada 2 años exactos de operación para asegurar frenado efectivo.</p>`;
+    let alertas = [];
+    if (last.ta > 105) alertas.push("Alarma Termodinámica inminente.");
+    if (last.vibracion >= 5.0) alertas.push("Desgaste de rodamiento y transmisión latente.");
+    if (last.km >= 60000) alertas.push("Ciclo Crítico de Correa de Distribución atravesado.");
+    if (alertas.length > 0) reportHTML += `<div class="bg-rose-500/10 border-l-[3px] border-rose-500 pl-4 py-3 my-4 rounded-r-lg"><p class="font-bold text-rose-400 tracking-wide uppercase text-[11px] mb-2">Acciones Inmediatas (Alertas):</p><ul class="list-disc pl-4 space-y-1 text-slate-300 text-xs">` + alertas.map(a => `<li class="text-rose-200">${a}</li>`).join("") + `</ul></div>`;
+    container.innerHTML = reportHTML;
+  }
+
+  function updateTimelineChart() {
+    const ctx = document.getElementById('timelineChart').getContext('2d');
+    if(db.length === 0) { if(timelineChartIns) timelineChartIns.destroy(); ctx.canvas.parentNode.innerHTML = '<div class="absolute inset-0 flex items-center justify-center text-slate-500 text-sm">Sin datos para graficar</div>'; return; }
+    const labels = db.map(d => new Date(d.timestamp).toLocaleDateString('es-ES', { day: '2-digit', month: 'short', hour:'2-digit', minute:'2-digit' }));
+    const uptimeData = db.map(d => d.uptime);
+    const downtimeData = db.map(d => d.downtime);
+    const dispData = db.map(d => (d.uptime + d.downtime) > 0 ? ((d.uptime / (d.uptime + d.downtime)) * 100).toFixed(1) : 0);
+    if(timelineChartIns) timelineChartIns.destroy();
+    timelineChartIns = new Chart(ctx, {
+      type: 'line',
+       {
+        labels: labels,
+        datasets: [
+          { label: 'Disponibilidad % (Right Axis)',  dispData, borderColor: '#00d4ff', backgroundColor: 'rgba(0, 212, 255, 0.1)', borderWidth: 3, tension: 0.4, yAxisID: 'y1', fill: true },
+          { label: 'Uptime (hs)', data: uptimeData, borderColor: '#14b8a6', borderDash: [5, 5], borderWidth: 2, tension: 0.2, yAxisID: 'y' },
+          { label: 'Downtime (hs)',  downtimeData, borderColor: '#f97316', borderWidth: 2, tension: 0.2, yAxisID: 'y' }
+        ]
+      },
+      options: { responsive: true, maintainAspectRatio: false, interaction: { mode: 'index', intersect: false }, plugins: { legend: { labels: { color: '#cbd5e1' } } }, scales: { x: { ticks: { color: '#64748b' }, grid: { color: '#334155' } }, y: { type: 'linear', display: true, position: 'left', title: { display: true, text: 'Horas', color: '#94a3b8' }, ticks: { color: '#94a3b8' }, grid: { color: '#334155' } }, y1: { type: 'linear', display: true, position: 'right', title: { display: true, text: 'Disponibilidad %', color: '#00d4ff' }, ticks: { color: '#00d4ff' }, grid: { drawOnChartArea: false } } } }
+    });
+  }
+
+  function pearsonCorrelation(x, y) {
+    if (x.length === 0 || y.length === 0) return 0;
+    const n = x.length; let sumX = 0, sumY = 0, sumXY = 0, sumX2 = 0, sumY2 = 0;
+    for (let i = 0; i < n; i++) { sumX += x[i]; sumY += y[i]; sumXY += x[i] * y[i]; sumX2 += x[i] * x[i]; sumY2 += y[i] * y[i]; }
+    const dt = (n * sumX2 - sumX * sumX) * (n * sumY2 - sumY * sumY);
+    if (dt <= 0) return 0;
+    return ((n * sumXY) - (sumX * sumY)) / Math.sqrt(dt);
+  }
+
+  function updateCorrelationMatrix() {
+    if(db.length < 2) { document.getElementById('correlation-matrix').innerHTML = '<p class="text-slate-500 text-center py-8">Se requieren al menos 2 registros para calcular correlaciones</p>'; return; }
+    const variables = ['km', 'uptime', 'downtime', 'vibracion', 'ta', 'rpm', 'psiDi'];
+    const labels = ['KM', 'Uptime', 'Downtime', 'Vibración', 'Temp', 'RPM', 'PSI'];
+    let html = '<table class="w-full border-collapse text-sm"><tr><td class="p-2"></td>';
+    html += labels.map(l => `<td class="p-3 font-bold text-slate-300 text-center border-b border-slate-700">${l}</td>`).join('') + '</tr>';
+    for(let i = 0; i < variables.length; i++) {
+        html += `<tr><td class="p-3 font-bold text-slate-300 text-right pr-4 border-r border-slate-700">${labels[i]}</td>`;
+        for(let j = 0; j < variables.length; j++) {
+            const arr1 = db.map(d => d[variables[i]] || 0); const arr2 = db.map(d => d[variables[j]] || 0);
+            const val = pearsonCorrelation(arr1, arr2); let opacity = Math.abs(val);
+            let colorStyle = val > 0 ? `rgba(20, 184, 166, ${opacity})` : `rgba(244, 63, 94, ${opacity})`;
+            if (i === j) html += `<td class="p-3 border border-slate-800 text-center text-slate-500 cursor-default" style="background-color: rgba(148, 163, 184, 0.1)">1.00</td>`;
+            else html += `<td class="p-3 border border-slate-800 text-center font-medium transition-colors hover:border-slate-400" title="Correlación" style="background-color: ${colorStyle}; color: ${opacity > 0.5 ? 'white' : '#94a3b8'}">${val.toFixed(2)}</td>`;
+        } html += '</tr>';
+    } html += '</table>';
+    document.getElementById('correlation-matrix').innerHTML = html;
+  }
+
+  function exportCSV() {
+    if (db.length === 0) { showNotification("📭 No hay datos para exportar", "info"); return; }
+    const headers = ["Unidad","ID","Motor","KM","Uptime","Downtime","Vibración","Temp°C","RPM","PSI-DI","PSI-DD","PSI-TI","PSI-TD","Timestamp"];
+    let csv = headers.join(";") + "\n";
+    db.forEach(row => { csv += [row.unidad, row.id, row.motor, row.km, row.uptime, row.downtime, row.vibracion, row.ta, row.rpm, row.psiDi, row.psiDd, row.psiTi, row.psiTd, new Date(row.timestamp).toLocaleString('es-ES')].join(";") + "\n"; });
+    const blob = new Blob(["\uFEFF" + csv], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement("a"); link.href = URL.createObjectURL(blob); link.download = `ML_Dataset_Predictivo_${new Date().toISOString().slice(0,10)}.csv`; link.click();
+    showNotification("📥 CSV descargado exitosamente", "success");
+  }
+
+  async function generateEnhancedPDF() {
+    if(db.length === 0) { showNotification("⚠️ No hay datos suficientes para generar el reporte", "warning"); return; }
+    showNotification("🔄 Generando reporte PDF...", "info");
+    const last = db[db.length - 1]; const now = new Date();
+    try {
+        const stats = calculateStatistics();
+        const observaciones = generateHighlightedObservations(stats, last);
+        const datasetTable = generateDatasetTable(db);
+        updatePDFTemplate({ stats, observaciones, datasetTable, last, now });
+        const template = document.getElementById('pdf-report-template-enhanced');
+        template.classList.remove('hidden');
+        await new Promise(resolve => setTimeout(resolve, 100));
+        const opt = { margin: 10, filename: `NEXO-ART_Reporte_Completo_${last.unidad}_${now.toISOString().slice(0,10)}.pdf`, image: { type: 'jpeg', quality: 1.0 }, html2canvas: { scale: 3, useCORS: true, windowWidth: 794, logging: false, backgroundColor: '#ffffff' }, jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait', compress: true } };
+        await html2pdf().set(opt).from(template).save();
+        template.classList.add('hidden');
+        showNotification("✅ PDF generado y descargado exitosamente", "success");
+    } catch (error) { console.error("Error generando PDF:", error); showNotification("❌ Error al generar PDF: " + error.message, "error"); }
+  }
+
+  function calculateStatistics() {
+    if(db.length === 0) return null;
+    const getStats = (arr) => { if(arr.length === 0) return { min: 0, max: 0, mean: 0, std: 0 }; const mean = arr.reduce((a,b) => a+b, 0) / arr.length; const variance = arr.reduce((a,b) => a + Math.pow(b - mean, 2), 0) / arr.length; return { min: Math.min(...arr).toFixed(2), max: Math.max(...arr).toFixed(2), mean: mean.toFixed(2), std: Math.sqrt(variance).toFixed(2) }; };
+    return { uptime: getStats(db.map(d => d.uptime)), downtime: getStats(db.map(d => d.downtime)), km: getStats(db.map(d => d.km)), vibracion: getStats(db.map(d => d.vibracion)), ta: getStats(db.map(d => d.ta)), rpm: getStats(db.map(d => d.rpm)), disponibilidad: getStats(db.map(d => (d.uptime + d.downtime) > 0 ? (d.uptime / (d.uptime + d.downtime)) * 100 : 0)) };
+  }
+
+  function generateHighlightedObservations(stats, last) {
+    const obs = [];
+    if(last.ta >= 105) obs.push({ tipo: 'crítico', icono: '🔥', texto: `Temperatura crítica: ${last.ta}°C - Riesgo de sobrecalentamiento inminente` });
+    else if(last.ta >= 95) obs.push({ tipo: 'advertencia', icono: '⚠️', texto: `Temperatura elevada: ${last.ta}°C - Monitorear sistema de refrigeración` });
+    if(last.vibracion >= 5.0) obs.push({ tipo: 'crítico', icono: '〰️', texto: `Vibración peligrosa: ${last.vibracion} mm/s - Revisión de rodamientos urgente` });
+    else if(last.vibracion >= 3.5) obs.push({ tipo: 'advertencia', icono: '📊', texto: `Vibración moderada: ${last.vibracion} mm/s - Programar alineación preventiva` });
+    if(last.km >= 60000) obs.push({ tipo: 'mantenimiento', icono: '🔧', texto: `Kilometraje crítico: ${last.km.toLocaleString()} KM - Verificar correa de distribución` });
+    if(last.km % 10000 < 2000 && last.km >= 10000) obs.push({ tipo: 'mantenimiento', icono: '💨', texto: `Próximo servicio: Filtro de aire recomendado en los próximos 2,000 KM` });
+    if(last.motor.toLowerCase().includes('diesel') && last.km % 30000 < 5000 && last.km >= 30000) obs.push({ tipo: 'mantenimiento', icono: '⛽', texto: `Motor Diésel: Cambio de filtro de combustible requerido (ciclo 30,000 KM)` });
+    const dispActual = (last.uptime / (last.uptime + last.downtime)) * 100;
+    if(dispActual < 85) obs.push({ tipo: 'operativo', icono: '📉', texto: `Disponibilidad baja: ${dispActual.toFixed(1)}% - Evaluar causas de downtime` });
+    if(obs.length === 0) obs.push({ tipo: 'ok', icono: '✅', texto: 'Todos los parámetros dentro de rangos óptimos - Unidad operativa sin restricciones' });
+    return obs;
+  }
+
+  function generateDatasetTable(data) {
+    if(data.length === 0) return '<tr><td colspan="13" class="text-center py-4 text-slate-500">Sin datos disponibles</td></tr>';
+    const headers = ['Unidad', 'Motor', 'KM', 'Uptime', 'Downtime', 'Vibración', 'Temp°C', 'RPM', 'PSI-DI', 'PSI-DD', 'PSI-TI', 'PSI-TD', 'Fecha'];
+    let html = `<thead><tr class="bg-slate-100">`;
+    headers.forEach(h => { html += `<th class="border border-slate-300 px-2 py-2 text-left font-bold text-slate-700">${h}</th>`; });
+    html += `</tr></thead><tbody>`;
+    data.forEach(row => { const fecha = new Date(row.timestamp).toLocaleDateString('es-ES'); html += `<tr class="hover:bg-slate-50 transition-colors"><td class="border border-slate-200 px-2 py-2 font-medium">${row.unidad}</td><td class="border border-slate-200 px-2 py-2">${row.motor}</td><td class="border border-slate-200 px-2 py-2 text-right">${row.km?.toLocaleString()}</td><td class="border border-slate-200 px-2 py-2 text-right">${row.uptime}</td><td class="border border-slate-200 px-2 py-2 text-right">${row.downtime}</td><td class="border border-slate-200 px-2 py-2 text-right">${row.vibracion}</td><td class="border border-slate-200 px-2 py-2 text-right">${row.ta}</td><td class="border border-slate-200 px-2 py-2 text-right">${row.rpm}</td><td class="border border-slate-200 px-2 py-2 text-right">${row.psiDi}</td><td class="border border-slate-200 px-2 py-2 text-right">${row.psiDd}</td><td class="border border-slate-200 px-2 py-2 text-right">${row.psiTi}</td><td class="border border-slate-200 px-2 py-2 text-right">${row.psiTd}</td><td class="border border-slate-200 px-2 py-2">${fecha}</td></tr>`; });
+    html += `</tbody>`; return html;
+  }
+
+  function updatePDFTemplate({ stats, observaciones, datasetTable, last, now }) {
+    document.getElementById('pdf-fecha').innerText = now.toLocaleDateString('es-ES', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute:'2-digit' });
+    document.getElementById('pdf-unidad').innerText = last.unidad; document.getElementById('pdf-id').innerText = "ID: " + last.id; document.getElementById('pdf-motor').innerText = last.motor; document.getElementById('pdf-km').innerText = last.km.toLocaleString() + " KM"; document.getElementById('pdf-last-reading').innerText = new Date(last.timestamp).toLocaleString('es-ES');
+    document.getElementById('pdf-disp-val').innerText = document.getElementById('kpi-disp').innerText; document.getElementById('pdf-mtbf-val').innerText = document.getElementById('kpi-mtbf').innerText + " hs"; document.getElementById('pdf-mttr-val').innerText = document.getElementById('kpi-mttr').innerText + " hs";
+    if(stats) { document.getElementById('stat-uptime-mean').innerText = stats.uptime.mean; document.getElementById('stat-uptime-range').innerText = `${stats.uptime.min} - ${stats.uptime.max}`; document.getElementById('stat-downtime-mean').innerText = stats.downtime.mean; document.getElementById('stat-km-mean').innerText = parseFloat(stats.km.mean).toLocaleString(); document.getElementById('stat-km-range').innerText = `${parseFloat(stats.km.min).toLocaleString()} - ${parseFloat(stats.km.max).toLocaleString()}`; document.getElementById('stat-temp-mean').innerText = stats.ta.mean + "°C"; document.getElementById('stat-vib-mean').innerText = stats.vibracion.mean + " mm/s"; document.getElementById('stat-disp-mean').innerText = stats.disponibilidad.mean + "%"; }
+    const obsContainer = document.getElementById('pdf-observaciones');
+    obsContainer.innerHTML = observaciones.map(obs => { const colors = { 'crítico': 'bg-rose-50 border-rose-300 text-rose-800', 'advertencia': 'bg-orange-50 border-orange-300 text-orange-800', 'mantenimiento': 'bg-indigo-50 border-indigo-300 text-indigo-800', 'operativo': 'bg-amber-50 border-amber-300 text-amber-800', 'ok': 'bg-teal-50 border-teal-300 text-teal-800' }; return `<div class="flex items-start gap-3 p-3 rounded-lg border-l-4 ${colors[obs.tipo]}"><span class="text-lg shrink-0">${obs.icono}</span><p class="text-[11px] leading-relaxed font-medium">${obs.texto}</p></div>`; }).join('');
+    document.getElementById('pdf-dataset-table').innerHTML = datasetTable;
+  }
+
+  window.onload = () => {
+    initTailwind();
+    calculateKPIs();
+    if(db.length > 0) { updateUnidadCard(db[db.length - 1]); runPredictiveAI(db[db.length - 1]); }
+    updateTimelineChart();
+    updateCorrelationMatrix();
   };
-  if(db.length>=20) db.shift();
-  db.push(entry); saveToStorage();
-  document.getElementById("mem-count").innerText = `${db.length}/20`;
-  document.querySelectorAll('input').forEach(el=>el.value="");
-  calculateKPIs(); updateCard(entry); runAI(entry); updateChart(); updateMatrix();
-  notify(`✅ ${entry.unidad} almacenada. Puede descargar los datos.`, "success");
-}
-
-function resetDataset() {
-  if(!db.length){ notify("ℹ️ Dataset vacío","info"); return; }
-  if(confirm("⚠️ ¿BORRAR todos los datos? Irreversible.")){
-    db=[]; localStorage.removeItem(STORAGE_KEY);
-    document.getElementById("mem-count").innerText="0/20";
-    document.getElementById("card-unidad").innerText="--"; document.getElementById("card-rpm").innerText="--";
-    document.getElementById("card-motor").innerText="Motor --";
-    document.getElementById("card-km").innerHTML='<i class="fas fa-road text-[10px]"></i> -- KM';
-    document.getElementById("kpi-mtbf").innerText="0"; document.getElementById("kpi-mttr").innerText="0";
-    document.getElementById("kpi-disp").innerText="0.0%";
-    document.getElementById("svg-disp").setAttribute("stroke-dasharray","0 282.7");
-    document.getElementById("trend-disp").innerHTML='<i class="fas fa-arrow-down"></i> Sin datos';
-    if(timelineChartIns){ timelineChartIns.destroy(); timelineChartIns=null; }
-    document.getElementById("correlation-matrix").innerHTML='<p class="text-slate-500 text-center py-8">Sin datos</p>';
-    document.getElementById("predictive-panel").innerHTML='<p class="text-slate-400 text-sm">Ingrese datos para activar</p>';
-    document.getElementById("ml-status-list").innerHTML="";
-    notify("🗑️ Datos eliminados","warning");
-  }
-}
-
-// === NOTIFICACIONES ===
-function notify(msg,type="info"){
-  const n=document.createElement("div");
-  const c={success:"bg-teal-500 border-teal-300 text-white",warning:"bg-amber-500 border-amber-300 text-white",error:"bg-rose-500 border-rose-300 text-white",info:"bg-indigo-500 border-indigo-300 text-white"};
-  const i={success:"✅",warning:"⚠️",error:"❌",info:"ℹ️"};
-  n.className=`fixed top-4 right-4 z-50 px-6 py-3 rounded-xl border-2 shadow-2xl flex items-center gap-3 animate-[slideIn_0.3s_ease-out] ${c[type]}`;
-  n.innerHTML=`<span class="text-xl">${i[type]}</span><span class="font-medium text-sm">${msg}</span>`;
-  document.body.appendChild(n);
-  setTimeout(()=>{n.style.opacity="0";n.style.transform="translateX(100%)";n.style.transition="all 0.3s ease-in";setTimeout(()=>n.remove(),300);},3000);
-}
-
-// === UI ===
-function updateCard(e){ if(!e)return; document.getElementById("card-unidad").innerText=e.unidad; document.getElementById("card-motor").innerText="Motor "+e.motor; document.getElementById("card-km").innerHTML=`<i class="fas fa-road text-[10px]"></i> ${e.km.toLocaleString()} KM`; document.getElementById("card-rpm").innerText=e.rpm; }
-
-function calculateKPIs(){
-  if(!db.length){ ["kpi-mtbf","kpi-mttr"].forEach(i=>document.getElementById(i).innerText="0"); document.getElementById("kpi-disp").innerText="0.0%"; document.getElementById("svg-disp").setAttribute("stroke-dasharray","0 282.7"); return; }
-  let u=0,d=0; db.forEach(r=>{u+=r.uptime;d+=r.downtime;});
-  const mtbf=u/db.length, mttr=d/db.length, disp=(mtbf+mttr)>0?(mtbf/(mtbf+mttr))*100:0;
-  document.getElementById("kpi-mtbf").innerText=mtbf.toFixed(1); document.getElementById("kpi-mttr").innerText=mttr.toFixed(1);
-  document.getElementById("kpi-disp").innerText=disp.toFixed(1)+"%";
-  const c=2*Math.PI*45; document.getElementById("svg-disp").setAttribute("stroke-dasharray",`${(disp/100)*c} ${c}`);
-  const t=document.getElementById("trend-disp");
-  if(disp>=95){t.innerHTML='<i class="fas fa-arrow-up"></i> Óptimo';t.className="text-sm font-semibold mt-6 bg-teal-500/10 text-teal-400 px-4 py-1.5 rounded-full border border-teal-500/20";}
-  else if(disp>=85){t.innerHTML='<i class="fas fa-arrow-right"></i> Estable';t.className="text-sm font-semibold mt-6 bg-amber-500/10 text-amber-400 px-4 py-1.5 rounded-full border border-amber-500/20";}
-  else{t.innerHTML='<i class="fas fa-arrow-down"></i> Revisar';t.className="text-sm font-semibold mt-6 bg-rose-500/10 text-rose-400 px-4 py-1.5 rounded-full border border-rose-500/20";}
-}
-
-function runAI(e){
-  const p=document.getElementById("predictive-panel"),s=document.getElementById("ml-status-list");
-  let pred=[],rep=[];
-  let ctx="";
-  if(e.motor.toLowerCase().includes("diesel")){ctx=`<strong>Diésel:</strong> Mayor eficiencia torque, costos reparación ~20-25% superiores.`;if(e.km>=30000&&e.km%30000<5000)rep.push("Cambio Filtro Combustible");}
-  else{ctx=`<strong>Gasolina:</strong> Conducción suave urbana. Mantenga bujías y encendido.`;if(e.km>=15000&&e.km%15000<3000)rep.push("Revisar Bujías");}
-  if(e.km>=10000&&e.km%10000<2000)rep.push("Filtro Aire próximo");if(e.km>=60000)rep.push("⚠️ VERIFICAR CORREA DISTRIBUCIÓN");
-  let ts=`<span class="text-teal-400"><i class="fas fa-check"></i> Normal</span>`,vs=ts;
-  if(e.ta>105){ts=`<span class="text-rose-400"><i class="fas fa-times"></i> ${e.ta}°C</span>`;pred.push(`<div class="p-3 bg-rose-500/10 border border-rose-500/40 rounded-xl flex items-start gap-4 mb-2"><div class="text-rose-500 text-xl"><i class="fas fa-temperature-high"></i></div><div><p class="font-bold text-rose-400 text-xs">Sobrecalentamiento</p><p class="text-[11px] text-slate-300">Riesgo junta (${e.ta}°C).</p></div></div>`);}
-  if(e.vibracion>=5.0){vs=`<span class="text-rose-400"><i class="fas fa-times"></i> ${e.vibracion}mm/s</span>`;pred.push(`<div class="p-3 bg-orange-500/10 border border-orange-500/40 rounded-xl flex items-start gap-4 mb-2"><div class="text-orange-500 text-xl"><i class="fas fa-wave-square"></i></div><div><p class="font-bold text-orange-400 text-xs">Vibración Alta</p><p class="text-[11px] text-slate-300">Desgaste (${e.vibracion}).</p></div></div>`);}
-  if(rep.length)pred.push(`<div class="p-3 bg-indigo-500/10 border border-indigo-500/40 rounded-xl mb-2"><p class="font-bold text-indigo-400 text-xs"><i class="fas fa-road"></i> Alertas KM</p><ul class="text-[10px] text-slate-300 mt-1">${rep.map(r=>`<li>- ${r}</li>`).join("")}</ul></div>`);
-  if(!pred.length)pred.push(`<div class="p-4 bg-teal-500/10 border border-teal-500/40 rounded-xl"><p class="font-bold text-teal-400"><i class="fas fa-shield-alt mr-2"></i> Sensores Óptimos</p></div>`);
-  p.innerHTML=`<div class="bg-slate-950 p-4 rounded-xl border border-slate-800 text-slate-300 text-xs leading-relaxed mb-4">${ctx}</div><div class="flex-1">${pred.join("")}</div>`;
-  s.innerHTML=`<li class="flex justify-between items-center border-b border-slate-800 pb-2"><span>Target:</span><span class="font-bold text-white">${e.unidad}</span></li><li class="flex justify-between items-center border-b border-slate-800 pb-2"><span>Temp:</span>${ts}</li><li class="flex justify-between items-center pb-2"><span>VIB:</span>${vs}</li>`;
-}
-
-function generateReport(){
-  const c=document.getElementById("ai-report-container"),pl=document.getElementById("ai-report-placeholder");
-  c.classList.remove("hidden");if(pl)pl.classList.add("hidden");
-  if(!db.length){c.innerHTML="<p class='text-rose-400'>Sin datos.</p>";return;}
-  const l=db[db.length-1],mtbf=document.getElementById("kpi-mtbf").innerText,mttr=document.getElementById("kpi-mttr").innerText,disp=document.getElementById("kpi-disp").innerText;
-  const em=l.motor.toLowerCase().includes("diesel")?"Motor Diésel: Costos +25%. Filtro crítico cada 30k KM.":"Motor Nafta: Urbano moderado. Supervisar bujías.";
-  c.innerHTML=`<h4 class="text-white font-bold mb-4 flex items-center gap-2 border-b border-slate-800 pb-3 text-sm uppercase"><i class="fas fa-file-alt text-indigo-400"></i> Informe</h4><p class="mb-3">Disponibilidad: <b class="text-teal-400">${disp}</b> | MTBF: <b>${mtbf}h</b> | MTTR: <b>${mttr}h</b>.</p><div class="bg-indigo-500/10 p-3 rounded-md border border-indigo-500/20 mb-3 text-xs">${em}</div><p class="text-xs text-slate-400">Use aceites sintéticos y revise frenos bianualmente.</p>`;
-}
-
-// === GRÁFICO TEMPORAL (CORREGIDO) ===
-function updateChart(){
-  const ctx=document.getElementById('timelineChart').getContext('2d');
-  if(!db.length){if(timelineChartIns)timelineChartIns.destroy();ctx.canvas.parentNode.innerHTML='<div class="absolute inset-0 flex items-center justify-center text-slate-500">Sin datos</div>';return;}
-  const labels=db.map(d=>new Date(d.timestamp).toLocaleDateString('es-ES',{day:'2-digit',month:'short'}));
-  const uD=db.map(d=>d.uptime),dD=db.map(d=>d.downtime),dDData=db.map(d=>(d.uptime+d.downtime)>0?((d.uptime/(d.uptime+d.downtime))*100).toFixed(1):0);
-  if(timelineChartIns)timelineChartIns.destroy();
-  timelineChartIns=new Chart(ctx,{
-    type:'line',
-    data:{
-      labels:labels,
-      datasets:[
-        {label:'Disponibilidad %',data:dDData,borderColor:'#00d4ff',backgroundColor:'rgba(0,212,255,0.1)',borderWidth:3,tension:0.4,yAxisID:'y1',fill:true},
-        {label:'Uptime (hs)',data:uD,borderColor:'#14b8a6',borderDash:[5,5],borderWidth:2,tension:0.2,yAxisID:'y'},
-        {label:'Downtime (hs)',data:dD,borderColor:'#f97316',borderWidth:2,tension:0.2,yAxisID:'y'}
-      ]
-    },
-    options:{responsive:true,maintainAspectRatio:false,interaction:{mode:'index',intersect:false},plugins:{legend:{labels:{color:'#cbd5e1'}}},scales:{x:{ticks:{color:'#64748b'},grid:{color:'#334155'}},y:{type:'linear',display:true,position:'left',title:{display:true,text:'Horas',color:'#94a3b8'},ticks:{color:'#94a3b8'},grid:{color:'#334155'}},y1:{type:'linear',display:true,position:'right',title:{display:true,text:'%',color:'#00d4ff'},ticks:{color:'#00d4ff'},grid:{drawOnChartArea:false}}}}
-  });
-}
-
-// === MATRIZ ===
-function pearson(x,y){
-  if(!x.length||!y.length)return 0;
-  const n=x.length;let sx=0,sy=0,sxy=0,sx2=0,sy2=0;
-  for(let i=0;i<n;i++){sx+=x[i];sy+=y[i];sxy+=x[i]*y[i];sx2+=x[i]*x[i];sy2+=y[i]*y[i];}
-  const dt=(n*sx2-sx*sx)*(n*sy2-sy*sy);if(dt<=0)return 0;
-  return((n*sxy)-(sx*sy))/Math.sqrt(dt);
-}
-function updateMatrix(){
-  if(db.length<2){document.getElementById('correlation-matrix').innerHTML='<p class="text-slate-500 text-center py-8">Mínimo 2 registros</p>';return;}
-  const v=['km','uptime','downtime','vibracion','ta','rpm','psiDi'],l=['KM','Up','Down','VIB','Temp','RPM','PSI'];
-  let h='<table class="w-full border-collapse text-sm"><tr><td class="p-2"></td>';
-  h+=l.map(x=>`<td class="p-3 font-bold text-slate-300 text-center border-b border-slate-700">${x}</td>`).join('')+'</tr>';
-  for(let i=0;i<v.length;i++){h+=`<tr><td class="p-3 font-bold text-slate-300 text-right pr-4 border-r border-slate-700">${l[i]}</td>`;
-    for(let j=0;j<v.length;j++){const a=db.map(d=>d[v[i]]||0),b=db.map(d=>d[v[j]]||0),val=pearson(a,b),op=Math.abs(val),col=val>0?`rgba(20,184,166,${op})`:`rgba(244,63,94,${op})`;
-      h+=i===j?`<td class="p-3 border border-slate-800 text-center text-slate-500 bg-slate-700/20">1.00</td>`:`<td class="p-3 border border-slate-800 text-center font-medium" style="background:${col};color:${op>0.5?'#fff':'#94a3b8'}">${val.toFixed(2)}</td>`;}
-    h+='</tr>';}
-  h+='</table>';document.getElementById('correlation-matrix').innerHTML=h;
-}
-
-// === DESCARGAR CSV ===
-function exportCSV(){
-  if(!db.length){notify("📭 No hay datos","info");return;}
-  const h=["Unidad","ID","Motor","KM","Uptime","Downtime","VIB","Temp","RPM","DI","DD","TI","TD","Timestamp"];
-  let csv=h.join(";")+"\n";
-  db.forEach(r=>{csv+=[r.unidad,r.id,r.motor,r.km,r.uptime,r.downtime,r.vibracion,r.ta,r.rpm,r.psiDi,r.psiDd,r.psiTi,r.psiTd,new Date(r.timestamp).toLocaleString('es-ES')].join(";")+"\n";});
-  const st=calcStats();
-  if(st){csv+="\nRESUMEN;Media;Mín;Máx\n";csv+=`Uptime;${st.uptime.mean};${st.uptime.min};${st.uptime.max}\nDowntime;${st.downtime.mean};${st.downtime.min};${st.downtime.max}\nKM;${st.km.mean};${st.km.min};${st.km.max}\nTemp;${st.ta.mean};${st.ta.min};${st.ta.max}\nVIB;${st.vibracion.mean};${st.vibracion.min};${st.vibracion.max}\nDisp;${st.disponibilidad.mean}%;${st.disponibilidad.min}%;${st.disponibilidad.max}%\n`;}
-  const b=new Blob(["\uFEFF"+csv],{type:'text/csv;charset=utf-8;'});
-  const a=document.createElement("a");a.href=URL.createObjectURL(b);a.download=`NEXO-ART_Datos_${new Date().toISOString().slice(0,10)}.csv`;a.click();
-  notify("📥 Archivo CSV descargado","success");
-}
-
-// === PDF ===
-async function generateEnhancedPDF(){
-  if(!db.length){notify("⚠️ Sin datos para reporte","warning");return;}
-  notify("🔄 Generando PDF...","info");
-  const l=db[db.length-1],now=new Date(),st=calcStats(),obs=genObs(st,l),tbl=genTable(db);
-  updPDF({st,obs,tbl,l,now});
-  const t=document.getElementById('pdf-report-template-enhanced');t.classList.remove('hidden');
-  await new Promise(r=>setTimeout(r,100));
-  await html2pdf().set({margin:10,filename:`NEXO-ART_${l.unidad}_${now.toISOString().slice(0,10)}.pdf`,image:{type:'jpeg',quality:1.0},html2canvas:{scale:3,useCORS:true,windowWidth:794,logging:false,backgroundColor:'#ffffff'},jsPDF:{unit:'mm',format:'a4',orientation:'portrait',compress:true}}).from(t).save();
-  t.classList.add('hidden');notify("✅ PDF descargado","success");
-}
-function calcStats(){if(!db.length)return null;const g=a=>{if(!a.length)return{min:0,max:0,mean:0};const m=a.reduce((s,v)=>s+v,0)/a.length;return{min:Math.min(...a).toFixed(2),max:Math.max(...a).toFixed(2),mean:m.toFixed(2)};};return{uptime:g(db.map(d=>d.uptime)),downtime:g(db.map(d=>d.downtime)),km:g(db.map(d=>d.km)),vibracion:g(db.map(d=>d.vibracion)),ta:g(db.map(d=>d.ta)),disponibilidad:g(db.map(d=>(d.uptime+d.downtime)>0?(d.uptime/(d.uptime+d.downtime))*100:0))};}
-function genObs(st,l){const o=[];if(l.ta>=105)o.push({t:'crítico',i:'🔥',tx:`Temp ${l.ta}°C: Riesgo térmico inminente.`});if(l.vibracion>=5.0)o.push({t:'crítico',i:'〰️',tx:`VIB ${l.vibracion}: Alineación urgente.`});if(l.km>=60000)o.push({t:'mantenimiento',i:'🔧',tx:`KM ${l.km}: Correa distribución obligatoria.`});if(!o.length)o.push({t:'ok',i:'✅',tx:'Parámetros seguros.'});return o;}
-function genTable(d){if(!d.length)return'<tr><td colspan="13" class="text-center py-4">Vacío</td></tr>';const h=['Unidad','Motor','KM','Up','Down','VIB','Temp','RPM','DI','DD','TI','TD','Fecha'];let r='<thead><tr class="bg-slate-100">';h.forEach(x=>r+=`<th class="border border-slate-300 px-2 py-2 text-left font-bold text-slate-700">${x}</th>`);r+='</tr></thead><tbody>';d.forEach(row=>{r+=`<tr><td class="border border-slate-200 px-2 py-2">${row.unidad}</td><td class="border border-slate-200 px-2 py-2">${row.motor}</td><td class="border border-slate-200 px-2 py-2 text-right">${row.km?.toLocaleString()}</td><td class="border border-slate-200 px-2 py-2 text-right">${row.uptime}</td><td class="border border-slate-200 px-2 py-2 text-right">${row.downtime}</td><td class="border border-slate-200 px-2 py-2 text-right">${row.vibracion}</td><td class="border border-slate-200 px-2 py-2 text-right">${row.ta}</td><td class="border border-slate-200 px-2 py-2 text-right">${row.rpm}</td><td class="border border-slate-200 px-2 py-2 text-right">${row.psiDi}</td><td class="border border-slate-200 px-2 py-2 text-right">${row.psiDd}</td><td class="border border-slate-200 px-2 py-2 text-right">${row.psiTi}</td><td class="border border-slate-200 px-2 py-2 text-right">${row.psiTd}</td><td class="border border-slate-200 px-2 py-2">${new Date(row.timestamp).toLocaleDateString()}</td></tr>`;});return r+'</tbody>';}
-function updPDF({st,obs,tbl,l,now}){document.getElementById('pdf-fecha').innerText=now.toLocaleString('es-ES');document.getElementById('pdf-unidad').innerText=l.unidad;document.getElementById('pdf-id').innerText="ID: "+l.id;document.getElementById('pdf-motor').innerText=l.motor;document.getElementById('pdf-km').innerText=l.km.toLocaleString()+" KM";document.getElementById('pdf-last-reading').innerText=new Date(l.timestamp).toLocaleString();document.getElementById('pdf-disp-val').innerText=document.getElementById('kpi-disp').innerText;document.getElementById('pdf-mtbf-val').innerText=document.getElementById('kpi-mtbf').innerText+" hs";document.getElementById('pdf-mttr-val').innerText=document.getElementById('kpi-mttr').innerText+" hs";if(st){document.getElementById('stat-uptime-mean').innerText=st.uptime.mean;document.getElementById('stat-uptime-range').innerText=`${st.uptime.min} - ${st.uptime.max}`;document.getElementById('stat-downtime-mean').innerText=st.downtime.mean;document.getElementById('stat-km-mean').innerText=parseFloat(st.km.mean).toLocaleString();document.getElementById('stat-km-range').innerText=`${parseFloat(st.km.min).toLocaleString()} - ${parseFloat(st.km.max).toLocaleString()}`;document.getElementById('stat-temp-mean').innerText=st.ta.mean+"°C";document.getElementById('stat-vib-mean').innerText=st.vibracion.mean+" mm/s";}document.getElementById('pdf-observaciones').innerHTML=obs.map(o=>{const c={crítico:'bg-rose-50 border-rose-300 text-rose-800',mantenimiento:'bg-indigo-50 border-indigo-300 text-indigo-800',ok:'bg-teal-50 border-teal-300 text-teal-800'};return`<div class="flex items-start gap-3 p-3 rounded-lg border-l-4 ${c[o.t]||'bg-slate-50'}"><span class="text-lg shrink-0">${o.i}</span><p class="text-[11px] leading-relaxed font-medium">${o.tx}</p></div>`;}).join('');document.getElementById('pdf-dataset-table').innerHTML=tbl;}
-
-// === INIT ===
-window.onload=()=>{initTailwind();calculateKPIs();if(db.length>0){updateCard(db[db.length-1]);runAI(db[db.length-1]);}updateChart();updateMatrix();document.getElementById("mem-count").innerText=`${db.length}/20`;};
 </script>
 </body>
 </html>
