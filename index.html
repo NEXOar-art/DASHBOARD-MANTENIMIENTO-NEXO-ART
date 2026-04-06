@@ -462,17 +462,22 @@
 <script>
   // === CONFIGURACIÓN ===
   const STORAGE_KEY = 'nexoart_data_v1';
+  const MAX_RECORDS = 20; // 🔹 Capacidad máxima de registros
   let db = [];
   let timelineChartIns = null;
   let isSidebarOpen = false;
 
-  // === PERSISTENCIA ===
+  // === PERSISTENCIA CON LOCALSTORAGE ===
   function loadFromStorage() {
     const stored = localStorage.getItem(STORAGE_KEY);
     if (stored) {
-      try { db = JSON.parse(stored); } catch (e) { db = []; }
+      try { 
+        db = JSON.parse(stored); 
+      } catch (e) { 
+        db = []; 
+      }
     } else {
-      // Datos demo
+      // Datos demo iniciales SOLO si es la primera vez
       const now = Date.now();
       const dayMs = 86400000;
       db = [
@@ -484,10 +489,20 @@
       ];
       saveToStorage();
     }
+    // 🔹 Actualizar contador al cargar (muestra espacios DISPONIBLES)
+    updateMemoryCounter();
   }
 
   function saveToStorage() {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(db));
+    // 🔹 Actualizar contador después de guardar
+    updateMemoryCounter();
+  }
+
+  // 🔹 Función para actualizar el contador de memoria (espacios disponibles)
+  function updateMemoryCounter() {
+    const remaining = MAX_RECORDS - db.length;
+    document.getElementById("mem-count").innerText = `${remaining}/${MAX_RECORDS}`;
   }
 
   loadFromStorage();
@@ -543,10 +558,14 @@
       unidad, id, motor, km, uptime, downtime, vibracion, ta, rpm, psiDi, psiDd, psiTi, psiTd, timestamp: new Date().toISOString()
     };
 
-    if (db.length >= 20) db.shift();
-    db.push(nuevaEntrada); 
-    saveToStorage();
-    document.getElementById("mem-count").innerText = `${db.length}/20`;
+    // 🔹 Lógica de acumulación con límite de 20 registros (FIFO)
+    if (db.length >= MAX_RECORDS) {
+      db.shift(); // Elimina el más antiguo para hacer espacio
+    }
+    db.push(nuevaEntrada); // 🔹 Agrega el nuevo registro (acumulación)
+    
+    saveToStorage(); // 🔹 Guarda en localStorage para persistencia
+    
     document.querySelectorAll('input, select').forEach(el => { if(el.type !== 'button') el.value = ""; });
     
     // Cerrar sidebar en móvil después de enviar
@@ -557,15 +576,18 @@
     runPredictiveAI(nuevaEntrada);
     updateTimelineChart();
     updateCorrelationMatrix();
-    showNotification("✅ Datos procesados", "success");
+    showNotification("✅ Datos acumulados en memoria", "success");
   }
 
   function resetDataset() {
-    if(db.length === 0) { showNotification("ℹ️ Dataset vacío", "info"); return; }
-    if(confirm("⚠️ ¿BORRAR todos los datos?")) {
+    if(db.length === 0) { showNotification("ℹ️ Dataset ya vacío", "info"); return; }
+    if(confirm("⚠️ ¿BORRAR permanentemente todos los datos de memoria? Esta acción NO se puede deshacer.")) {
+      // 🔹 ÚNICA FORMA de eliminar los datos: RESET borra localStorage
       db = [];
-      localStorage.removeItem(STORAGE_KEY);
-      document.getElementById("mem-count").innerText = `0/20`;
+      localStorage.removeItem(STORAGE_KEY); // 🔹 Eliminación permanente de la memoria del navegador
+      updateMemoryCounter(); // 🔹 Actualiza contador a 20/20
+      
+      // Resetear UI
       document.getElementById("card-unidad").innerText = "--";
       document.getElementById("card-motor").innerText = "Motor --";
       document.getElementById("card-km").innerHTML = `<i class="fas fa-road"></i> -- KM`;
@@ -580,7 +602,7 @@
       document.getElementById("correlation-matrix").innerHTML = '<p class="text-slate-500 text-center py-4 md:py-8 text-[10px]">Sin datos</p>';
       document.getElementById("predictive-panel").innerHTML = '<p class="text-slate-400 text-[10px] md:text-sm">Ingresa datos para activar IA</p>';
       document.getElementById("ml-status-list").innerHTML = '';
-      showNotification("🗑️ Dataset limpiado", "warning");
+      showNotification("🗑️ Memoria borrada permanentemente", "warning");
     }
   }
 
