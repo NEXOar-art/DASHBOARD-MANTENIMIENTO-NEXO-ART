@@ -5,20 +5,13 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>NEXO-ART Motor Intelligence - Dashboard Predictivo</title>
   
-  <!-- Librerías Esenciales -->
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
   
   <script>
-    tailwind.config = {
-      theme: {
-        extend: {
-          screens: { 'xs': '320px', 'sm': '480px' }
-        }
-      }
-    }
+    tailwind.config = { theme: { extend: { screens: { 'xs': '320px', 'sm': '480px' } } } }
   </script>
   
   <style>
@@ -27,55 +20,29 @@
     body { 
       font-family: 'Inter', sans-serif; 
       -webkit-tap-highlight-color: transparent;
-      background: 
-        linear-gradient(135deg, rgba(0,0,0,0.85) 0%, rgba(0,20,40,0.80) 50%, rgba(0,0,0,0.90) 100%),
+      background: linear-gradient(135deg, rgba(0,0,0,0.85) 0%, rgba(0,20,40,0.80) 50%, rgba(0,0,0,0.90) 100%),
         url('https://image.pollinations.ai/prompt/futuristic%20dark%20garage%20with%20black%20sports%20car%20Chevrolet%20Camaro%20neon%20blue%20cyan%20lighting%20holographic%20data%20displays%20HUD%20interface%20automotive%20dashboard%20sci-fi%20technology%20motor%20intelligence%208k%20ultra%20detailed?width=1920&height=1080&nologo=true') center center / cover no-repeat fixed;
     }
-    
     .font-tech { font-family: 'Orbitron', monospace; }
-    
     .gauge-wrapper { position: relative; width: 100%; max-width: 240px; margin: 0 auto; aspect-ratio: 1/1; }
     .gauge-circle { position: absolute; inset: 0; }
-    
     .custom-scrollbar::-webkit-scrollbar { width: 6px; height: 6px; }
     .custom-scrollbar::-webkit-scrollbar-thumb { background-color: #06b6d4; border-radius: 4px; }
     .custom-scrollbar::-webkit-scrollbar-track { background-color: rgba(0,0,0,0.5); }
     
-    @keyframes pulse-glow {
-      0%, 100% { box-shadow: 0 0 15px rgba(6, 182, 212, 0.3); }
-      50% { box-shadow: 0 0 30px rgba(6, 182, 212, 0.6); }
-    }
-    @keyframes shake {
-      0%, 100% { transform: translateX(0); }
-      25% { transform: translateX(-3px); }
-      75% { transform: translateX(3px); }
-    }
-    @keyframes slideIn {
-      from { opacity: 0; transform: translateX(100%); }
-      to { opacity: 1; transform: translateX(0); }
-    }
-    @keyframes neon-flicker {
-      0%, 100% { opacity: 1; }
-      50% { opacity: 0.85; }
-    }
-    @keyframes float {
-      0%, 100% { transform: translateY(0); }
-      50% { transform: translateY(-5px); }
-    }
+    @keyframes pulse-glow { 0%, 100% { box-shadow: 0 0 15px rgba(6, 182, 212, 0.3); } 50% { box-shadow: 0 0 30px rgba(6, 182, 212, 0.6); } }
+    @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-3px); } 75% { transform: translateX(3px); } }
+    @keyframes slideIn { from { opacity: 0; transform: translateX(100%); } to { opacity: 1; transform: translateX(0); } }
+    @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-5px); } }
     .animate-shake:hover { animation: shake 0.3s ease-in-out; }
-    .neon-text { animation: neon-flicker 3s ease-in-out infinite; }
     .float-anim { animation: float 4s ease-in-out infinite; }
     
     .glass-card {
-      background: rgba(5, 15, 30, 0.75);
-      backdrop-filter: blur(16px);
+      background: rgba(5, 15, 30, 0.75); backdrop-filter: blur(16px);
       border: 1px solid rgba(6, 182, 212, 0.2);
       box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(6, 182, 212, 0.1);
     }
-    .glass-card:hover {
-      border-color: rgba(6, 182, 212, 0.4);
-      box-shadow: 0 8px 40px rgba(6, 182, 212, 0.15), inset 0 1px 0 rgba(6, 182, 212, 0.2);
-    }
+    .glass-card:hover { border-color: rgba(6, 182, 212, 0.4); box-shadow: 0 8px 40px rgba(6, 182, 212, 0.15), inset 0 1px 0 rgba(6, 182, 212, 0.2); }
     .glow-text { text-shadow: 0 0 20px rgba(6, 182, 212, 0.5), 0 0 40px rgba(6, 182, 212, 0.2); }
     
     .hud-corner { position: absolute; width: 20px; height: 20px; border-color: rgba(6, 182, 212, 0.4); border-style: solid; }
@@ -84,60 +51,81 @@
     .hud-corner-bl { bottom: -1px; left: -1px; border-width: 0 0 2px 2px; }
     .hud-corner-br { bottom: -1px; right: -1px; border-width: 0 2px 2px 0; }
     
-    .cyber-input {
-      background: rgba(0, 20, 40, 0.8) !important;
-      border: 1px solid rgba(6, 182, 212, 0.25) !important;
-      color: #e0f2fe !important;
-      transition: all 0.3s ease;
-    }
-    .cyber-input:focus {
-      border-color: #06b6d4 !important;
-      box-shadow: 0 0 20px rgba(6, 182, 212, 0.3), inset 0 0 10px rgba(6, 182, 212, 0.05) !important;
-      outline: none;
-    }
+    .cyber-input { background: rgba(0, 20, 40, 0.8) !important; border: 1px solid rgba(6, 182, 212, 0.25) !important; color: #e0f2fe !important; transition: all 0.3s ease; }
+    .cyber-input:focus { border-color: #06b6d4 !important; box-shadow: 0 0 20px rgba(6, 182, 212, 0.3), inset 0 0 10px rgba(6, 182, 212, 0.05) !important; outline: none; }
     .cyber-input::placeholder { color: rgba(148, 163, 184, 0.5); }
     
-    .btn-neon {
-      background: linear-gradient(135deg, rgba(6, 182, 212, 0.8), rgba(8, 145, 178, 0.8));
-      border: 1px solid rgba(6, 182, 212, 0.5);
-      box-shadow: 0 0 20px rgba(6, 182, 212, 0.3);
-      transition: all 0.3s ease;
-    }
+    .btn-neon { background: linear-gradient(135deg, rgba(6, 182, 212, 0.8), rgba(8, 145, 178, 0.8)); border: 1px solid rgba(6, 182, 212, 0.5); box-shadow: 0 0 20px rgba(6, 182, 212, 0.3); transition: all 0.3s ease; }
     .btn-neon:hover { box-shadow: 0 0 35px rgba(6, 182, 212, 0.5); transform: translateY(-1px); }
-    .btn-danger {
-      background: linear-gradient(135deg, rgba(220, 38, 38, 0.8), rgba(185, 28, 28, 0.8));
-      border: 1px solid rgba(220, 38, 38, 0.5);
-      box-shadow: 0 0 15px rgba(220, 38, 38, 0.3);
-    }
+    .btn-danger { background: linear-gradient(135deg, rgba(220, 38, 38, 0.8), rgba(185, 28, 28, 0.8)); border: 1px solid rgba(220, 38, 38, 0.5); box-shadow: 0 0 15px rgba(220, 38, 38, 0.3); }
     .btn-danger:hover { box-shadow: 0 0 25px rgba(220, 38, 38, 0.5); }
-    .btn-purple {
-      background: linear-gradient(135deg, rgba(139, 92, 246, 0.8), rgba(109, 40, 217, 0.8));
-      border: 1px solid rgba(139, 92, 246, 0.5);
-      box-shadow: 0 0 15px rgba(139, 92, 246, 0.3);
-    }
+    .btn-purple { background: linear-gradient(135deg, rgba(139, 92, 246, 0.8), rgba(109, 40, 217, 0.8)); border: 1px solid rgba(139, 92, 246, 0.5); box-shadow: 0 0 15px rgba(139, 92, 246, 0.3); }
     .btn-purple:hover { box-shadow: 0 0 25px rgba(139, 92, 246, 0.5); }
     
-    .status-dot {
-      width: 8px; height: 8px;
-      border-radius: 50%;
-      background: #06b6d4;
-      box-shadow: 0 0 10px #06b6d4;
-      animation: pulse-glow 2s ease-in-out infinite;
-    }
-    
-    @media (max-width: 767px) {
-      .mobile-hidden { display: none !important; }
-    }
+    .status-dot { width: 8px; height: 8px; border-radius: 50%; background: #06b6d4; box-shadow: 0 0 10px #06b6d4; animation: pulse-glow 2s ease-in-out infinite; }
     
     .touch-target { min-height: 44px; min-width: 44px; }
     input, select, textarea { font-size: 16px !important; }
     
-    .cyber-table th {
-      background: rgba(6, 182, 212, 0.1);
-      border-bottom: 1px solid rgba(6, 182, 212, 0.3);
-    }
+    .cyber-table th { background: rgba(6, 182, 212, 0.1); border-bottom: 1px solid rgba(6, 182, 212, 0.3); }
     .cyber-table td { border-bottom: 1px solid rgba(6, 182, 212, 0.1); }
     .cyber-table tr:hover td { background: rgba(6, 182, 212, 0.05); }
+    
+    /* Checklist VTV Styles */
+    .vtv-check { display: none; }
+    .vtv-label {
+      display: flex; align-items: center; gap: 8px;
+      padding: 6px 10px; border-radius: 8px; cursor: pointer;
+      transition: all 0.3s ease; border: 1px solid transparent;
+      font-size: 12px; color: #94a3b8;
+    }
+    .vtv-label:hover { background: rgba(6, 182, 212, 0.05); border-color: rgba(6, 182, 212, 0.15); }
+    .vtv-check:checked + .vtv-label {
+      background: rgba(6, 182, 212, 0.08); border-color: rgba(6, 182, 212, 0.3);
+      color: #e0f2fe;
+    }
+    .vtv-check:checked + .vtv-label .vtv-icon {
+      background: linear-gradient(135deg, #06b6d4, #0891b2); color: #0f172a;
+      box-shadow: 0 0 12px rgba(6, 182, 212, 0.4);
+    }
+    .vtv-icon {
+      width: 22px; height: 22px; border-radius: 6px; flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center;
+      border: 1.5px solid rgba(6, 182, 212, 0.3); background: rgba(0, 20, 40, 0.6);
+      transition: all 0.3s ease; font-size: 11px;
+    }
+    .vtv-category {
+      padding: 8px 12px; border-radius: 10px;
+      background: rgba(6, 182, 212, 0.05); border: 1px solid rgba(6, 182, 212, 0.15);
+      margin-bottom: 8px;
+    }
+    .vtv-category-title {
+      font-family: 'Orbitron', monospace; font-size: 11px; font-weight: 700;
+      color: #06b6d4; text-transform: uppercase; letter-spacing: 1px;
+      display: flex; align-items: center; gap: 6px; margin-bottom: 6px;
+    }
+    
+    /* Score ring */
+    .score-ring {
+      width: 80px; height: 80px; border-radius: 50%;
+      background: conic-gradient(#06b6d4 var(--score-pct, 0%), rgba(6,182,212,0.1) var(--score-pct, 0%));
+      display: flex; align-items: center; justify-content: center;
+      box-shadow: 0 0 20px rgba(6, 182, 212, 0.2);
+      transition: background 0.5s ease;
+    }
+    .score-ring-inner {
+      width: 60px; height: 60px; border-radius: 50%;
+      background: #0f172a; display: flex; align-items: center; justify-content: center;
+    }
+    
+    /* Progress bar */
+    .vtv-progress-bg { height: 6px; background: rgba(6,182,212,0.1); border-radius: 3px; overflow: hidden; }
+    .vtv-progress-fill { height: 100%; border-radius: 3px; transition: width 0.5s ease, background 0.5s ease; }
+    
+    @media (max-width: 1023px) {
+      .dashboard-grid { grid-template-columns: 1fr !important; }
+      .vtv-sidebar { order: -1 !important; }
+    }
   </style>
 </head>
 <body class="text-slate-200 overflow-x-hidden min-h-screen">
@@ -153,18 +141,14 @@
     <button id="sidebar-close" class="md:hidden absolute top-4 right-4 touch-target text-slate-400 hover:text-cyan-400">
       <i class="fas fa-times text-xl"></i>
     </button>
-    
     <div class="p-4 md:p-6 border-b border-cyan-500/20 flex items-center gap-3 shrink-0 bg-gradient-to-r from-black/80 to-transparent relative overflow-hidden">
       <div class="absolute inset-0 bg-gradient-to-r from-cyan-500/5 to-transparent"></div>
-      <div class="w-12 h-12 bg-gradient-to-br from-cyan-400 to-blue-600 rounded-xl flex items-center justify-center text-white font-bold text-xl shadow-lg shadow-cyan-500/30 flex-shrink-0 relative z-10">
-        <i class="fas fa-cogs"></i>
-      </div>
+      <div class="w-12 h-12 bg-gradient-to-br from-cyan-400 to-blue-600 rounded-xl flex items-center justify-center text-white font-bold text-xl shadow-lg shadow-cyan-500/30 flex-shrink-0 relative z-10"><i class="fas fa-cogs"></i></div>
       <div class="min-w-0 relative z-10">
         <h1 class="text-xl md:text-3xl font-black tracking-tighter text-transparent bg-clip-text bg-gradient-to-r from-cyan-300 via-cyan-400 to-blue-400 font-tech truncate glow-text">NEXO-ART</h1>
         <p class="text-[9px] md:text-[10px] uppercase font-bold text-cyan-500/60 tracking-widest -mt-0.5 hidden xs:block">Motor Intelligence</p>
       </div>
     </div>
-    
     <div class="flex-1 overflow-hidden flex flex-col p-3 md:p-5 bg-gradient-to-b from-black/30 to-black/60 relative">
       <button onclick="generateReport()" class="w-full btn-purple text-white font-bold py-3 px-3 md:py-3.5 md:px-4 rounded-xl transition-all flex items-center justify-center gap-2 shrink-0 hover:scale-[1.02] touch-target text-sm">
         <i class="fas fa-file-signature text-lg"></i> <span class="hidden xs:inline">Exportar Informe</span><span class="xs:hidden">Informe</span>
@@ -175,7 +159,6 @@
          <p class="text-slate-500 text-xs md:text-sm">Presiona para sintetizar informe técnico de la flota.</p>
       </div>
     </div>
-    
     <div class="p-3 md:p-4 border-t border-cyan-500/20 text-slate-500 text-[10px] md:text-xs flex items-center justify-between bg-black/60">
       <span class="truncate flex items-center gap-1"><span class="status-dot inline-block"></span> <span class="hidden xs:inline">Data Server: Online</span></span>
       <span class="text-cyan-400 font-bold font-tech">V 1.3.0</span>
@@ -186,8 +169,6 @@
 
   <!-- MAIN -->
   <div class="flex-1 flex flex-col min-w-0">
-
-    <!-- HEADER -->
     <header class="h-14 md:h-16 bg-black/70 border-b border-cyan-500/20 px-3 md:px-8 flex items-center justify-between backdrop-blur-xl sticky top-0 z-20 relative overflow-hidden">
       <div class="absolute inset-0 bg-gradient-to-r from-cyan-500/5 via-transparent to-cyan-500/5"></div>
       <div class="flex items-center gap-2 md:gap-4 ml-8 md:ml-4 relative z-10">
@@ -212,10 +193,9 @@
       </div>
     </header>
 
-    <!-- FORMULARIO -->
     <div class="bg-black/60 border-b border-cyan-500/20 px-3 md:px-8 py-3 md:py-5 backdrop-blur-sm overflow-x-auto relative">
       <div class="absolute inset-0 bg-gradient-to-b from-cyan-500/3 to-transparent pointer-events-none"></div>
-      <div class="min-w-[600px] md:min-w-0 max-w-[1400px] mx-auto px-1 relative z-10">
+      <div class="min-w-[600px] md:min-w-0 max-w-[1600px] mx-auto px-1 relative z-10">
         <div class="flex justify-between mb-3 md:mb-4 flex-wrap gap-2 items-center">
           <h3 class="font-semibold flex items-center gap-2 text-cyan-300 text-sm font-tech tracking-wider"><i class="fas fa-database"></i> <span class="hidden xs:inline">Ingesta de Datos</span><span class="xs:hidden">Datos</span></h3>
           <div class="text-slate-400 text-[10px] md:text-sm flex items-center gap-2 bg-black/50 px-2 md:px-3 py-1 rounded-lg border border-cyan-500/10">
@@ -228,13 +208,9 @@
         <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-7 gap-2 md:gap-3 text-[10px] md:text-sm">
           <div><label class="text-cyan-400/60 text-[9px] font-bold block mb-0.5 tracking-wider">UNIDAD</label><input id="input-unidad" type="text" class="cyber-input w-full rounded-lg px-3 py-2 text-xs touch-target" placeholder="V-021"></div>
           <div><label class="text-cyan-400/60 text-[9px] font-bold block mb-0.5 tracking-wider">ID</label><input id="input-id" type="text" class="cyber-input w-full rounded-lg px-3 py-2 text-xs touch-target" placeholder="ID-99"></div>
-          <div>
-            <label class="text-cyan-400/60 text-[9px] font-bold block mb-0.5 tracking-wider">MOTOR</label>
+          <div><label class="text-cyan-400/60 text-[9px] font-bold block mb-0.5 tracking-wider">MOTOR</label>
             <select id="input-motor" class="cyber-input w-full rounded-lg px-3 py-2 text-xs touch-target">
-              <option value="Nafta">Gasolina</option>
-              <option value="Diesel">Diésel</option>
-              <option value="Hibrido">Híbrido</option>
-              <option value="Electrico">Eléctrico</option>
+              <option value="Nafta">Gasolina</option><option value="Diesel">Diésel</option><option value="Hibrido">Híbrido</option><option value="Electrico">Eléctrico</option>
             </select>
           </div>
           <div><label class="text-cyan-400/60 text-[9px] font-bold block mb-0.5 tracking-wider">KM</label><input id="input-km" type="number" class="cyber-input w-full rounded-lg px-3 py-2 text-xs touch-target" placeholder="85000"></div>
@@ -251,181 +227,260 @@
       </div>
     </div>
 
-    <!-- DASHBOARD -->
+    <!-- DASHBOARD MAIN CONTENT -->
     <div class="flex-1 overflow-auto p-3 md:p-8" id="content-area">
-      <div class="max-w-[1400px] mx-auto px-1 md:px-4 pb-8 md:pb-12">
+      <div class="max-w-[1600px] mx-auto px-1 md:px-4 pb-8 md:pb-12">
 
-        <!-- Tarjeta de Unidad -->
-        <div class="mb-4 md:mb-8">
-          <div class="glass-card rounded-xl md:rounded-2xl p-4 md:p-6 flex flex-col xs:flex-row items-center gap-4 shadow-lg relative overflow-hidden">
-             <div class="hud-corner hud-corner-tl"></div>
-             <div class="hud-corner hud-corner-tr"></div>
-             <div class="hud-corner hud-corner-bl"></div>
-             <div class="hud-corner hud-corner-br"></div>
-             
-             <div class="w-14 h-14 md:w-20 md:h-20 bg-gradient-to-br from-cyan-500/20 to-blue-500/5 text-cyan-400 border border-cyan-500/30 rounded-xl md:rounded-2xl flex items-center justify-center text-2xl md:text-4xl shrink-0 z-10 shadow-inner relative">
-                 <i class="fas fa-car-side float-anim"></i>
-                 <div class="absolute -bottom-1 -right-1 w-4 h-4 bg-cyan-400 rounded-full animate-pulse opacity-60"></div>
-             </div>
-             <div class="flex-1 z-10 w-full text-center xs:text-left">
-               <p class="text-cyan-400/60 text-[9px] md:text-xs font-bold uppercase tracking-widest mb-1 flex items-center xs:justify-start justify-center gap-2">
-                 <span class="status-dot"></span> <span class="hidden xs:inline">Sistema Seleccionado</span><span class="xs:hidden">Unidad</span>
-               </p>
-               <div class="flex flex-col xs:flex-row items-center xs:items-baseline gap-2 md:gap-4 mt-1">
-                 <h3 id="card-unidad" class="text-2xl md:text-4xl lg:text-5xl font-black text-white tracking-tight glow-text font-tech">--</h3>
-                 <span id="card-motor" class="text-cyan-400 border border-cyan-500/30 bg-cyan-500/10 px-3 py-1 rounded-full text-[10px] md:text-sm font-bold uppercase tracking-wide">Motor --</span>
-                 <span id="card-km" class="text-slate-400 bg-black/40 px-2 md:px-3 py-1 rounded-full text-[10px] md:text-sm font-bold tracking-widest shadow-inner border border-cyan-500/10 font-tech"><i class="fas fa-road"></i> -- KM</span>
-               </div>
-             </div>
-             <div class="flex gap-2 md:gap-4 z-10 w-full xs:w-auto justify-center">
-                 <div class="bg-black/40 rounded-lg md:rounded-xl p-2 md:p-3 border border-cyan-500/20 text-center min-w-[70px] md:min-w-[100px]">
-                     <p class="text-[8px] md:text-[10px] text-slate-400 uppercase font-bold tracking-widest mb-0.5">RPM</p>
-                     <p id="card-rpm" class="text-lg md:text-xl font-bold text-cyan-400 font-tech">--</p>
-                 </div>
-                 <div class="bg-black/40 rounded-lg md:rounded-xl p-2 md:p-3 border border-cyan-500/20 text-center min-w-[70px] md:min-w-[100px]">
-                     <p class="text-[8px] md:text-[10px] text-slate-400 uppercase font-bold tracking-widest mb-0.5">Estado</p>
-                     <p class="text-xs md:text-base font-bold text-cyan-400 mt-0.5"><i class="fas fa-circle text-[8px] animate-pulse"></i> <span class="hidden xs:inline">Online</span></p>
-                 </div>
-             </div>
-          </div>
-        </div>
-
-        <!-- KPIs -->
-        <h2 class="text-lg md:text-xl font-bold text-white mb-4 md:mb-6 flex items-center gap-2 font-tech tracking-wider"><i class="fas fa-chart-line text-cyan-400"></i> <span class="hidden xs:inline">Rendimiento de la Flota</span><span class="xs:hidden">KPIs</span></h2>
-        <div class="grid grid-cols-1 lg:grid-cols-12 gap-4 md:gap-6">
+        <!-- MAIN GRID: Dashboard Left + VTV Checklist Right -->
+        <div class="dashboard-grid grid grid-cols-1 lg:grid-cols-12 gap-4 md:gap-6">
           
-          <div class="lg:col-span-4 glass-card rounded-2xl md:rounded-3xl p-4 md:p-8 flex flex-col items-center justify-center shadow-lg relative overflow-hidden">
-            <div class="absolute inset-0 bg-gradient-to-b from-cyan-500/5 to-transparent pointer-events-none"></div>
-            <h3 class="uppercase text-cyan-400 text-[9px] md:text-[11px] font-bold tracking-widest mb-3 md:mb-6 text-center font-tech">DISPONIBILIDAD</h3>
-            <div class="gauge-wrapper mt-1 md:mt-2">
-              <svg class="gauge-circle w-full h-full -rotate-90" viewBox="0 0 100 100" preserveAspectRatio="xMidYMid meet">
-                <circle cx="50" cy="50" r="45" fill="none" stroke="rgba(6,182,212,0.1)" stroke-width="8"/>
-                <circle id="svg-disp" cx="50" cy="50" r="45" fill="none" stroke="#06b6d4" stroke-width="8" stroke-dasharray="0 282.7" stroke-linecap="round" class="transition-all duration-1000 ease-out" style="filter: drop-shadow(0 0 8px rgba(6,182,212,0.5));"/>
-              </svg>
-              <div class="absolute inset-0 flex flex-col items-center justify-center text-center">
-                <span id="kpi-disp" class="text-2xl md:text-3xl lg:text-4xl font-black text-cyan-400 mt-1 md:mt-2 font-tech">0.0%</span>
+          <!-- LEFT: Main Dashboard (8 cols) -->
+          <div class="lg:col-span-8">
+            
+            <!-- Tarjeta de Unidad -->
+            <div class="mb-4 md:mb-8">
+              <div class="glass-card rounded-xl md:rounded-2xl p-4 md:p-6 flex flex-col xs:flex-row items-center gap-4 shadow-lg relative overflow-hidden">
+                 <div class="hud-corner hud-corner-tl"></div><div class="hud-corner hud-corner-tr"></div>
+                 <div class="hud-corner hud-corner-bl"></div><div class="hud-corner hud-corner-br"></div>
+                 <div class="w-14 h-14 md:w-20 md:h-20 bg-gradient-to-br from-cyan-500/20 to-blue-500/5 text-cyan-400 border border-cyan-500/30 rounded-xl md:rounded-2xl flex items-center justify-center text-2xl md:text-4xl shrink-0 z-10 shadow-inner relative">
+                     <i class="fas fa-car-side float-anim"></i>
+                     <div class="absolute -bottom-1 -right-1 w-4 h-4 bg-cyan-400 rounded-full animate-pulse opacity-60"></div>
+                 </div>
+                 <div class="flex-1 z-10 w-full text-center xs:text-left">
+                   <p class="text-cyan-400/60 text-[9px] md:text-xs font-bold uppercase tracking-widest mb-1 flex items-center xs:justify-start justify-center gap-2">
+                     <span class="status-dot"></span> <span class="hidden xs:inline">Sistema Seleccionado</span><span class="xs:hidden">Unidad</span>
+                   </p>
+                   <div class="flex flex-col xs:flex-row items-center xs:items-baseline gap-2 md:gap-4 mt-1">
+                     <h3 id="card-unidad" class="text-2xl md:text-4xl lg:text-5xl font-black text-white tracking-tight glow-text font-tech">--</h3>
+                     <span id="card-motor" class="text-cyan-400 border border-cyan-500/30 bg-cyan-500/10 px-3 py-1 rounded-full text-[10px] md:text-sm font-bold uppercase tracking-wide">Motor --</span>
+                     <span id="card-km" class="text-slate-400 bg-black/40 px-2 md:px-3 py-1 rounded-full text-[10px] md:text-sm font-bold tracking-widest shadow-inner border border-cyan-500/10 font-tech"><i class="fas fa-road"></i> -- KM</span>
+                   </div>
+                 </div>
+                 <div class="flex gap-2 md:gap-4 z-10 w-full xs:w-auto justify-center">
+                     <div class="bg-black/40 rounded-lg md:rounded-xl p-2 md:p-3 border border-cyan-500/20 text-center min-w-[70px] md:min-w-[100px]">
+                         <p class="text-[8px] md:text-[10px] text-slate-400 uppercase font-bold tracking-widest mb-0.5">RPM</p>
+                         <p id="card-rpm" class="text-lg md:text-xl font-bold text-cyan-400 font-tech">--</p>
+                     </div>
+                     <div class="bg-black/40 rounded-lg md:rounded-xl p-2 md:p-3 border border-cyan-500/20 text-center min-w-[70px] md:min-w-[100px]">
+                         <p class="text-[8px] md:text-[10px] text-slate-400 uppercase font-bold tracking-widest mb-0.5">Estado</p>
+                         <p class="text-xs md:text-base font-bold text-cyan-400 mt-0.5"><i class="fas fa-circle text-[8px] animate-pulse"></i> <span class="hidden xs:inline">Online</span></p>
+                     </div>
+                 </div>
               </div>
             </div>
-            <p id="trend-disp" class="text-[10px] md:text-sm font-semibold mt-3 md:mt-6 bg-cyan-500/10 text-cyan-400 px-3 md:px-4 py-1 md:py-1.5 rounded-full border border-cyan-500/20"><i class="fas fa-arrow-up"></i> <span class="hidden xs:inline">Óptimo</span></p>
-          </div>
 
-          <div class="lg:col-span-8 grid grid-cols-2 gap-3 md:gap-6">
-            <div class="glass-card rounded-2xl md:rounded-3xl p-4 md:p-6 flex flex-col items-center justify-center text-center shadow-lg relative overflow-hidden group">
-              <div class="absolute top-0 right-0 w-24 h-24 md:w-32 md:h-32 bg-cyan-500/5 rounded-bl-full transition-all group-hover:scale-110 pointer-events-none"></div>
-              <div class="w-12 h-12 md:w-16 md:h-16 rounded-xl md:rounded-2xl bg-black/40 flex items-center justify-center text-cyan-400 text-2xl md:text-3xl shadow-inner border border-cyan-500/20 mb-3 md:mb-4 z-10"><i class="fas fa-clock"></i></div>
-              <div class="z-10">
-                <h4 class="text-slate-400 text-[10px] md:text-lg font-bold tracking-wider uppercase font-tech">MTBF</h4>
-                <p class="text-[8px] md:text-xs text-slate-500 mb-2 md:mb-4 hidden xs:block">Tiempo entre fallas</p>
-                <p class="text-3xl md:text-6xl font-black text-white font-tech"><span id="kpi-mtbf">0</span><span class="text-lg md:text-3xl text-slate-500 font-medium ml-1">h</span></p>
+            <!-- KPIs -->
+            <h2 class="text-lg md:text-xl font-bold text-white mb-4 md:mb-6 flex items-center gap-2 font-tech tracking-wider"><i class="fas fa-chart-line text-cyan-400"></i> <span class="hidden xs:inline">Rendimiento de la Flota</span><span class="xs:hidden">KPIs</span></h2>
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-4 md:gap-6 mb-6 md:mb-10">
+              <div class="lg:col-span-4 glass-card rounded-2xl md:rounded-3xl p-4 md:p-8 flex flex-col items-center justify-center shadow-lg relative overflow-hidden">
+                <div class="absolute inset-0 bg-gradient-to-b from-cyan-500/5 to-transparent pointer-events-none"></div>
+                <h3 class="uppercase text-cyan-400 text-[9px] md:text-[11px] font-bold tracking-widest mb-3 md:mb-6 text-center font-tech">DISPONIBILIDAD</h3>
+                <div class="gauge-wrapper mt-1 md:mt-2">
+                  <svg class="gauge-circle w-full h-full -rotate-90" viewBox="0 0 100 100" preserveAspectRatio="xMidYMid meet">
+                    <circle cx="50" cy="50" r="45" fill="none" stroke="rgba(6,182,212,0.1)" stroke-width="8"/>
+                    <circle id="svg-disp" cx="50" cy="50" r="45" fill="none" stroke="#06b6d4" stroke-width="8" stroke-dasharray="0 282.7" stroke-linecap="round" class="transition-all duration-1000 ease-out" style="filter: drop-shadow(0 0 8px rgba(6,182,212,0.5));"/>
+                  </svg>
+                  <div class="absolute inset-0 flex flex-col items-center justify-center text-center">
+                    <span id="kpi-disp" class="text-2xl md:text-3xl lg:text-4xl font-black text-cyan-400 mt-1 md:mt-2 font-tech">0.0%</span>
+                  </div>
+                </div>
+                <p id="trend-disp" class="text-[10px] md:text-sm font-semibold mt-3 md:mt-6 bg-cyan-500/10 text-cyan-400 px-3 md:px-4 py-1 md:py-1.5 rounded-full border border-cyan-500/20"><i class="fas fa-arrow-up"></i> <span class="hidden xs:inline">Óptimo</span></p>
+              </div>
+              <div class="lg:col-span-8 grid grid-cols-2 gap-3 md:gap-6">
+                <div class="glass-card rounded-2xl md:rounded-3xl p-4 md:p-6 flex flex-col items-center justify-center text-center shadow-lg relative overflow-hidden group">
+                  <div class="absolute top-0 right-0 w-24 h-24 md:w-32 md:h-32 bg-cyan-500/5 rounded-bl-full transition-all group-hover:scale-110 pointer-events-none"></div>
+                  <div class="w-12 h-12 md:w-16 md:h-16 rounded-xl md:rounded-2xl bg-black/40 flex items-center justify-center text-cyan-400 text-2xl md:text-3xl shadow-inner border border-cyan-500/20 mb-3 md:mb-4 z-10"><i class="fas fa-clock"></i></div>
+                  <div class="z-10">
+                    <h4 class="text-slate-400 text-[10px] md:text-lg font-bold tracking-wider uppercase font-tech">MTBF</h4>
+                    <p class="text-[8px] md:text-xs text-slate-500 mb-2 md:mb-4 hidden xs:block">Tiempo entre fallas</p>
+                    <p class="text-3xl md:text-6xl font-black text-white font-tech"><span id="kpi-mtbf">0</span><span class="text-lg md:text-3xl text-slate-500 font-medium ml-1">h</span></p>
+                  </div>
+                </div>
+                <div class="glass-card rounded-2xl md:rounded-3xl p-4 md:p-6 flex flex-col items-center justify-center text-center shadow-lg relative overflow-hidden group">
+                  <div class="absolute top-0 right-0 w-24 h-24 md:w-32 md:h-32 bg-orange-500/5 rounded-bl-full transition-all group-hover:scale-110 pointer-events-none"></div>
+                  <div class="w-12 h-12 md:w-16 md:h-16 rounded-xl md:rounded-2xl bg-black/40 flex items-center justify-center text-orange-400 text-2xl md:text-3xl shadow-inner border border-orange-500/20 mb-3 md:mb-4 z-10"><i class="fas fa-wrench"></i></div>
+                  <div class="z-10">
+                    <h4 class="text-slate-400 text-[10px] md:text-lg font-bold tracking-wider uppercase font-tech">MTTR</h4>
+                    <p class="text-[8px] md:text-xs text-slate-500 mb-2 md:mb-4 hidden xs:block">Tiempo de reparación</p>
+                    <p class="text-3xl md:text-6xl font-black text-white font-tech"><span id="kpi-mttr">0</span><span class="text-lg md:text-3xl text-slate-500 font-medium ml-1">h</span></p>
+                  </div>
+                </div>
               </div>
             </div>
-            <div class="glass-card rounded-2xl md:rounded-3xl p-4 md:p-6 flex flex-col items-center justify-center text-center shadow-lg relative overflow-hidden group">
-              <div class="absolute top-0 right-0 w-24 h-24 md:w-32 md:h-32 bg-orange-500/5 rounded-bl-full transition-all group-hover:scale-110 pointer-events-none"></div>
-              <div class="w-12 h-12 md:w-16 md:h-16 rounded-xl md:rounded-2xl bg-black/40 flex items-center justify-center text-orange-400 text-2xl md:text-3xl shadow-inner border border-orange-500/20 mb-3 md:mb-4 z-10"><i class="fas fa-wrench"></i></div>
-              <div class="z-10">
-                <h4 class="text-slate-400 text-[10px] md:text-lg font-bold tracking-wider uppercase font-tech">MTTR</h4>
-                <p class="text-[8px] md:text-xs text-slate-500 mb-2 md:mb-4 hidden xs:block">Tiempo de reparación</p>
-                <p class="text-3xl md:text-6xl font-black text-white font-tech"><span id="kpi-mttr">0</span><span class="text-lg md:text-3xl text-slate-500 font-medium ml-1">h</span></p>
+
+            <!-- GRÁFICOS -->
+            <h2 class="text-lg md:text-xl font-bold text-white mb-4 md:mb-6 flex items-center gap-2 font-tech tracking-wider"><i class="fas fa-chart-area text-purple-400"></i> <span class="hidden xs:inline">Tendencia Temporal</span><span class="xs:hidden">Gráficos</span></h2>
+            <div class="glass-card rounded-2xl md:rounded-3xl p-3 md:p-6 shadow-lg mb-6 md:mb-10">
+              <div class="relative w-full" style="aspect-ratio: 16/9; min-height: 200px;"><canvas id="timelineChart" class="w-full h-full"></canvas></div>
+            </div>
+
+            <!-- Matriz de Correlación -->
+            <h2 class="text-lg md:text-xl font-bold text-white mb-4 md:mb-6 flex items-center gap-2 font-tech tracking-wider"><i class="fas fa-th text-green-400"></i> <span class="hidden xs:inline">Matriz de Correlación</span><span class="xs:hidden">Correlación</span></h2>
+            <div class="glass-card rounded-2xl md:rounded-3xl p-3 md:p-6 shadow-lg overflow-x-auto mb-6 md:mb-10">
+              <div id="correlation-matrix" class="min-w-[400px] md:min-w-[600px] text-white text-[10px] md:text-sm"></div>
+              <div class="mt-4 md:mt-6 flex justify-end items-center gap-1 md:gap-2 text-[8px] md:text-xs text-slate-400 flex-wrap">
+                 <span class="hidden xs:inline">Escala:</span>
+                 <div class="flex items-center gap-1"><div class="w-3 h-3 md:w-4 md:h-4 bg-rose-500 rounded-sm"></div><span class="hidden xs:inline">Inversa</span></div>
+                 <div class="flex items-center gap-1"><div class="w-3 h-3 md:w-4 md:h-4 bg-slate-800 border border-slate-600 rounded-sm"></div><span class="hidden xs:inline">Nula</span></div>
+                 <div class="flex items-center gap-1"><div class="w-3 h-3 md:w-4 md:h-4 bg-cyan-500 rounded-sm"></div><span class="hidden xs:inline">Directa</span></div>
+              </div>
+            </div>
+
+            <!-- DATASET + DESCRIBE() -->
+            <div class="mt-6 md:mt-10">
+              <h2 class="text-lg md:text-xl font-bold text-white mb-4 md:mb-6 flex items-center gap-2 font-tech tracking-wider"><i class="fas fa-database text-cyan-400"></i> <span class="hidden xs:inline">Dataset Acumulado</span><span class="xs:hidden">Dataset</span></h2>
+              <div class="glass-card rounded-2xl md:rounded-3xl p-3 md:p-6 shadow-lg mb-4 md:mb-6">
+                <div class="flex justify-between items-center mb-3 md:mb-4">
+                  <h3 class="text-cyan-400 font-bold text-sm font-tech"><i class="fas fa-table mr-1"></i> Registros (<span id="dataset-count">0</span>/20)</h3>
+                  <div class="flex gap-2">
+                    <button onclick="exportCSV()" class="bg-emerald-600/80 hover:bg-emerald-500 text-white text-[10px] md:text-xs px-3 py-1.5 rounded-lg flex items-center gap-1 touch-target border border-emerald-500/30"><i class="fas fa-file-csv"></i> <span class="hidden xs:inline">CSV</span></button>
+                    <button onclick="generateEnhancedPDF()" class="btn-purple text-white text-[10px] md:text-xs px-3 py-1.5 rounded-lg flex items-center gap-1 touch-target"><i class="fas fa-file-pdf"></i> <span class="hidden xs:inline">PDF</span></button>
+                  </div>
+                </div>
+                <div class="overflow-x-auto custom-scrollbar"><table class="w-full border-collapse cyber-table text-[9px] md:text-xs" id="dataset-table"></table></div>
+              </div>
+              <div class="glass-card rounded-2xl md:rounded-3xl p-3 md:p-6 shadow-lg">
+                <h3 class="text-purple-400 font-bold text-sm mb-3 md:mb-4 flex items-center gap-2 font-tech"><i class="fas fa-calculator mr-1"></i> DESCRIBE() - Estadísticas</h3>
+                <p class="text-[9px] md:text-xs text-slate-400 mb-3 md:mb-4"><i class="fas fa-info-circle mr-1"></i> <span class="hidden xs:inline">count, mean, std, min, 25%, 50%, 75%, max.</span><span class="xs:hidden">Estadísticas básicas.</span></p>
+                <div id="describe-table-container" class="overflow-x-auto custom-scrollbar"></div>
+              </div>
+            </div>
+
+            <!-- Predicciones IA -->
+            <h2 class="text-lg md:text-xl font-bold text-white mb-4 md:mb-6 mt-6 md:mt-10 flex items-center gap-2 font-tech tracking-wider"><i class="fas fa-brain text-indigo-400"></i> <span class="hidden xs:inline">Recomendaciones IA</span><span class="xs:hidden">IA</span></h2>
+            <div class="glass-card border-indigo-500/30 rounded-2xl md:rounded-3xl p-4 md:p-6 shadow-lg relative overflow-hidden">
+              <div class="absolute top-0 left-0 w-1 md:w-1.5 h-full bg-gradient-to-b from-indigo-500 to-purple-500"></div>
+              <div class="flex flex-col md:flex-row gap-4 md:gap-8">
+                <div class="flex-1 flex flex-col justify-between" id="predictive-panel"></div>
+                <div class="w-full md:w-1/3 bg-black/40 p-3 md:p-5 rounded-xl md:rounded-2xl border border-cyan-500/10 shrink-0">
+                   <h4 class="text-slate-300 font-bold mb-2 md:mb-3 text-xs md:text-sm font-tech">Última Ingesta</h4>
+                   <ul id="ml-status-list" class="space-y-2 text-[9px] md:text-xs text-slate-400"></ul>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- RIGHT: VTV Checklist Sidebar (4 cols) -->
+          <div class="vtv-sidebar lg:col-span-4">
+            
+            <!-- VTV SCORE HEADER -->
+            <div class="glass-card rounded-2xl p-4 md:p-6 shadow-lg mb-4 md:mb-6 sticky top-20">
+              <div class="flex items-center gap-3 mb-4">
+                <div class="score-ring" id="vtv-score-ring" style="--score-pct: 0%;">
+                  <div class="score-ring-inner">
+                    <span id="vtv-score-value" class="text-lg font-black text-cyan-400 font-tech">0%</span>
+                  </div>
+                </div>
+                <div>
+                  <h3 class="text-sm font-bold text-white font-tech">SCORE VTV</h3>
+                  <p id="vtv-score-label" class="text-[10px] text-slate-400">Sin evaluar</p>
+                </div>
+              </div>
+              
+              <!-- Progress bar -->
+              <div class="mb-3">
+                <div class="flex justify-between text-[9px] mb-1">
+                  <span class="text-slate-400">Preparación</span>
+                  <span id="vtv-progress-text" class="text-cyan-400 font-bold font-tech">0/24</span>
+                </div>
+                <div class="vtv-progress-bg">
+                  <div class="vtv-progress-fill" id="vtv-progress-bar" style="width: 0%; background: #06b6d4;"></div>
+                </div>
+              </div>
+              
+              <!-- Status badges -->
+              <div class="flex gap-2 flex-wrap" id="vtv-status-badges">
+                <span class="px-2 py-0.5 rounded-full text-[9px] font-bold bg-rose-500/20 text-rose-400 border border-rose-500/30">
+                  <i class="fas fa-times-circle mr-1"></i><span id="vtv-failed">0</span> Faltan
+                </span>
+                <span class="px-2 py-0.5 rounded-full text-[9px] font-bold bg-cyan-500/20 text-cyan-400 border border-cyan-500/30">
+                  <i class="fas fa-check-circle mr-1"></i><span id="vtv-passed">0</span> Listos
+                </span>
+              </div>
+              
+              <!-- Alerts -->
+              <div id="vtv-alerts" class="mt-3 hidden">
+                <p class="text-[9px] text-amber-400 font-bold mb-1 flex items-center gap-1"><i class="fas fa-exclamation-triangle"></i> Pendientes para VTV:</p>
+                <div id="vtv-alerts-list" class="space-y-1"></div>
+              </div>
+              
+              <div id="vtv-all-clear" class="mt-3 hidden">
+                <p class="text-[9px] text-cyan-400 font-bold flex items-center gap-1"><i class="fas fa-check-circle"></i> ¡Unidad lista para VTV!</p>
+              </div>
+            </div>
+
+            <!-- CHECKLIST -->
+            <div class="glass-card rounded-2xl p-4 md:p-6 shadow-lg mb-4 md:mb-6">
+              <h3 class="text-sm font-bold text-white font-tech mb-4 flex items-center gap-2">
+                <i class="fas fa-clipboard-check text-cyan-400"></i> CHECKLIST VTV
+              </h3>
+              
+              <!-- Luces -->
+              <div class="vtv-category">
+                <div class="vtv-category-title"><i class="fas fa-lightbulb text-amber-400"></i> 💡 Iluminación</div>
+                <div class="space-y-0.5" id="vtv-luces"></div>
+              </div>
+              
+              <!-- Frenos -->
+              <div class="vtv-category">
+                <div class="vtv-category-title"><i class="fas fa-exclamation-circle text-rose-400"></i> 🛑 Frenos</div>
+                <div class="space-y-0.5" id="vtv-frenos"></div>
+              </div>
+              
+              <!-- Dirección y suspensión -->
+              <div class="vtv-category">
+                <div class="vtv-category-title"><i class="fas fa-cog text-cyan-400"></i> ⚙️ Dirección y Suspensión</div>
+                <div class="space-y-0.5" id="vtv-direccion"></div>
+              </div>
+              
+              <!-- Neumáticos -->
+              <div class="vtv-category">
+                <div class="vtv-category-title"><i class="fas fa-circle text-slate-400"></i> 🚗 Neumáticos</div>
+                <div class="space-y-0.5" id="vtv-neumaticos"></div>
+              </div>
+              
+              <!-- Escape -->
+              <div class="vtv-category">
+                <div class="vtv-category-title"><i class="fas fa-wind text-slate-400"></i> 🌫️ Escape y Emisiones</div>
+                <div class="space-y-0.5" id="vtv-escape"></div>
+              </div>
+              
+              <!-- Otros -->
+              <div class="vtv-category">
+                <div class="vtv-category-title"><i class="fas fa-shield-alt text-green-400"></i> 🪪 Otros Controles</div>
+                <div class="space-y-0.5" id="vtv-otros"></div>
+              </div>
+              
+              <!-- Documentación -->
+              <div class="vtv-category">
+                <div class="vtv-category-title"><i class="fas fa-file-alt text-purple-400"></i> 📄 Documentación</div>
+                <div class="space-y-0.5" id="vtv-documentacion"></div>
+              </div>
+            </div>
+            
+            <!-- Resumen Ejecutivo -->
+            <div class="glass-card rounded-2xl p-4 md:p-6 shadow-lg">
+              <h3 class="text-sm font-bold text-white font-tech mb-3 flex items-center gap-2">
+                <i class="fas fa-book-open text-cyan-400"></i> <span class="hidden xs:inline">Resumen Explicado</span><span class="xs:hidden">Ayuda</span>
+              </h3>
+              <div class="space-y-3 text-[10px] md:text-xs text-slate-300">
+                <div class="bg-black/30 p-3 rounded-lg border border-cyan-500/10">
+                  <h4 class="text-cyan-400 font-bold mb-1 font-tech text-[10px]"><i class="fas fa-chart-pie mr-1"></i> KPIs</h4>
+                  <p class="mb-1"><span class="text-white font-semibold bg-black/40 px-1.5 py-0.5 rounded text-[9px]">Disponibilidad:</span> % operativo. ~100% = ideal.</p>
+                  <p><span class="text-white font-semibold bg-black/40 px-1.5 py-0.5 rounded text-[9px]">MTBF:</span> Horas entre fallas. <strong>Más alto = confiable.</strong></p>
+                </div>
+                <div class="bg-black/30 p-3 rounded-lg border border-cyan-500/10">
+                  <h4 class="text-purple-400 font-bold mb-1 font-tech text-[10px]"><i class="fas fa-brain mr-1"></i> IA Predictiva</h4>
+                  <p>Alertas si <span class="text-rose-400 font-semibold">temp &gt;105°C</span> o <span class="text-orange-400 font-semibold">vibración &gt;5 mm/s</span>.</p>
+                </div>
+                <div class="bg-black/30 p-3 rounded-lg border border-cyan-500/10">
+                  <h4 class="text-cyan-400 font-bold mb-1 font-tech text-[10px]"><i class="fas fa-lightbulb mr-1"></i> Recomendación</h4>
+                  <p>Usa el checklist para asegurar que tu unidad está lista para VTV. Prioriza unidades con alertas.</p>
+                </div>
               </div>
             </div>
           </div>
         </div>
-        
-        <!-- GRÁFICOS -->
-        <h2 class="text-lg md:text-xl font-bold text-white mb-4 md:mb-6 mt-6 md:mt-10 flex items-center gap-2 font-tech tracking-wider"><i class="fas fa-chart-area text-purple-400"></i> <span class="hidden xs:inline">Tendencia Temporal</span><span class="xs:hidden">Gráficos</span></h2>
-        <div class="glass-card rounded-2xl md:rounded-3xl p-3 md:p-6 shadow-lg">
-          <div class="relative w-full" style="aspect-ratio: 16/9; min-height: 200px;">
-            <canvas id="timelineChart" class="w-full h-full"></canvas>
-          </div>
-        </div>
-
-        <!-- Matriz de Correlación -->
-        <h2 class="text-lg md:text-xl font-bold text-white mb-4 md:mb-6 mt-6 md:mt-10 flex items-center gap-2 font-tech tracking-wider"><i class="fas fa-th text-green-400"></i> <span class="hidden xs:inline">Matriz de Correlación</span><span class="xs:hidden">Correlación</span></h2>
-        <div class="glass-card rounded-2xl md:rounded-3xl p-3 md:p-6 shadow-lg overflow-x-auto">
-          <div id="correlation-matrix" class="min-w-[400px] md:min-w-[600px] text-white text-[10px] md:text-sm"></div>
-          <div class="mt-4 md:mt-6 flex justify-end items-center gap-1 md:gap-2 text-[8px] md:text-xs text-slate-400 flex-wrap">
-             <span class="hidden xs:inline">Escala:</span>
-             <div class="flex items-center gap-1"><div class="w-3 h-3 md:w-4 md:h-4 bg-rose-500 rounded-sm"></div><span class="hidden xs:inline">Inversa</span></div>
-             <div class="flex items-center gap-1"><div class="w-3 h-3 md:w-4 md:h-4 bg-slate-800 border border-slate-600 rounded-sm"></div><span class="hidden xs:inline">Nula</span></div>
-             <div class="flex items-center gap-1"><div class="w-3 h-3 md:w-4 md:h-4 bg-cyan-500 rounded-sm"></div><span class="hidden xs:inline">Directa</span></div>
-          </div>
-        </div>
-
-        <!-- DATASET + DESCRIBE() -->
-        <div class="mt-6 md:mt-10">
-          <h2 class="text-lg md:text-xl font-bold text-white mb-4 md:mb-6 flex items-center gap-2 font-tech tracking-wider">
-            <i class="fas fa-database text-cyan-400"></i> <span class="hidden xs:inline">Dataset Acumulado en Memoria</span><span class="xs:hidden">Dataset</span>
-          </h2>
-          
-          <div class="glass-card rounded-2xl md:rounded-3xl p-3 md:p-6 shadow-lg mb-4 md:mb-6">
-            <div class="flex justify-between items-center mb-3 md:mb-4">
-              <h3 class="text-cyan-400 font-bold text-sm font-tech"><i class="fas fa-table mr-1"></i> Registros (<span id="dataset-count">0</span>/20)</h3>
-              <div class="flex gap-2">
-                <button onclick="exportCSV()" class="bg-emerald-600/80 hover:bg-emerald-500 text-white text-[10px] md:text-xs px-3 py-1.5 rounded-lg flex items-center gap-1 touch-target border border-emerald-500/30">
-                  <i class="fas fa-file-csv"></i> <span class="hidden xs:inline">CSV</span>
-                </button>
-                <button onclick="generateEnhancedPDF()" class="btn-purple text-white text-[10px] md:text-xs px-3 py-1.5 rounded-lg flex items-center gap-1 touch-target">
-                  <i class="fas fa-file-pdf"></i> <span class="hidden xs:inline">PDF</span>
-                </button>
-              </div>
-            </div>
-            <div class="overflow-x-auto custom-scrollbar">
-              <table class="w-full border-collapse cyber-table text-[9px] md:text-xs" id="dataset-table"></table>
-            </div>
-            <p class="text-[9px] text-slate-500 mt-2 text-center italic">* Datos persisten en memoria local. RESET para borrar.</p>
-          </div>
-
-          <div class="glass-card rounded-2xl md:rounded-3xl p-3 md:p-6 shadow-lg">
-            <h3 class="text-purple-400 font-bold text-sm mb-3 md:mb-4 flex items-center gap-2 font-tech">
-              <i class="fas fa-calculator mr-1"></i> DESCRIBE() - Estadísticas del Dataset
-            </h3>
-            <p class="text-[9px] md:text-xs text-slate-400 mb-3 md:mb-4">
-              <i class="fas fa-info-circle mr-1"></i> 
-              <span class="hidden xs:inline">Estadísticas básicas por columna: count, mean, std, min, 25%, 50%, 75%, max. Detecta outliers y calidad de datos.</span>
-              <span class="xs:hidden">Estadísticas básicas para análisis.</span>
-            </p>
-            <div id="describe-table-container" class="overflow-x-auto custom-scrollbar"></div>
-          </div>
-        </div>
-
-        <!-- Predicciones IA -->
-        <h2 class="text-lg md:text-xl font-bold text-white mb-4 md:mb-6 mt-6 md:mt-10 flex items-center gap-2 font-tech tracking-wider"><i class="fas fa-brain text-indigo-400"></i> <span class="hidden xs:inline">Recomendaciones IA</span><span class="xs:hidden">IA</span></h2>
-        <div class="glass-card border-indigo-500/30 rounded-2xl md:rounded-3xl p-4 md:p-6 shadow-lg relative overflow-hidden">
-          <div class="absolute top-0 left-0 w-1 md:w-1.5 h-full bg-gradient-to-b from-indigo-500 to-purple-500"></div>
-          <div class="flex flex-col md:flex-row gap-4 md:gap-8">
-            <div class="flex-1 flex flex-col justify-between" id="predictive-panel"></div>
-            <div class="w-full md:w-1/3 bg-black/40 p-3 md:p-5 rounded-xl md:rounded-2xl border border-cyan-500/10 shrink-0">
-               <h4 class="text-slate-300 font-bold mb-2 md:mb-3 text-xs md:text-sm font-tech">Última Ingesta</h4>
-               <ul id="ml-status-list" class="space-y-2 text-[9px] md:text-xs text-slate-400"></ul>
-            </div>
-          </div>
-        </div>
-
-        <!-- RESUMEN EJECUTIVO -->
-        <div class="mt-8 md:mt-12 glass-card rounded-2xl md:rounded-3xl p-4 md:p-8 shadow-2xl relative overflow-hidden">
-          <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-cyan-500 via-purple-500 to-blue-500"></div>
-          <h2 class="text-lg md:text-2xl font-bold text-white mb-4 md:mb-6 flex items-center gap-2 md:gap-3 font-tech tracking-wider">
-            <i class="fas fa-book-open text-cyan-400"></i> <span class="hidden xs:inline">Resumen Explicado</span><span class="xs:hidden">Ayuda</span>
-          </h2>
-          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 md:gap-6 text-slate-300 text-[10px] md:text-sm leading-relaxed">
-            <div class="bg-black/30 p-3 md:p-5 rounded-lg md:rounded-xl border border-cyan-500/10">
-              <h3 class="text-cyan-400 font-bold mb-2 flex items-center gap-2 text-xs md:text-base font-tech"><i class="fas fa-chart-pie"></i> 1. KPIs</h3>
-              <p class="mb-1.5"><span class="text-white font-semibold bg-black/40 px-1.5 py-0.5 rounded text-[9px]">Disponibilidad:</span> % tiempo operativo. ~100% = ideal.</p>
-              <p class="mb-1.5"><span class="text-white font-semibold bg-black/40 px-1.5 py-0.5 rounded text-[9px]">MTBF:</span> Horas entre fallas. <strong>Más alto = confiable.</strong></p>
-              <p><span class="text-white font-semibold bg-black/40 px-1.5 py-0.5 rounded text-[9px]">MTTR:</span> Tiempo reparación. <strong>Más bajo = eficiente.</strong></p>
-            </div>
-            <div class="bg-black/30 p-3 md:p-5 rounded-lg md:rounded-xl border border-cyan-500/10">
-              <h3 class="text-purple-400 font-bold mb-2 flex items-center gap-2 text-xs md:text-base font-tech"><i class="fas fa-brain"></i> 2. IA Predictiva</h3>
-              <p class="mb-1.5">Alertas si <span class="text-rose-400 font-semibold">temp &gt;105°C</span> o <span class="text-orange-400 font-semibold">vibración &gt;5 mm/s</span>.</p>
-              <p>Cruza datos con <strong>kilometraje</strong> para anticipar mantenimientos.</p>
-            </div>
-            <div class="bg-black/30 p-3 md:p-5 rounded-lg md:rounded-xl border border-cyan-500/10 sm:col-span-2">
-              <h3 class="text-cyan-400 font-bold mb-2 flex items-center gap-2 text-xs md:text-base font-tech"><i class="fas fa-lightbulb"></i> 💡 Recomendación</h3>
-              <p>Prioriza unidades con alertas, usa <strong>aceites sintéticos</strong> y mantén registros actualizados. La detección temprana evita paradas costosas.</p>
-            </div>
-          </div>
-        </div>
-
       </div>
     </div>
   </div>
@@ -434,22 +489,10 @@
 <!-- Mobile Bottom Navigation -->
 <nav id="mobile-nav" class="fixed bottom-0 left-0 right-0 bg-black/90 border-t border-cyan-500/20 p-2 md:hidden z-20 backdrop-blur-xl">
   <div class="flex justify-around items-center">
-    <button onclick="document.getElementById('mobile-menu-btn').click()" class="flex flex-col items-center gap-1 p-2 text-cyan-400 touch-target">
-      <i class="fas fa-bars text-lg"></i>
-      <span class="text-[9px]">Menú</span>
-    </button>
-    <button onclick="calculateKPIs()" class="flex flex-col items-center gap-1 p-2 text-slate-300 touch-target">
-      <i class="fas fa-sync text-lg"></i>
-      <span class="text-[9px]">Actualizar</span>
-    </button>
-    <button onclick="generateEnhancedPDF()" class="flex flex-col items-center gap-1 p-2 text-slate-300 touch-target">
-      <i class="fas fa-file-pdf text-lg"></i>
-      <span class="text-[9px]">PDF</span>
-    </button>
-    <button onclick="submitData()" class="flex flex-col items-center gap-1 p-2 text-cyan-400 touch-target">
-      <i class="fas fa-plus-circle text-lg"></i>
-      <span class="text-[9px]">Nuevo</span>
-    </button>
+    <button onclick="document.getElementById('mobile-menu-btn').click()" class="flex flex-col items-center gap-1 p-2 text-cyan-400 touch-target"><i class="fas fa-bars text-lg"></i><span class="text-[9px]">Menú</span></button>
+    <button onclick="calculateKPIs()" class="flex flex-col items-center gap-1 p-2 text-slate-300 touch-target"><i class="fas fa-sync text-lg"></i><span class="text-[9px]">Actualizar</span></button>
+    <button onclick="generateEnhancedPDF()" class="flex flex-col items-center gap-1 p-2 text-slate-300 touch-target"><i class="fas fa-file-pdf text-lg"></i><span class="text-[9px]">PDF</span></button>
+    <button onclick="submitData()" class="flex flex-col items-center gap-1 p-2 text-cyan-400 touch-target"><i class="fas fa-plus-circle text-lg"></i><span class="text-[9px]">Nuevo</span></button>
   </div>
 </nav>
 
@@ -458,119 +501,133 @@
     <div class="flex justify-between items-center border-b-4 border-slate-900 pb-4 mb-6">
         <div class="flex items-center gap-3">
             <div class="w-10 h-10 bg-gradient-to-br from-cyan-500 to-blue-600 text-white rounded-lg flex items-center justify-center text-xl font-bold shadow-lg">⚙️</div>
-            <div>
-                <h1 class="text-2xl font-black text-slate-900 tracking-tighter font-tech">NEXO-ART</h1>
-                <p class="text-[9px] font-bold text-slate-500 uppercase tracking-wider">Reporte Predictivo</p>
-            </div>
+            <div><h1 class="text-2xl font-black text-slate-900 tracking-tighter font-tech">NEXO-ART</h1><p class="text-[9px] font-bold text-slate-500 uppercase tracking-wider">Reporte Predictivo</p></div>
         </div>
-        <div class="text-right">
-            <p class="text-[9px] text-slate-400 font-bold uppercase">Generado</p>
-            <p id="pdf-fecha" class="text-[10px] font-bold text-indigo-700">--</p>
-        </div>
+        <div class="text-right"><p class="text-[9px] text-slate-400 font-bold uppercase">Generado</p><p id="pdf-fecha" class="text-[10px] font-bold text-indigo-700">--</p></div>
     </div>
     <div class="bg-gradient-to-r from-slate-50 to-white rounded-xl p-4 mb-5 border border-slate-200">
         <h2 class="text-[9px] font-black text-slate-400 uppercase tracking-wider mb-3">📋 Unidad en Análisis</h2>
         <div class="grid grid-cols-2 gap-3">
-            <div>
-                <p class="text-[9px] text-slate-400 uppercase">Identificador</p>
-                <p id="pdf-unidad" class="text-lg font-black text-slate-900 font-tech">--</p>
-                <p id="pdf-id" class="text-[10px] font-bold text-slate-500">ID: --</p>
-            </div>
-            <div class="text-right">
-                <p class="text-[9px] text-slate-400 uppercase">Configuración</p>
-                <p id="pdf-motor" class="text-base font-black text-indigo-600 bg-indigo-50 px-3 py-1 rounded-lg inline-block">--</p>
-            </div>
-            <div>
-                <p class="text-[9px] text-slate-400 uppercase">Kilometraje</p>
-                <p id="pdf-km" class="text-base font-black text-teal-700 font-tech">-- KM</p>
-            </div>
-            <div class="text-right">
-                <p class="text-[9px] text-slate-400 uppercase">Última Lectura</p>
-                <p class="text-[10px] font-bold text-slate-600" id="pdf-last-reading">--</p>
-            </div>
+            <div><p class="text-[9px] text-slate-400 uppercase">Identificador</p><p id="pdf-unidad" class="text-lg font-black text-slate-900 font-tech">--</p><p id="pdf-id" class="text-[10px] font-bold text-slate-500">ID: --</p></div>
+            <div class="text-right"><p class="text-[9px] text-slate-400 uppercase">Configuración</p><p id="pdf-motor" class="text-base font-black text-indigo-600 bg-indigo-50 px-3 py-1 rounded-lg inline-block">--</p></div>
+            <div><p class="text-[9px] text-slate-400 uppercase">Kilometraje</p><p id="pdf-km" class="text-base font-black text-teal-700 font-tech">-- KM</p></div>
+            <div class="text-right"><p class="text-[9px] text-slate-400 uppercase">Última Lectura</p><p class="text-[10px] font-bold text-slate-600" id="pdf-last-reading">--</p></div>
         </div>
     </div>
     <div class="grid grid-cols-3 gap-3 mb-5">
-        <div class="bg-indigo-50 border border-indigo-200 rounded-xl p-3 text-center">
-            <p class="text-[8px] text-indigo-600 font-black uppercase">Disponibilidad</p>
-            <p id="pdf-disp-val" class="text-xl font-black text-indigo-900 font-tech">--</p>
-        </div>
-        <div class="bg-teal-50 border border-teal-200 rounded-xl p-3 text-center">
-            <p class="text-[8px] text-teal-600 font-black uppercase">MTBF</p>
-            <p id="pdf-mtbf-val" class="text-xl font-black text-teal-900 font-tech">--</p>
-        </div>
-        <div class="bg-orange-50 border border-orange-200 rounded-xl p-3 text-center">
-            <p class="text-[8px] text-orange-600 font-black uppercase">MTTR</p>
-            <p id="pdf-mttr-val" class="text-xl font-black text-orange-900 font-tech">--</p>
-        </div>
+        <div class="bg-indigo-50 border border-indigo-200 rounded-xl p-3 text-center"><p class="text-[8px] text-indigo-600 font-black uppercase">Disponibilidad</p><p id="pdf-disp-val" class="text-xl font-black text-indigo-900 font-tech">--</p></div>
+        <div class="bg-teal-50 border border-teal-200 rounded-xl p-3 text-center"><p class="text-[8px] text-teal-600 font-black uppercase">MTBF</p><p id="pdf-mtbf-val" class="text-xl font-black text-teal-900 font-tech">--</p></div>
+        <div class="bg-orange-50 border border-orange-200 rounded-xl p-3 text-center"><p class="text-[8px] text-orange-600 font-black uppercase">MTTR</p><p id="pdf-mttr-val" class="text-xl font-black text-orange-900 font-tech">--</p></div>
     </div>
+    
+    <!-- 🔹 CHECKLIST VTV EN PDF -->
     <div class="mb-5">
         <h2 class="text-[9px] font-black text-slate-700 uppercase tracking-wider mb-3 pb-2 border-b border-slate-200 flex items-center gap-2">
-            <span>📈</span> Resumen Estadístico
+            <span>✅</span> Checklist VTV - Estado de Preparación
         </h2>
+        <div class="grid grid-cols-2 gap-2 text-[10px] mb-3">
+            <div class="bg-slate-50 rounded-lg p-2">
+                <p class="font-bold text-slate-600 mb-1">Score VTV</p>
+                <p id="pdf-vtv-score" class="text-lg font-black text-teal-700 font-tech">--</p>
+            </div>
+            <div class="bg-slate-50 rounded-lg p-2">
+                <p class="font-bold text-slate-600 mb-1">Estado</p>
+                <p id="pdf-vtv-status" class="font-black text-slate-900">--</p>
+            </div>
+        </div>
+        <div id="pdf-vtv-checklist" class="space-y-1"></div>
+    </div>
+    
+    <div class="mb-5">
+        <h2 class="text-[9px] font-black text-slate-700 uppercase tracking-wider mb-3 pb-2 border-b border-slate-200 flex items-center gap-2"><span>📈</span> Resumen Estadístico</h2>
         <div class="grid grid-cols-2 gap-2 text-[10px]">
-            <div class="bg-slate-50 rounded-lg p-2">
-                <p class="font-bold text-slate-600 mb-1">Uptime (horas)</p>
-                <p>Media: <span id="stat-uptime-mean" class="font-black text-slate-900 font-tech">--</span>h</p>
-                <p class="text-[9px] text-slate-500">Rango: <span id="stat-uptime-range" class="font-tech">--</span></p>
-            </div>
-            <div class="bg-slate-50 rounded-lg p-2">
-                <p class="font-bold text-slate-600 mb-1">Downtime (horas)</p>
-                <p>Media: <span id="stat-downtime-mean" class="font-black text-slate-900 font-tech">--</span>h</p>
-            </div>
-            <div class="bg-slate-50 rounded-lg p-2">
-                <p class="font-bold text-slate-600 mb-1">Kilometraje</p>
-                <p>Media: <span id="stat-km-mean" class="font-black text-slate-900 font-tech">--</span> KM</p>
-            </div>
-            <div class="bg-slate-50 rounded-lg p-2">
-                <p class="font-bold text-slate-600 mb-1">Temperatura</p>
-                <p>Media: <span id="stat-temp-mean" class="font-black text-slate-900 font-tech">--</span>°C</p>
-            </div>
-            <div class="bg-slate-50 rounded-lg p-2">
-                <p class="font-bold text-slate-600 mb-1">Disponibilidad</p>
-                <p>Media: <span id="stat-disp-mean" class="font-black text-slate-900 font-tech">--</span>%</p>
-            </div>
-            <div class="bg-slate-50 rounded-lg p-2">
-                <p class="font-bold text-slate-600 mb-1">Vibración</p>
-                <p>Media: <span id="stat-vib-mean" class="font-black text-slate-900 font-tech">--</span> mm/s</p>
-            </div>
+            <div class="bg-slate-50 rounded-lg p-2"><p class="font-bold text-slate-600 mb-1">Uptime</p><p>Media: <span id="stat-uptime-mean" class="font-black text-slate-900 font-tech">--</span>h</p><p class="text-[9px] text-slate-500">Rango: <span id="stat-uptime-range" class="font-tech">--</span></p></div>
+            <div class="bg-slate-50 rounded-lg p-2"><p class="font-bold text-slate-600 mb-1">Downtime</p><p>Media: <span id="stat-downtime-mean" class="font-black text-slate-900 font-tech">--</span>h</p></div>
+            <div class="bg-slate-50 rounded-lg p-2"><p class="font-bold text-slate-600 mb-1">Kilometraje</p><p>Media: <span id="stat-km-mean" class="font-black text-slate-900 font-tech">--</span> KM</p></div>
+            <div class="bg-slate-50 rounded-lg p-2"><p class="font-bold text-slate-600 mb-1">Temperatura</p><p>Media: <span id="stat-temp-mean" class="font-black text-slate-900 font-tech">--</span>°C</p></div>
+            <div class="bg-slate-50 rounded-lg p-2"><p class="font-bold text-slate-600 mb-1">Disponibilidad</p><p>Media: <span id="stat-disp-mean" class="font-black text-slate-900 font-tech">--</span>%</p></div>
+            <div class="bg-slate-50 rounded-lg p-2"><p class="font-bold text-slate-600 mb-1">Vibración</p><p>Media: <span id="stat-vib-mean" class="font-black text-slate-900 font-tech">--</span> mm/s</p></div>
         </div>
     </div>
     <div class="mb-5">
-        <h2 class="text-[9px] font-black text-slate-700 uppercase tracking-wider mb-3 pb-2 border-b border-slate-200 flex items-center gap-2">
-            <span>🔍</span> Observaciones
-        </h2>
+        <h2 class="text-[9px] font-black text-slate-700 uppercase tracking-wider mb-3 pb-2 border-b border-slate-200 flex items-center gap-2"><span>🔍</span> Observaciones</h2>
         <div id="pdf-observaciones" class="space-y-2"></div>
     </div>
     <div class="mb-4">
-        <h2 class="text-[9px] font-black text-slate-700 uppercase tracking-wider mb-3 pb-2 border-b border-slate-200 flex items-center gap-2">
-            <span>🗃️</span> Dataset (Últimos 20)
-        </h2>
-        <div class="overflow-x-auto border border-slate-200 rounded-lg">
-            <table class="pdf-table w-full text-[9px] border-collapse" id="pdf-dataset-table"></table>
-        </div>
+        <h2 class="text-[9px] font-black text-slate-700 uppercase tracking-wider mb-3 pb-2 border-b border-slate-200 flex items-center gap-2"><span>🗃️</span> Dataset</h2>
+        <div class="overflow-x-auto border border-slate-200 rounded-lg"><table class="pdf-table w-full text-[9px] border-collapse" id="pdf-dataset-table"></table></div>
         <p class="text-[8px] text-slate-400 mt-2 text-center italic">* Datos almacenados en memoria local del navegador.</p>
     </div>
     <div class="mt-auto pt-4 border-t-2 border-slate-200 flex justify-between items-center text-[8px] text-slate-400 uppercase tracking-wider font-bold">
-        <p><i class="fas fa-shield-alt mr-1"></i> NEXO-ART Motor Intelligence v1.3.0</p>
-        <p>Documento generado automáticamente</p>
+        <p><i class="fas fa-shield-alt mr-1"></i> NEXO-ART Motor Intelligence v1.3.0</p><p>Documento generado automáticamente</p>
     </div>
 </div>
 
 <script>
   // === CONFIGURACIÓN ===
   const STORAGE_KEY = 'nexoart_data_v1';
+  const VTV_KEY = 'nexoart_vtv_checklist';
   const MAX_RECORDS = 20;
   let db = [];
   let timelineChartIns = null;
   let isSidebarOpen = false;
+  
+  // 🔹 CHECKLIST VTV - Definición de ítems
+  const VTV_ITEMS = [
+    // Luces
+    { id: 'luces-bajas', label: 'Luces bajas y altas', category: 'luces', icon: 'fa-lightbulb' },
+    { id: 'luces-freno', label: 'Luces de freno', category: 'luces', icon: 'fa-lightbulb' },
+    { id: 'luces-giro', label: 'Luces de giro e intermitentes', category: 'luces', icon: 'fa-lightbulb' },
+    { id: 'luces-balizas', label: 'Balizas', category: 'luces', icon: 'fa-lightbulb' },
+    { id: 'luces-patente', label: 'Luz de patente', category: 'luces', icon: 'fa-lightbulb' },
+    // Frenos
+    { id: 'freno-servicio', label: 'Freno de servicio (pedal)', category: 'frenos', icon: 'fa-circle-stop' },
+    { id: 'freno-mano', label: 'Freno de mano (estacionamiento)', category: 'frenos', icon: 'fa-circle-stop' },
+    { id: 'freno-equilibrio', label: 'Equilibrio entre ruedas', category: 'frenos', icon: 'fa-circle-stop' },
+    // Dirección y suspensión
+    { id: 'dir-juego', label: 'Dirección sin juego excesivo', category: 'direccion', icon: 'fa-gears' },
+    { id: 'amortiguadores', label: 'Amortiguadores en buen estado', category: 'direccion', icon: 'fa-gears' },
+    { id: 'rotulas', label: 'Rótulas y bujes firmes', category: 'direccion', icon: 'fa-gears' },
+    // Neumáticos
+    { id: 'neum-dibujo', label: 'Dibujo mínimo 1,6 mm', category: 'neumaticos', icon: 'fa-circle' },
+    { id: 'neum-cortes', label: 'Sin cortes ni deformaciones', category: 'neumaticos', icon: 'fa-circle' },
+    { id: 'neum-desgaste', label: 'Desgaste parejo', category: 'neumaticos', icon: 'fa-circle' },
+    // Escape
+    { id: 'escape-fugas', label: 'Caño de escape sin fugas', category: 'escape', icon: 'fa-wind' },
+    { id: 'emisiones', label: 'Emisiones dentro de lo permitido', category: 'escape', icon: 'fa-wind' },
+    // Otros
+    { id: 'bocina', label: 'Bocina funcionando', category: 'otros', icon: 'fa-volume-high' },
+    { id: 'cinturones', label: 'Cinturones de seguridad en todas las plazas', category: 'otros', icon: 'fa-shield-halved' },
+    { id: 'parabrisas', label: 'Parabrisas sin roturas que afecten la visión', category: 'otros', icon: 'fa-shield-halved' },
+    { id: 'limpia', label: 'Limpiaparabrisas operativo', category: 'otros', icon: 'fa-shield-halved' },
+    { id: 'carroceria', label: 'Carrocería sin daños estructurales', category: 'otros', icon: 'fa-shield-halved' },
+    // Documentación
+    { id: 'doc-cedula', label: 'Cédula verde/azul', category: 'documentacion', icon: 'fa-id-card' },
+    { id: 'doc-dni', label: 'DNI', category: 'documentacion', icon: 'fa-id-card' },
+    { id: 'doc-seguro', label: 'Seguro vigente', category: 'documentacion', icon: 'fa-id-card' },
+    { id: 'doc-vtv', label: 'Comprobante de pago VTV', category: 'documentacion', icon: 'fa-id-card' }
+  ];
 
-  // === PERSISTENCIA ===
+  // 🔹 Estado del checklist
+  let vtvState = {};
+
+  function loadVTVState() {
+    const stored = localStorage.getItem(VTV_KEY);
+    if (stored) {
+      try { vtvState = JSON.parse(stored); } catch (e) { vtvState = {}; }
+    } else {
+      VTV_ITEMS.forEach(item => { vtvState[item.id] = false; });
+    }
+  }
+
+  function saveVTVState() {
+    localStorage.setItem(VTV_KEY, JSON.stringify(vtvState));
+  }
+
   function loadFromStorage() {
     const stored = localStorage.getItem(STORAGE_KEY);
-    if (stored) {
-      try { db = JSON.parse(stored); } catch (e) { db = []; }
-    } else {
+    if (stored) { try { db = JSON.parse(stored); } catch (e) { db = []; } }
+    else {
       const now = Date.now(); const dayMs = 86400000;
       db = [
         {unidad:"V-001", id:"V-001", motor:"Diesel", km: 82000, uptime: 420, downtime: 3.5, vibracion: 2.4, ta: 92, rpm: 4500, psiDi: 32, psiDd: 32, psiTi: 28, psiTd: 34, timestamp: new Date(now - 19*dayMs).toISOString()},
@@ -595,7 +652,88 @@
     document.getElementById("dataset-count").innerText = db.length;
   }
 
+  // 🔹 Renderizar checklist VTV
+  function renderVTVChecklist() {
+    const categories = { luces: [], frenos: [], direccion: [], neumaticos: [], escape: [], otros: [], documentacion: [] };
+    VTV_ITEMS.forEach(item => { if (categories[item.category]) categories[item.category].push(item); });
+    
+    Object.keys(categories).forEach(cat => {
+      const container = document.getElementById(`vtv-${cat}`);
+      if (!container) return;
+      container.innerHTML = categories[cat].map(item => `
+        <input type="checkbox" id="vtv-${item.id}" class="vtv-check" ${vtvState[item.id] ? 'checked' : ''} onchange="toggleVTVItem('${item.id}')">
+        <label for="vtv-${item.id}" class="vtv-label">
+          <span class="vtv-icon"><i class="fas ${vtvState[item.id] ? 'fa-check' : item.icon}"></i></span>
+          <span>${item.label}</span>
+        </label>
+      `).join('');
+    });
+    
+    updateVTVScore();
+  }
+
+  function toggleVTVItem(id) {
+    const checkbox = document.getElementById(`vtv-${id}`);
+    vtvState[id] = checkbox.checked;
+    
+    // Update icon
+    const item = VTV_ITEMS.find(i => i.id === id);
+    const icon = checkbox.nextElementSibling.querySelector('.vtv-icon i');
+    icon.className = `fas ${checkbox.checked ? 'fa-check' : (item ? item.icon : 'fa-question')}`;
+    
+    saveVTVState();
+    updateVTVScore();
+  }
+
+  function updateVTVScore() {
+    const total = VTV_ITEMS.length;
+    const checked = VTV_ITEMS.filter(i => vtvState[i.id]).length;
+    const unchecked = total - checked;
+    const pct = Math.round((checked / total) * 100);
+    
+    // Score ring
+    document.getElementById('vtv-score-ring').style.setProperty('--score-pct', `${pct}%`);
+    document.getElementById('vtv-score-value').innerText = `${pct}%`;
+    
+    // Progress bar
+    const bar = document.getElementById('vtv-progress-bar');
+    bar.style.width = `${pct}%`;
+    if (pct >= 80) bar.style.background = 'linear-gradient(90deg, #06b6d4, #10b981)';
+    else if (pct >= 50) bar.style.background = 'linear-gradient(90deg, #f59e0b, #06b6d4)';
+    else bar.style.background = 'linear-gradient(90deg, #ef4444, #f59e0b)';
+    
+    document.getElementById('vtv-progress-text').innerText = `${checked}/${total}`;
+    document.getElementById('vtv-passed').innerText = checked;
+    document.getElementById('vtv-failed').innerText = unchecked;
+    
+    // Label
+    const label = document.getElementById('vtv-score-label');
+    if (pct === 100) { label.innerText = '✅ APTO VTV'; label.className = 'text-[10px] text-emerald-400 font-bold'; }
+    else if (pct >= 80) { label.innerText = '🟡 Casi listo'; label.className = 'text-[10px] text-amber-400'; }
+    else if (pct >= 50) { label.innerText = '🟠 En proceso'; label.className = 'text-[10px] text-orange-400'; }
+    else { label.innerText = '🔴 Falta mucho'; label.className = 'text-[10px] text-rose-400'; }
+    
+    // Alerts
+    const alertsContainer = document.getElementById('vtv-alerts');
+    const alertsList = document.getElementById('vtv-alerts-list');
+    const allClear = document.getElementById('vtv-all-clear');
+    
+    if (unchecked === 0) {
+      alertsContainer.classList.add('hidden');
+      allClear.classList.remove('hidden');
+    } else {
+      allClear.classList.add('hidden');
+      alertsContainer.classList.remove('hidden');
+      const failedItems = VTV_ITEMS.filter(i => !vtvState[i.id]);
+      alertsList.innerHTML = failedItems.slice(0, 5).map(item => 
+        `<p class="text-[9px] text-slate-400 flex items-center gap-1"><i class="fas fa-circle-xmark text-rose-400 text-[8px]"></i>${item.label}</p>`
+      ).join('');
+      if (failedItems.length > 5) alertsList.innerHTML += `<p class="text-[9px] text-slate-500 italic">... y ${failedItems.length - 5} más</p>`;
+    }
+  }
+
   loadFromStorage();
+  loadVTVState();
 
   // === UI MOBILE ===
   const sidebar = document.getElementById('sidebar');
@@ -609,7 +747,6 @@
     overlay.classList.toggle('hidden', !isSidebarOpen);
     document.body.style.overflow = isSidebarOpen ? 'hidden' : '';
   }
-
   mobileMenuBtn?.addEventListener('click', toggleSidebar);
   sidebarClose?.addEventListener('click', toggleSidebar);
   overlay?.addEventListener('click', toggleSidebar);
@@ -627,12 +764,7 @@
     const uptime = parseFloat(document.getElementById("input-uptime").value);
     const downtime = parseFloat(document.getElementById("input-downtime").value);
     const km = parseFloat(document.getElementById("input-km").value) || 0;
-
-    if(isNaN(uptime) || isNaN(downtime) || uptime <= 0) {
-      showNotification("⚠️ Valores inválidos", "error");
-      return;
-    }
-
+    if(isNaN(uptime) || isNaN(downtime) || uptime <= 0) { showNotification("⚠️ Valores inválidos", "error"); return; }
     const unidad = document.getElementById("input-unidad").value || "V-" + Math.floor(Math.random()*1000);
     const id = document.getElementById("input-id").value || "ID-" + Math.floor(Math.random()*1000);
     const motor = document.getElementById("input-motor").value;
@@ -643,35 +775,25 @@
     const psiDd = parseFloat(document.getElementById("input-psi-dd").value) || 0;
     const psiTi = parseFloat(document.getElementById("input-psi-ti").value) || 0;
     const psiTd = parseFloat(document.getElementById("input-psi-td").value) || 0;
-
-    const nuevaEntrada = {
-      unidad, id, motor, km, uptime, downtime, vibracion, ta, rpm, psiDi, psiDd, psiTi, psiTd, timestamp: new Date().toISOString()
-    };
-
+    const nuevaEntrada = { unidad, id, motor, km, uptime, downtime, vibracion, ta, rpm, psiDi, psiDd, psiTi, psiTd, timestamp: new Date().toISOString() };
     if (db.length >= MAX_RECORDS) db.shift();
     db.push(nuevaEntrada);
     saveToStorage();
-    
     document.querySelectorAll('input, select').forEach(el => { if(el.type !== 'button') el.value = ""; });
     if (window.innerWidth < 768 && isSidebarOpen) toggleSidebar();
-    
-    calculateKPIs();
-    updateUnidadCard(nuevaEntrada);
-    runPredictiveAI(nuevaEntrada);
-    updateTimelineChart();
-    updateCorrelationMatrix();
-    renderDatasetTable();
-    renderDescribeTable();
+    calculateKPIs(); updateUnidadCard(nuevaEntrada); runPredictiveAI(nuevaEntrada);
+    updateTimelineChart(); updateCorrelationMatrix(); renderDatasetTable(); renderDescribeTable();
     showNotification("✅ Datos acumulados", "success");
   }
 
   function resetDataset() {
     if(db.length === 0) { showNotification("ℹ️ Vacío", "info"); return; }
     if(confirm("⚠️ ¿BORRAR todos los datos permanentemente?")) {
-      db = [];
-      localStorage.removeItem(STORAGE_KEY);
+      db = []; localStorage.removeItem(STORAGE_KEY);
+      // 🔹 También resetear checklist VTV
+      vtvState = {}; VTV_ITEMS.forEach(item => { vtvState[item.id] = false; });
+      localStorage.removeItem(VTV_KEY);
       updateMemoryCounter();
-      
       document.getElementById("card-unidad").innerText = "--";
       document.getElementById("card-motor").innerText = "Motor --";
       document.getElementById("card-km").innerHTML = `<i class="fas fa-road"></i> -- KM`;
@@ -686,8 +808,7 @@
       document.getElementById("correlation-matrix").innerHTML = '<p class="text-slate-500 text-center py-4 md:py-8 text-[10px]">Sin datos</p>';
       document.getElementById("predictive-panel").innerHTML = '<p class="text-slate-400 text-[10px] md:text-sm">Ingresa datos</p>';
       document.getElementById("ml-status-list").innerHTML = '';
-      renderDatasetTable();
-      renderDescribeTable();
+      renderDatasetTable(); renderDescribeTable(); renderVTVChecklist();
       showNotification("🗑️ Memoria borrada", "warning");
     }
   }
@@ -699,55 +820,30 @@
     notification.className = `fixed top-4 right-4 z-50 px-4 py-2.5 rounded-xl border-2 shadow-2xl flex items-center gap-2 animate-[slideIn_0.3s_ease-out] ${colors[type]} text-white max-w-[90vw] backdrop-blur-md`;
     notification.innerHTML = `<span class="text-base">${icons[type]}</span><span class="font-medium text-xs md:text-sm">${message}</span>`;
     document.body.appendChild(notification);
-    setTimeout(() => {
-      notification.style.opacity = "0"; notification.style.transform = "translateX(100%)"; notification.style.transition = "all 0.3s ease-in";
-      setTimeout(() => notification.remove(), 300);
-    }, 3000);
+    setTimeout(() => { notification.style.opacity = "0"; notification.style.transform = "translateX(100%)"; notification.style.transition = "all 0.3s ease-in"; setTimeout(() => notification.remove(), 300); }, 3000);
   }
 
   function calculateKPIs() {
-    if (db.length === 0) {
-      document.getElementById("kpi-mtbf").innerText = "0";
-      document.getElementById("kpi-mttr").innerText = "0";
-      document.getElementById("kpi-disp").innerText = "0.0%";
-      document.getElementById("svg-disp").setAttribute("stroke-dasharray", `0 282.7`);
-      return;
-    }
+    if (db.length === 0) { document.getElementById("kpi-mtbf").innerText = "0"; document.getElementById("kpi-mttr").innerText = "0"; document.getElementById("kpi-disp").innerText = "0.0%"; document.getElementById("svg-disp").setAttribute("stroke-dasharray", `0 282.7`); return; }
     let totalUptime = 0, totalDowntime = 0;
     db.forEach(row => { totalUptime += row.uptime; totalDowntime += row.downtime; });
-    const mtbf = totalUptime / db.length;
-    const mttr = totalDowntime / db.length;
+    const mtbf = totalUptime / db.length; const mttr = totalDowntime / db.length;
     let disponibilidad = (mtbf + mttr) > 0 ? (mtbf / (mtbf + mttr)) * 100 : 0;
-    
     document.getElementById("kpi-mtbf").innerText = mtbf.toFixed(1);
     document.getElementById("kpi-mttr").innerText = mttr.toFixed(1);
     document.getElementById("kpi-disp").innerText = disponibilidad.toFixed(1) + "%";
-    
-    const circ = 2 * Math.PI * 45;
-    const length = (disponibilidad / 100) * circ;
+    const circ = 2 * Math.PI * 45; const length = (disponibilidad / 100) * circ;
     document.getElementById("svg-disp").setAttribute("stroke-dasharray", `${length} ${circ}`);
-    
     const trendEl = document.getElementById("trend-disp");
-    if(disponibilidad >= 95) { 
-      trendEl.innerHTML = `<i class="fas fa-arrow-up"></i> <span class="hidden xs:inline">Óptimo</span>`; 
-      trendEl.className = "text-[10px] md:text-sm font-semibold mt-3 md:mt-6 bg-cyan-500/10 text-cyan-400 px-3 md:px-4 py-1 md:py-1.5 rounded-full border border-cyan-500/20"; 
-    } else if(disponibilidad >= 85) { 
-      trendEl.innerHTML = `<i class="fas fa-arrow-right"></i> <span class="hidden xs:inline">Estable</span>`; 
-      trendEl.className = "text-[10px] md:text-sm font-semibold mt-3 md:mt-6 bg-amber-500/10 text-amber-400 px-3 md:px-4 py-1 md:py-1.5 rounded-full border border-amber-500/20"; 
-    } else { 
-      trendEl.innerHTML = `<i class="fas fa-arrow-down"></i> <span class="hidden xs:inline">Revisar</span>`; 
-      trendEl.className = "text-[10px] md:text-sm font-semibold mt-3 md:mt-6 bg-rose-500/10 text-rose-400 px-3 md:px-4 py-1 md:py-1.5 rounded-full border border-rose-500/20"; 
-    }
+    if(disponibilidad >= 95) { trendEl.innerHTML = `<i class="fas fa-arrow-up"></i> <span class="hidden xs:inline">Óptimo</span>`; trendEl.className = "text-[10px] md:text-sm font-semibold mt-3 md:mt-6 bg-cyan-500/10 text-cyan-400 px-3 md:px-4 py-1 md:py-1.5 rounded-full border border-cyan-500/20"; }
+    else if(disponibilidad >= 85) { trendEl.innerHTML = `<i class="fas fa-arrow-right"></i> <span class="hidden xs:inline">Estable</span>`; trendEl.className = "text-[10px] md:text-sm font-semibold mt-3 md:mt-6 bg-amber-500/10 text-amber-400 px-3 md:px-4 py-1 md:py-1.5 rounded-full border border-amber-500/20"; }
+    else { trendEl.innerHTML = `<i class="fas fa-arrow-down"></i> <span class="hidden xs:inline">Revisar</span>`; trendEl.className = "text-[10px] md:text-sm font-semibold mt-3 md:mt-6 bg-rose-500/10 text-rose-400 px-3 md:px-4 py-1 md:py-1.5 rounded-full border border-rose-500/20"; }
   }
 
-  // 🔹 Renderizar tabla dataset
   function renderDatasetTable() {
     const container = document.getElementById('dataset-table');
     if (!container) return;
-    if (db.length === 0) {
-      container.innerHTML = '<tr><td colspan="11" class="text-center py-6 text-slate-500 text-[10px]">📭 Sin datos acumulados</td></tr>';
-      return;
-    }
+    if (db.length === 0) { container.innerHTML = '<tr><td colspan="11" class="text-center py-6 text-slate-500 text-[10px]">📭 Sin datos acumulados</td></tr>'; return; }
     const headers = ['Unidad', 'Motor', 'KM', 'UP', 'DOWN', 'VIB', 'TEMP', 'RPM', 'PSI-DI', 'PSI-DD', 'Fecha'];
     let html = `<thead><tr class="cyber-table">`;
     headers.forEach(h => { html += `<th class="p-2 text-left font-bold border-b border-cyan-500/30 text-[9px] md:text-xs sticky top-0 bg-slate-900 z-10 text-cyan-400 font-tech">${h}</th>`; });
@@ -760,11 +856,9 @@
       html += `<td class="p-2 text-right text-[9px] md:text-xs">${row.ta}°</td><td class="p-2 text-right text-[9px] md:text-xs font-tech">${row.rpm}</td><td class="p-2 text-right text-[9px] md:text-xs">${row.psiDi}</td>`;
       html += `<td class="p-2 text-right text-[9px] md:text-xs">${row.psiDd}</td><td class="p-2 text-[9px] md:text-xs text-slate-400">${fecha}</td></tr>`;
     });
-    html += '</tbody>';
-    container.innerHTML = html;
+    html += '</tbody>'; container.innerHTML = html;
   }
 
-  // 🔹 Calcular estadísticas DESCRIBE()
   function calculateDescribeStats() {
     if (db.length === 0) return null;
     const numericColumns = [
@@ -777,45 +871,26 @@
       const values = db.map(d => d[col.key]).filter(v => v !== undefined && v !== null && !isNaN(v));
       if (values.length === 0) return;
       values.sort((a, b) => a - b);
-      const n = values.length;
-      const sum = values.reduce((a, b) => a + b, 0);
-      const mean = sum / n;
-      const variance = values.reduce((acc, val) => acc + Math.pow(val - mean, 2), 0) / n;
+      const n = values.length; const sum = values.reduce((a, b) => a + b, 0);
+      const mean = sum / n; const variance = values.reduce((acc, val) => acc + Math.pow(val - mean, 2), 0) / n;
       const std = Math.sqrt(variance);
-      const percentile = (p) => {
-        const idx = (n - 1) * p;
-        const lower = Math.floor(idx);
-        const upper = Math.ceil(idx);
-        if (lower === upper) return values[lower];
-        return values[lower] + (values[upper] - values[lower]) * (idx - lower);
-      };
+      const percentile = (p) => { const idx = (n - 1) * p; const lower = Math.floor(idx); const upper = Math.ceil(idx); if (lower === upper) return values[lower]; return values[lower] + (values[upper] - values[lower]) * (idx - lower); };
       stats[col.key] = { label: col.label, count: n, mean: mean.toFixed(2), std: std.toFixed(2), min: values[0].toFixed(2), '25%': percentile(0.25).toFixed(2), '50%': percentile(0.50).toFixed(2), '75%': percentile(0.75).toFixed(2), max: values[n-1].toFixed(2) };
     });
     return stats;
   }
 
-  // 🔹 Renderizar DESCRIBE()
   function renderDescribeTable() {
     const container = document.getElementById('describe-table-container');
     if (!container) return;
-    if (db.length === 0) {
-      container.innerHTML = '<p class="text-slate-500 text-center py-4 text-[10px]">📊 Sin datos</p>';
-      return;
-    }
+    if (db.length === 0) { container.innerHTML = '<p class="text-slate-500 text-center py-4 text-[10px]">📊 Sin datos</p>'; return; }
     const stats = calculateDescribeStats();
-    if (!stats || Object.keys(stats).length === 0) {
-      container.innerHTML = '<p class="text-slate-500 text-center py-4 text-[10px]">⚠️ Sin columnas numéricas</p>';
-      return;
-    }
+    if (!stats || Object.keys(stats).length === 0) { container.innerHTML = '<p class="text-slate-500 text-center py-4 text-[10px]">⚠️ Sin columnas numéricas</p>'; return; }
     const metrics = [
-      {key: 'count', label: 'count', color: 'text-slate-300'},
-      {key: 'mean', label: 'mean', color: 'text-cyan-400 font-bold'},
-      {key: 'std', label: 'std', color: 'text-purple-400'},
-      {key: 'min', label: 'min', color: 'text-rose-400'},
-      {key: '25%', label: '25%', color: 'text-amber-400'},
-      {key: '50%', label: '50%', color: 'text-cyan-400'},
-      {key: '75%', label: '75%', color: 'text-amber-400'},
-      {key: 'max', label: 'max', color: 'text-rose-400'}
+      {key: 'count', label: 'count', color: 'text-slate-300'}, {key: 'mean', label: 'mean', color: 'text-cyan-400 font-bold'},
+      {key: 'std', label: 'std', color: 'text-purple-400'}, {key: 'min', label: 'min', color: 'text-rose-400'},
+      {key: '25%', label: '25%', color: 'text-amber-400'}, {key: '50%', label: '50%', color: 'text-cyan-400'},
+      {key: '75%', label: '75%', color: 'text-amber-400'}, {key: 'max', label: 'max', color: 'text-rose-400'}
     ];
     const columns = Object.keys(stats);
     let html = '<div class="overflow-x-auto"><table class="w-full border-collapse text-[9px] md:text-xs">';
@@ -841,10 +916,7 @@
   function runPredictiveAI(ultimaEntrada) {
     const panel = document.getElementById("predictive-panel");
     const statusList = document.getElementById("ml-status-list");
-    let predicciones = []; 
-    let reportKM = [];
-    let explicacionContexto = "";
-    
+    let predicciones = []; let reportKM = []; let explicacionContexto = "";
     if (ultimaEntrada.motor.toLowerCase().includes("diesel")) {
         explicacionContexto = `<strong class="text-cyan-400">Diagnóstico Diésel:</strong> Mayor eficiencia, costos de reparación 20-25% más elevados.`;
         if (ultimaEntrada.km >= 30000 && ultimaEntrada.km % 30000 < 5000) reportKM.push("Filtro combustible: Cambio recomendado");
@@ -852,29 +924,23 @@
         explicacionContexto = `<strong class="text-cyan-400">Diagnóstico Gasolina:</strong> Ideal para uso urbano, mantenimiento económico.`;
         if (ultimaEntrada.km >= 15000 && ultimaEntrada.km % 15000 < 3000) reportKM.push("Bujías: Verificar desgaste");
     }
-    
     if (ultimaEntrada.km >= 10000 && ultimaEntrada.km % 10000 < 2000) reportKM.push("Filtro aire: Próximo cambio");
     if (ultimaEntrada.km >= 60000) reportKM.push("⚠️ Correa distribución: Verificar urgentemente");
-
     let tempStatus = `<span class="text-cyan-400"><i class="fas fa-check"></i> OK</span>`;
     if (ultimaEntrada.ta > 105) {
       tempStatus = `<span class="text-rose-400"><i class="fas fa-times"></i> ${ultimaEntrada.ta}°C</span>`;
       predicciones.push(`<div class="p-2 md:p-3 bg-rose-500/10 border border-rose-500/40 rounded-lg md:rounded-xl flex items-start gap-3 mb-2"><div class="text-rose-500 text-lg"><i class="fas fa-temperature-high"></i></div><div><p class="font-bold text-rose-400 text-[10px]">Sobrecalentamiento</p><p class="text-[9px] text-slate-300">Riesgo: ${ultimaEntrada.ta}°C.</p></div></div>`);
     }
-    
     let vibStatus = `<span class="text-cyan-400"><i class="fas fa-check"></i> OK</span>`;
     if (ultimaEntrada.vibracion >= 5.0) {
       vibStatus = `<span class="text-rose-400"><i class="fas fa-times"></i> ${ultimaEntrada.vibracion}</span>`;
       predicciones.push(`<div class="p-2 md:p-3 bg-orange-500/10 border border-orange-500/40 rounded-lg md:rounded-xl flex items-start gap-3 mb-2"><div class="text-orange-500 text-lg"><i class="fas fa-wave-square"></i></div><div><p class="font-bold text-orange-400 text-[10px]">Vibración alta</p><p class="text-[9px] text-slate-300">Posible desgaste.</p></div></div>`);
     }
-    
     if (reportKM.length > 0) {
        let repList = reportKM.map(r => `<li>- ${r}</li>`).join("");
        predicciones.push(`<div class="p-2 md:p-3 bg-purple-500/10 border border-purple-500/40 rounded-lg md:rounded-xl mb-2"><p class="font-bold text-purple-400 text-[10px]"><i class="fas fa-road"></i> Por KM (${ultimaEntrada.km})</p><ul class="text-[9px] text-slate-300 mt-1">${repList}</ul></div>`);
     }
-    
     if (predicciones.length === 0) predicciones.push(`<div class="p-3 md:p-4 bg-cyan-500/10 border border-cyan-500/40 rounded-lg md:rounded-xl"><p class="font-bold text-cyan-400 text-[10px]"><i class="fas fa-shield-alt mr-1"></i> Parámetros óptimos</p></div>`);
-    
     panel.innerHTML = `<div class="bg-black/40 p-3 md:p-4 rounded-lg md:rounded-xl border border-cyan-500/10 text-slate-300 text-[10px] md:text-xs leading-relaxed mb-3">${explicacionContexto}</div><div class="flex-1">${predicciones.join("")}</div>`;
     statusList.innerHTML = `<li class="flex justify-between items-center border-b border-cyan-500/10 pb-2 text-[9px]"><span>Unidad:</span> <span class="font-bold text-white font-tech">${ultimaEntrada.unidad}</span></li><li class="flex justify-between items-center border-b border-cyan-500/10 pb-2 text-[9px]"><span>Temp:</span> ${tempStatus}</li><li class="flex justify-between items-center pb-2 text-[9px]"><span>VIB:</span> ${vibStatus}</li>`;
   }
@@ -889,11 +955,16 @@
     const mtbf = document.getElementById("kpi-mtbf").innerText;
     const mttr = document.getElementById("kpi-mttr").innerText;
     const disp = document.getElementById("kpi-disp").innerText;
-    let reportHTML = `<h4 class="text-white font-bold mb-3 flex items-center gap-2 border-b border-cyan-500/20 pb-2 text-xs uppercase font-tech"><i class="fas fa-file-alt text-indigo-400"></i> Informe</h4><p class="mb-3 text-slate-300 text-xs">Disp: <span class="text-cyan-400 font-bold">${disp}</span>. MTBF: <b>${mtbf}h</b>. MTTR: <b>${mttr}h</b>.</p>`;
+    const vtvPct = document.getElementById("vtv-score-value").innerText;
+    let reportHTML = `<h4 class="text-white font-bold mb-3 flex items-center gap-2 border-b border-cyan-500/20 pb-2 text-xs uppercase font-tech"><i class="fas fa-file-alt text-indigo-400"></i> Informe</h4>`;
+    reportHTML += `<p class="mb-2 text-slate-300 text-xs">Disp: <span class="text-cyan-400 font-bold">${disp}</span>. MTBF: <b>${mtbf}h</b>. MTTR: <b>${mttr}h</b>.</p>`;
+    reportHTML += `<p class="mb-3 text-slate-300 text-xs">Score VTV: <span class="text-cyan-400 font-bold">${vtvPct}</span></p>`;
     let alertas = [];
     if (last.ta > 105) alertas.push("🔥 Temp crítica");
     if (last.vibracion >= 5.0) alertas.push("〰️ Vibración alta");
     if (last.km >= 60000) alertas.push("⚠️ Correa distribución");
+    const failedVTV = VTV_ITEMS.filter(i => !vtvState[i.id]);
+    if (failedVTV.length > 0) alertas.push(`📋 ${failedVTV.length} ítems VTV pendientes`);
     if (alertas.length > 0) reportHTML += `<div class="bg-rose-500/10 border-l-2 border-rose-500 pl-3 py-2 my-3 rounded-r"><p class="font-bold text-rose-400 text-[10px] mb-1">Alertas:</p><ul class="list-disc pl-4 space-y-0.5 text-slate-300 text-[9px]">` + alertas.map(a => `<li>${a}</li>`).join("") + `</ul></div>`;
     container.innerHTML = reportHTML;
   }
@@ -902,11 +973,7 @@
     const canvas = document.getElementById('timelineChart');
     const ctx = canvas?.getContext('2d');
     if(!ctx) return;
-    if(db.length === 0) { 
-      if(timelineChartIns) timelineChartIns.destroy(); 
-      canvas.parentNode.innerHTML = '<div class="absolute inset-0 flex items-center justify-center text-slate-500 text-xs">Sin datos</div>'; 
-      return; 
-    }
+    if(db.length === 0) { if(timelineChartIns) timelineChartIns.destroy(); canvas.parentNode.innerHTML = '<div class="absolute inset-0 flex items-center justify-center text-slate-500 text-xs">Sin datos</div>'; return; }
     const labels = db.map(d => new Date(d.timestamp).toLocaleDateString('es-ES', { day: '2-digit', month: 'short' }));
     const uptimeData = db.map(d => d.uptime);
     const downtimeData = db.map(d => d.downtime);
@@ -914,7 +981,7 @@
     if(timelineChartIns) timelineChartIns.destroy();
     timelineChartIns = new Chart(ctx, {
       type: 'line',
-      data: {
+       {
         labels: labels,
         datasets: [
           { label: 'Disponibilidad %', data: dispData, borderColor: '#06b6d4', backgroundColor: 'rgba(6, 182, 212, 0.1)', borderWidth: 2, tension: 0.4, yAxisID: 'y1', fill: true, pointRadius: window.innerWidth < 480 ? 2 : 3 },
@@ -922,11 +989,7 @@
           { label: 'Downtime (h)', data: downtimeData, borderColor: '#f97316', borderWidth: 2, tension: 0.2, yAxisID: 'y', pointRadius: 0 }
         ]
       },
-      options: { 
-        responsive: true, maintainAspectRatio: false, interaction: { mode: 'index', intersect: false }, 
-        plugins: { legend: { labels: { color: '#cbd5e1', font: { size: window.innerWidth < 480 ? 9 : 11 } }, position: 'bottom' }, tooltip: { bodyFont: { size: 10 }, titleFont: { size: 11 } } }, 
-        scales: { x: { ticks: { color: '#64748b', font: { size: 9 } }, grid: { color: 'rgba(6,182,212,0.1)' } }, y: { type: 'linear', display: true, position: 'left', title: { display: true, text: 'Horas', color: '#94a3b8' }, ticks: { color: '#94a3b8', font: { size: 9 } }, grid: { color: 'rgba(6,182,212,0.1)' } }, y1: { type: 'linear', display: true, position: 'right', title: { display: true, text: '%', color: '#06b6d4' }, ticks: { color: '#06b6d4', font: { size: 9 } }, grid: { drawOnChartArea: false } } } 
-      }
+      options: { responsive: true, maintainAspectRatio: false, interaction: { mode: 'index', intersect: false }, plugins: { legend: { labels: { color: '#cbd5e1', font: { size: window.innerWidth < 480 ? 9 : 11 } }, position: 'bottom' }, tooltip: { bodyFont: { size: 10 }, titleFont: { size: 11 } } }, scales: { x: { ticks: { color: '#64748b', font: { size: 9 } }, grid: { color: 'rgba(6,182,212,0.1)' } }, y: { type: 'linear', display: true, position: 'left', title: { display: true, text: 'Horas', color: '#94a3b8' }, ticks: { color: '#94a3b8', font: { size: 9 } }, grid: { color: 'rgba(6,182,212,0.1)' } }, y1: { type: 'linear', display: true, position: 'right', title: { display: true, text: '%', color: '#06b6d4' }, ticks: { color: '#06b6d4', font: { size: 9 } }, grid: { drawOnChartArea: false } } } }
     });
   }
 
@@ -990,7 +1053,8 @@
         const stats = calculateStatistics();
         const observaciones = generateHighlightedObservations(stats, last);
         const datasetTable = generateDatasetTable(db);
-        updatePDFTemplate({ stats, observaciones, datasetTable, last, now });
+        const vtvChecklist = generateVTVChecklistPDF();
+        updatePDFTemplate({ stats, observaciones, datasetTable, vtvChecklist, last, now });
         const template = document.getElementById('pdf-report-template-enhanced');
         template.classList.remove('hidden');
         await new Promise(resolve => setTimeout(resolve, 100));
@@ -1019,6 +1083,30 @@
     return obs;
   }
 
+  // 🔹 Generar checklist VTV para PDF
+  function generateVTVChecklistPDF() {
+    const total = VTV_ITEMS.length;
+    const checked = VTV_ITEMS.filter(i => vtvState[i.id]).length;
+    const pct = Math.round((checked / total) * 100);
+    
+    let statusText = '❌ No apto';
+    if (pct === 100) statusText = '✅ APTO VTV';
+    else if (pct >= 80) statusText = '🟡 Casi listo';
+    else if (pct >= 50) statusText = '🟠 En proceso';
+    else statusText = '🔴 Falta mucho';
+    
+    const categories = { luces: '💡 Iluminación', frenos: '🛑 Frenos', direccion: '⚙️ Dirección/Suspensión', neumaticos: '🚗 Neumáticos', escape: '🌫️ Escape', otros: '🪪 Otros', documentacion: '📄 Documentación' };
+    let itemsHtml = '<div class="space-y-1">';
+    
+    VTV_ITEMS.forEach(item => {
+      const isChecked = vtvState[item.id];
+      itemsHtml += `<div class="flex items-center gap-2 text-[8px]"><span class="w-3 h-3 rounded-sm ${isChecked ? 'bg-cyan-500' : 'bg-slate-200'} flex items-center justify-center text-white text-[6px]">${isChecked ? '✓' : ''}</span><span class="${isChecked ? 'text-slate-700' : 'text-rose-500'}">${item.label}</span></div>`;
+    });
+    itemsHtml += '</div>';
+    
+    return { pct, statusText, itemsHtml };
+  }
+
   function generateDatasetTable(data) {
     if(data.length === 0) return '<tr><td colspan="10" class="text-center py-4 text-slate-500 text-[9px]">Sin datos</td></tr>';
     const headers = ['Unidad', 'Motor', 'KM', 'UP', 'DOWN', 'VIB', 'TEMP', 'RPM', 'PSI-DI', 'Fecha'];
@@ -1029,7 +1117,7 @@
     html += `</tbody>`; return html;
   }
 
-  function updatePDFTemplate({ stats, observaciones, datasetTable, last, now }) {
+  function updatePDFTemplate({ stats, observaciones, datasetTable, vtvChecklist, last, now }) {
     document.getElementById('pdf-fecha').innerText = now.toLocaleDateString('es-ES');
     document.getElementById('pdf-unidad').innerText = last.unidad; 
     document.getElementById('pdf-id').innerText = "ID: " + last.id; 
@@ -1040,7 +1128,13 @@
     document.getElementById('pdf-mtbf-val').innerText = document.getElementById('kpi-mtbf').innerText + "h"; 
     document.getElementById('pdf-mttr-val').innerText = document.getElementById('kpi-mttr').innerText + "h";
     
-    // ✅ ACTUALIZAR TODAS LAS ESTADÍSTICAS EN EL PDF
+    // VTV en PDF
+    if(vtvChecklist) {
+      document.getElementById('pdf-vtv-score').innerText = vtvChecklist.pct + '%';
+      document.getElementById('pdf-vtv-status').innerText = vtvChecklist.statusText;
+      document.getElementById('pdf-vtv-checklist').innerHTML = vtvChecklist.itemsHtml;
+    }
+    
     if(stats) { 
       document.getElementById('stat-uptime-mean').innerText = stats.uptime.mean; 
       document.getElementById('stat-uptime-range').innerText = `${stats.uptime.min}-${stats.uptime.max}`; 
@@ -1050,7 +1144,6 @@
       document.getElementById('stat-disp-mean').innerText = stats.disponibilidad.mean + "%"; 
       document.getElementById('stat-vib-mean').innerText = stats.vibracion.mean + " mm/s"; 
     }
-    
     const obsContainer = document.getElementById('pdf-observaciones');
     obsContainer.innerHTML = observaciones.map(obs => { const colors = { 'crítico': 'bg-rose-50 border-rose-300 text-rose-800', 'advertencia': 'bg-orange-50 border-orange-300 text-orange-800', 'mantenimiento': 'bg-indigo-50 border-indigo-300 text-indigo-800', 'operativo': 'bg-amber-50 border-amber-300 text-amber-800', 'ok': 'bg-teal-50 border-teal-300 text-teal-800' }; return `<div class="flex items-start gap-2 p-2 rounded border-l-4 ${colors[obs.tipo]}"><span class="text-base">${obs.icono}</span><p class="text-[9px] leading-tight">${obs.texto}</p></div>`; }).join('');
     document.getElementById('pdf-dataset-table').innerHTML = datasetTable;
@@ -1064,6 +1157,7 @@
     updateCorrelationMatrix();
     renderDatasetTable();
     renderDescribeTable();
+    renderVTVChecklist(); // 🔹 Inicializar checklist VTV
     window.addEventListener('orientationchange', () => { if (window.innerWidth < 768 && isSidebarOpen) toggleSidebar(); });
   };
 </script>
