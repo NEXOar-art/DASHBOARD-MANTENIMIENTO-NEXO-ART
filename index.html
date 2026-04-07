@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>NEXO-ART Taller Mecánico - Dashboard Predictivo</title>
+  <title>NEXO-ART Motor Intelligence - Dashboard Predictivo</title>
   
   <!-- Librerías Esenciales -->
   <script src="https://cdn.tailwindcss.com"></script>
@@ -15,18 +15,25 @@
     tailwind.config = {
       theme: {
         extend: {
-          screens: {
-            'xs': '320px',
-            'sm': '480px',
-          }
+          screens: { 'xs': '320px', 'sm': '480px' }
         }
       }
     }
   </script>
   
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
-    body { font-family: 'Inter', sans-serif; -webkit-tap-highlight-color: transparent; }
+    @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&family=Inter:wght@300;400;500;600;700;800&display=swap');
+    
+    body { 
+      font-family: 'Inter', sans-serif; 
+      -webkit-tap-highlight-color: transparent;
+      /* 🔹 IMAGEN DE FONDO PROFESIONAL */
+      background: 
+        linear-gradient(135deg, rgba(0,0,0,0.85) 0%, rgba(0,20,40,0.80) 50%, rgba(0,0,0,0.90) 100%),
+        url('https://image.pollinations.ai/prompt/futuristic%20dark%20garage%20with%20black%20sports%20car%20Chevrolet%20Camaro%20neon%20blue%20cyan%20lighting%20holographic%20data%20displays%20HUD%20interface%20automotive%20dashboard%20sci-fi%20technology%20motor%20intelligence%208k%20ultra%20detailed?width=1920&height=1080&nologo=true') center center / cover no-repeat fixed;
+    }
+    
+    .font-tech { font-family: 'Orbitron', monospace; }
     
     /* Gauge responsive */
     .gauge-wrapper { position: relative; width: 100%; max-width: 240px; margin: 0 auto; aspect-ratio: 1/1; }
@@ -34,13 +41,13 @@
     
     /* Scroll personalizado */
     .custom-scrollbar::-webkit-scrollbar { width: 6px; height: 6px; }
-    .custom-scrollbar::-webkit-scrollbar-thumb { background-color: #475569; border-radius: 4px; }
-    .custom-scrollbar::-webkit-scrollbar-track { background-color: #0f172a; }
+    .custom-scrollbar::-webkit-scrollbar-thumb { background-color: #06b6d4; border-radius: 4px; }
+    .custom-scrollbar::-webkit-scrollbar-track { background-color: rgba(0,0,0,0.5); }
     
     /* Animaciones */
     @keyframes pulse-glow {
-      0%, 100% { box-shadow: 0 0 15px rgba(20, 184, 166, 0.3); }
-      50% { box-shadow: 0 0 25px rgba(20, 184, 166, 0.6); }
+      0%, 100% { box-shadow: 0 0 15px rgba(6, 182, 212, 0.3); }
+      50% { box-shadow: 0 0 30px rgba(6, 182, 212, 0.6); }
     }
     @keyframes shake {
       0%, 100% { transform: translateX(0); }
@@ -51,234 +58,336 @@
       from { opacity: 0; transform: translateX(100%); }
       to { opacity: 1; transform: translateX(0); }
     }
+    @keyframes neon-flicker {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.85; }
+    }
+    @keyframes float {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-5px); }
+    }
     .animate-shake:hover { animation: shake 0.3s ease-in-out; }
+    .neon-text { animation: neon-flicker 3s ease-in-out infinite; }
+    .float-anim { animation: float 4s ease-in-out infinite; }
     
-    /* Estilos PDF */
-    .pdf-table th { background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%); }
-    .pdf-table tr:hover { background-color: #f8fafc; }
-    .pdf-table td { border-color: #e2e8f0; }
-    
-    /* Glassmorphism */
+    /* Glassmorphism mejorado */
     .glass-card {
-      background: rgba(30, 41, 59, 0.7);
-      backdrop-filter: blur(10px);
-      border: 1px solid rgba(71, 85, 105, 0.4);
+      background: rgba(5, 15, 30, 0.75);
+      backdrop-filter: blur(16px);
+      border: 1px solid rgba(6, 182, 212, 0.2);
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(6, 182, 212, 0.1);
     }
-    .glow-text { text-shadow: 0 0 10px rgba(20, 184, 166, 0.4); }
+    .glass-card:hover {
+      border-color: rgba(6, 182, 212, 0.4);
+      box-shadow: 0 8px 40px rgba(6, 182, 212, 0.15), inset 0 1px 0 rgba(6, 182, 212, 0.2);
+    }
+    .glow-text { text-shadow: 0 0 20px rgba(6, 182, 212, 0.5), 0 0 40px rgba(6, 182, 212, 0.2); }
+    .glow-border { box-shadow: 0 0 15px rgba(6, 182, 212, 0.3); }
     
-    /* Mobile optimizations */
-    @media (max-width: 767px) {
-      .mobile-hidden { display: none !important; }
-      .mobile-full { width: 100% !important; }
-      .text-mobile-sm { font-size: 0.75rem !important; }
-      .text-mobile-base { font-size: 0.875rem !important; }
-      .p-mobile { padding: 0.75rem !important; }
-      .h-auto-mobile { height: auto !important; }
+    /* Neon line accents */
+    .neon-line {
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(6, 182, 212, 0.6), transparent);
     }
+    
+    /* Input styling futurista */
+    .cyber-input {
+      background: rgba(0, 20, 40, 0.8) !important;
+      border: 1px solid rgba(6, 182, 212, 0.25) !important;
+      color: #e0f2fe !important;
+      transition: all 0.3s ease;
+    }
+    .cyber-input:focus {
+      border-color: #06b6d4 !important;
+      box-shadow: 0 0 20px rgba(6, 182, 212, 0.3), inset 0 0 10px rgba(6, 182, 212, 0.05) !important;
+      outline: none;
+    }
+    .cyber-input::placeholder { color: rgba(148, 163, 184, 0.5); }
+    
+    /* Botones estilo neon */
+    .btn-neon {
+      background: linear-gradient(135deg, rgba(6, 182, 212, 0.8), rgba(8, 145, 178, 0.8));
+      border: 1px solid rgba(6, 182, 212, 0.5);
+      box-shadow: 0 0 20px rgba(6, 182, 212, 0.3);
+      transition: all 0.3s ease;
+    }
+    .btn-neon:hover {
+      box-shadow: 0 0 35px rgba(6, 182, 212, 0.5);
+      transform: translateY(-1px);
+    }
+    .btn-danger {
+      background: linear-gradient(135deg, rgba(220, 38, 38, 0.8), rgba(185, 28, 28, 0.8));
+      border: 1px solid rgba(220, 38, 38, 0.5);
+      box-shadow: 0 0 15px rgba(220, 38, 38, 0.3);
+    }
+    .btn-danger:hover {
+      box-shadow: 0 0 25px rgba(220, 38, 38, 0.5);
+    }
+    .btn-purple {
+      background: linear-gradient(135deg, rgba(139, 92, 246, 0.8), rgba(109, 40, 217, 0.8));
+      border: 1px solid rgba(139, 92, 246, 0.5);
+      box-shadow: 0 0 15px rgba(139, 92, 246, 0.3);
+    }
+    .btn-purple:hover {
+      box-shadow: 0 0 25px rgba(139, 92, 246, 0.5);
+    }
+    
+    /* HUD overlay elements */
+    .hud-corner {
+      position: absolute;
+      width: 20px;
+      height: 20px;
+      border-color: rgba(6, 182, 212, 0.4);
+      border-style: solid;
+    }
+    .hud-corner-tl { top: -1px; left: -1px; border-width: 2px 0 0 2px; }
+    .hud-corner-tr { top: -1px; right: -1px; border-width: 2px 2px 0 0; }
+    .hud-corner-bl { bottom: -1px; left: -1px; border-width: 0 0 2px 2px; }
+    .hud-corner-br { bottom: -1px; right: -1px; border-width: 0 2px 2px 0; }
     
     /* Touch targets */
     .touch-target { min-height: 44px; min-width: 44px; }
-    
-    /* Prevent zoom on input focus */
     input, select, textarea { font-size: 16px !important; }
+    
+    /* Table styling */
+    .cyber-table th {
+      background: rgba(6, 182, 212, 0.1);
+      border-bottom: 1px solid rgba(6, 182, 212, 0.3);
+    }
+    .cyber-table td {
+      border-bottom: 1px solid rgba(6, 182, 212, 0.1);
+    }
+    .cyber-table tr:hover td {
+      background: rgba(6, 182, 212, 0.05);
+    }
+    
+    /* Status indicator */
+    .status-dot {
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      background: #06b6d4;
+      box-shadow: 0 0 10px #06b6d4;
+      animation: pulse-glow 2s ease-in-out infinite;
+    }
+    
+    /* Mobile nav */
+    @media (max-width: 767px) {
+      .mobile-hidden { display: none !important; }
+    }
   </style>
 </head>
-<body class="bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 text-slate-200 overflow-x-hidden">
+<body class="text-slate-200 overflow-x-hidden min-h-screen">
 
-<!-- Mobile Header Toggle -->
-<button id="mobile-menu-btn" class="fixed top-4 left-4 z-50 md:hidden touch-target bg-slate-800/90 p-3 rounded-xl border border-slate-700 text-teal-400 shadow-lg">
+<!-- Mobile Menu Toggle -->
+<button id="mobile-menu-btn" class="fixed top-4 left-4 z-50 md:hidden touch-target bg-black/60 backdrop-blur-md p-3 rounded-xl border border-cyan-500/30 text-cyan-400 shadow-lg">
   <i class="fas fa-bars text-xl"></i>
 </button>
 
 <div class="flex min-h-screen">
 
-  <!-- SIDEBAR (Desktop) / Bottom Nav (Mobile) -->
-  <aside id="sidebar" class="w-[22rem] md:w-[22rem] bg-slate-900/95 border-r border-slate-800 flex flex-col fixed md:static inset-y-0 left-0 z-40 transform -translate-x-full md:translate-x-0 transition-transform duration-300 shadow-2xl backdrop-blur-md">
+  <!-- SIDEBAR -->
+  <aside id="sidebar" class="w-[22rem] bg-black/80 border-r border-cyan-500/20 flex flex-col fixed md:static inset-y-0 left-0 z-40 transform -translate-x-full md:translate-x-0 transition-transform duration-300 shadow-2xl backdrop-blur-xl">
     
-    <!-- Close button for mobile -->
-    <button id="sidebar-close" class="md:hidden absolute top-4 right-4 touch-target text-slate-400 hover:text-white">
+    <button id="sidebar-close" class="md:hidden absolute top-4 right-4 touch-target text-slate-400 hover:text-cyan-400">
       <i class="fas fa-times text-xl"></i>
     </button>
     
-    <div class="p-4 md:p-6 border-b border-slate-800 flex items-center gap-3 shrink-0 bg-slate-950/60">
-      <div class="w-10 h-10 bg-gradient-to-br from-teal-500 to-cyan-400 rounded-xl flex items-center justify-center text-white font-bold text-2xl shadow-lg shadow-teal-500/20 flex-shrink-0">⚙️</div>
-      <div class="min-w-0">
-        <h1 class="text-xl md:text-3xl font-black tracking-tighter text-transparent bg-clip-text bg-gradient-to-r from-teal-400 to-cyan-300 truncate">NEXO-ART</h1>
-        <p class="text-[9px] md:text-[10px] uppercase font-bold text-slate-500 tracking-widest -mt-0.5 hidden xs:block">Motor Intelligence</p>
+    <!-- Logo Section -->
+    <div class="p-4 md:p-6 border-b border-cyan-500/20 flex items-center gap-3 shrink-0 bg-gradient-to-r from-black/80 to-transparent relative overflow-hidden">
+      <div class="absolute inset-0 bg-gradient-to-r from-cyan-500/5 to-transparent"></div>
+      <div class="w-12 h-12 bg-gradient-to-br from-cyan-400 to-blue-600 rounded-xl flex items-center justify-center text-white font-bold text-xl shadow-lg shadow-cyan-500/30 flex-shrink-0 relative z-10">
+        <i class="fas fa-cogs"></i>
       </div>
+      <div class="min-w-0 relative z-10">
+        <h1 class="text-xl md:text-3xl font-black tracking-tighter text-transparent bg-clip-text bg-gradient-to-r from-cyan-300 via-cyan-400 to-blue-400 font-tech truncate glow-text">NEXO-ART</h1>
+        <p class="text-[9px] md:text-[10px] uppercase font-bold text-cyan-500/60 tracking-widest -mt-0.5 hidden xs:block">Motor Intelligence</p>
+      </div>
+      <div class="absolute top-0 right-0 w-32 h-full bg-gradient-to-l from-cyan-500/5 to-transparent"></div>
     </div>
     
-    <div class="flex-1 overflow-hidden flex flex-col p-3 md:p-5 bg-gradient-to-b from-slate-900/50 to-slate-950 relative">
-      <div class="absolute top-10 -right-20 w-40 h-40 bg-teal-500/10 rounded-full blur-3xl pointer-events-none"></div>
+    <div class="flex-1 overflow-hidden flex flex-col p-3 md:p-5 bg-gradient-to-b from-black/30 to-black/60 relative">
+      <div class="absolute top-10 -right-20 w-40 h-40 bg-cyan-500/5 rounded-full blur-3xl pointer-events-none"></div>
       
-      <button onclick="generateReport()" class="w-full bg-indigo-600 hover:bg-indigo-500 text-white font-bold py-3 px-3 md:py-3.5 md:px-4 rounded-xl shadow-[0_0_20px_rgba(99,102,241,0.4)] transition-all flex items-center justify-center gap-2 shrink-0 border border-indigo-400/30 hover:scale-[1.02] touch-target text-sm">
-        <i class="fas fa-file-signature text-lg"></i> <span class="hidden xs:inline">Exportar Informe</span><span class="xs:hidden">Informe</span>
+      <!-- Botón Informe -->
+      <button onclick="generateReport()" class="w-full btn-purple text-white font-bold py-3 px-3 md:py-3.5 md:px-4 rounded-xl transition-all flex items-center justify-center gap-2 shrink-0 hover:scale-[1.02] touch-target text-sm relative overflow-hidden group">
+        <div class="absolute inset-0 bg-gradient-to-r from-violet-500/20 to-purple-500/20 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+        <i class="fas fa-file-signature text-lg relative z-10"></i> 
+        <span class="hidden xs:inline relative z-10">Exportar Informe</span><span class="xs:hidden relative z-10">Informe</span>
       </button>
       
-      <div id="ai-report-container" class="mt-3 md:mt-5 flex-1 overflow-y-auto bg-slate-950/80 rounded-xl p-3 md:p-5 border border-slate-800 text-xs md:text-sm text-slate-300 hidden leading-relaxed shadow-inner backdrop-blur-sm z-10 custom-scrollbar">
+      <!-- Container del Reporte IA -->
+      <div id="ai-report-container" class="mt-3 md:mt-5 flex-1 overflow-y-auto bg-black/60 rounded-xl p-3 md:p-5 border border-cyan-500/20 text-xs md:text-sm text-slate-300 hidden leading-relaxed shadow-inner backdrop-blur-sm z-10 custom-scrollbar">
       </div>
       
       <div id="ai-report-placeholder" class="mt-6 md:mt-8 text-center px-2 flex flex-col items-center justify-center flex-1 z-10">
-         <i class="fas fa-robot text-4xl md:text-5xl text-slate-800 mb-3 md:mb-4"></i>
+         <i class="fas fa-robot text-4xl md:text-5xl text-cyan-500/20 mb-3 md:mb-4 float-anim"></i>
          <p class="text-slate-500 text-xs md:text-sm">Presiona para sintetizar informe técnico de la flota.</p>
       </div>
     </div>
     
-    <div class="p-3 md:p-4 border-t border-slate-800 text-slate-500 text-[10px] md:text-xs flex items-center justify-between bg-slate-950/60">
-      <span class="truncate"><i class="fas fa-server mr-1"></i> <span class="hidden xs:inline">Data Server:</span> Online</span>
-      <span class="text-teal-400 font-bold">V 1.3.0</span>
+    <!-- Footer Sidebar -->
+    <div class="p-3 md:p-4 border-t border-cyan-500/20 text-slate-500 text-[10px] md:text-xs flex items-center justify-between bg-black/60">
+      <span class="truncate flex items-center gap-1"><span class="status-dot inline-block"></span> <span class="hidden xs:inline">Data Server: Online</span></span>
+      <span class="text-cyan-400 font-bold font-tech">V 1.3.0</span>
     </div>
   </aside>
 
-  <!-- Overlay for mobile sidebar -->
-  <div id="sidebar-overlay" class="fixed inset-0 bg-black/50 z-30 md:hidden hidden"></div>
+  <!-- Overlay mobile -->
+  <div id="sidebar-overlay" class="fixed inset-0 bg-black/60 z-30 md:hidden hidden backdrop-blur-sm"></div>
 
-  <!-- MAIN -->
+  <!-- MAIN CONTENT -->
   <div class="flex-1 flex flex-col min-w-0">
 
     <!-- HEADER -->
-    <header class="h-14 md:h-16 bg-slate-900/80 border-b border-slate-800 px-3 md:px-8 flex items-center justify-between backdrop-blur-md sticky top-0 z-20">
-      <div class="flex items-center gap-2 md:gap-4 ml-8 md:ml-4">
+    <header class="h-14 md:h-16 bg-black/70 border-b border-cyan-500/20 px-3 md:px-8 flex items-center justify-between backdrop-blur-xl sticky top-0 z-20 relative overflow-hidden">
+      <div class="absolute inset-0 bg-gradient-to-r from-cyan-500/5 via-transparent to-cyan-500/5"></div>
+      <div class="flex items-center gap-2 md:gap-4 ml-8 md:ml-4 relative z-10">
         <div class="text-lg md:text-2xl font-bold tracking-tight text-white flex items-center gap-2 md:gap-3">
-          <i class="fas fa-tachometer-alt text-teal-400 text-base md:text-2xl"></i> <span class="hidden sm:inline">DASHBOARD</span><span class="sm:hidden">DASH</span>
+          <i class="fas fa-tachometer-alt text-cyan-400 text-base md:text-2xl glow-text"></i> 
+          <span class="hidden sm:inline font-tech tracking-wider">DASHBOARD</span><span class="sm:hidden font-tech">DASH</span>
         </div>
       </div>
-      <div class="flex items-center gap-1 md:gap-3">
-        <button onclick="resetDataset()" class="flex items-center gap-1 md:gap-2 px-2 md:px-4 py-2 bg-rose-600 hover:bg-rose-500 rounded-lg md:rounded-xl text-[10px] md:text-sm font-bold text-white shadow-[0_0_15px_rgba(225,29,72,0.4)] transition-all transform hover:scale-105 animate-shake touch-target" title="Reset">
+      <div class="flex items-center gap-1 md:gap-3 relative z-10">
+        <button onclick="resetDataset()" class="btn-danger flex items-center gap-1 md:gap-2 px-2 md:px-4 py-2 rounded-lg md:rounded-xl text-[10px] md:text-sm font-bold text-white transition-all transform hover:scale-105 animate-shake touch-target">
           <i class="fas fa-trash-alt text-xs md:text-sm"></i> <span class="hidden xs:inline">RESET</span>
         </button>
-        <button onclick="generateEnhancedPDF()" class="flex items-center gap-1 md:gap-2 px-3 md:px-6 py-2 bg-indigo-600 hover:bg-indigo-500 rounded-lg md:rounded-xl text-[10px] md:text-sm font-bold text-white shadow-[0_0_20px_rgba(99,102,241,0.5)] transition-all transform hover:scale-105 touch-target">
+        <button onclick="generateEnhancedPDF()" class="btn-purple flex items-center gap-1 md:gap-2 px-3 md:px-6 py-2 rounded-lg md:rounded-xl text-[10px] md:text-sm font-bold text-white transition-all transform hover:scale-105 touch-target">
           <i class="fas fa-file-pdf text-xs md:text-sm"></i> <span class="hidden xs:inline">PDF</span>
         </button>
-        <button onclick="exportCSV()" class="flex items-center gap-1 md:gap-2 px-3 md:px-6 py-2 bg-emerald-600 hover:bg-emerald-500 rounded-lg md:rounded-xl text-[10px] md:text-sm font-bold text-white shadow-[0_0_20px_rgba(16,185,129,0.5)] transition-all transform hover:scale-105 touch-target">
+        <button onclick="exportCSV()" class="flex items-center gap-1 md:gap-2 px-3 md:px-6 py-2 bg-emerald-600/80 hover:bg-emerald-500 rounded-lg md:rounded-xl text-[10px] md:text-sm font-bold text-white shadow-[0_0_20px_rgba(16,185,129,0.4)] transition-all transform hover:scale-105 touch-target border border-emerald-500/30">
           <i class="fas fa-file-csv text-xs md:text-sm"></i> <span class="hidden xs:inline">CSV</span>
         </button>
-        <button onclick="calculateKPIs()" class="flex items-center gap-1 md:gap-2 px-2 md:px-4 py-2 bg-teal-500 hover:bg-teal-400 text-slate-900 rounded-lg md:rounded-xl text-[10px] md:text-sm font-bold ml-1 transition-all hover:scale-105 shadow-lg shadow-teal-500/20 touch-target">
+        <button onclick="calculateKPIs()" class="btn-neon flex items-center gap-1 md:gap-2 px-2 md:px-4 py-2 text-slate-900 rounded-lg md:rounded-xl text-[10px] md:text-sm font-bold transition-all hover:scale-105 touch-target">
           <i class="fas fa-sync text-xs md:text-sm"></i> <span class="hidden xs:inline">Actualizar</span>
         </button>
       </div>
     </header>
 
     <!-- FORMULARIO DE CARGA -->
-    <div class="bg-slate-900/60 border-b border-slate-800 px-3 md:px-8 py-3 md:py-5 backdrop-blur-sm overflow-x-auto">
-      <div class="min-w-[600px] md:min-w-0 max-w-[1400px] mx-auto px-1">
+    <div class="bg-black/60 border-b border-cyan-500/20 px-3 md:px-8 py-3 md:py-5 backdrop-blur-sm overflow-x-auto relative">
+      <div class="absolute inset-0 bg-gradient-to-b from-cyan-500/3 to-transparent pointer-events-none"></div>
+      <div class="min-w-[600px] md:min-w-0 max-w-[1400px] mx-auto px-1 relative z-10">
         <div class="flex justify-between mb-3 md:mb-4 flex-wrap gap-2 items-center">
-          <h3 class="font-semibold flex items-center gap-2 text-teal-300 text-sm"><i class="fas fa-database"></i> <span class="hidden xs:inline">Ingesta de Datos</span><span class="xs:hidden">Datos</span></h3>
-          <div class="text-slate-400 text-[10px] md:text-sm flex items-center gap-2 bg-slate-800/50 px-2 md:px-3 py-1 rounded-lg">
-              Memoria: <span id="mem-count" class="text-teal-400 font-bold px-1.5 md:px-2 py-0.5 bg-slate-900 rounded">20/20</span>
+          <h3 class="font-semibold flex items-center gap-2 text-cyan-300 text-sm font-tech tracking-wider"><i class="fas fa-database"></i> <span class="hidden xs:inline">Ingesta de Datos</span><span class="xs:hidden">Datos</span></h3>
+          <div class="text-slate-400 text-[10px] md:text-sm flex items-center gap-2 bg-black/50 px-2 md:px-3 py-1 rounded-lg border border-cyan-500/10">
+              Memoria: <span id="mem-count" class="text-cyan-400 font-bold px-1.5 md:px-2 py-0.5 bg-cyan-900/30 rounded border border-cyan-500/20 font-tech">20/20</span>
           </div>
-          <button onclick="submitData()" class="bg-gradient-to-r from-teal-500 to-cyan-500 hover:from-teal-400 hover:to-cyan-400 text-slate-900 px-4 md:px-6 py-2 rounded-lg md:rounded-xl flex items-center gap-2 font-bold text-xs md:text-sm shadow-lg shadow-teal-500/30 transition-all touch-target whitespace-nowrap">
+          <button onclick="submitData()" class="btn-neon text-slate-900 px-4 md:px-6 py-2 rounded-lg md:rounded-xl flex items-center gap-2 font-bold text-xs md:text-sm transition-all touch-target whitespace-nowrap">
             <i class="fas fa-microchip"></i> <span class="hidden sm:inline">Procesar</span><span class="sm:hidden">OK</span>
           </button>
         </div>
         <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-7 gap-2 md:gap-3 text-[10px] md:text-sm">
-          <div><label class="text-slate-400 text-[9px] font-bold block mb-0.5">UNIDAD</label><input id="input-unidad" type="text" class="bg-slate-800 w-full rounded-lg px-3 py-2 text-xs focus:outline-none focus:ring-2 focus:ring-teal-500 transition-all border border-slate-700 touch-target" placeholder="V-021"></div>
-          <div><label class="text-slate-400 text-[9px] font-bold block mb-0.5">ID</label><input id="input-id" type="text" class="bg-slate-800 w-full rounded-lg px-3 py-2 text-xs focus:outline-none focus:ring-2 focus:ring-teal-500 transition-all border border-slate-700 touch-target" placeholder="ID-99"></div>
+          <div><label class="text-cyan-400/60 text-[9px] font-bold block mb-0.5 tracking-wider">UNIDAD</label><input id="input-unidad" type="text" class="cyber-input w-full rounded-lg px-3 py-2 text-xs touch-target" placeholder="V-021"></div>
+          <div><label class="text-cyan-400/60 text-[9px] font-bold block mb-0.5 tracking-wider">ID</label><input id="input-id" type="text" class="cyber-input w-full rounded-lg px-3 py-2 text-xs touch-target" placeholder="ID-99"></div>
           <div>
-            <label class="text-slate-400 text-[9px] font-bold block mb-0.5">MOTOR</label>
-            <select id="input-motor" class="bg-slate-800 w-full rounded-lg px-3 py-2 text-xs focus:outline-none focus:ring-2 focus:ring-teal-500 border border-slate-700 touch-target">
+            <label class="text-cyan-400/60 text-[9px] font-bold block mb-0.5 tracking-wider">MOTOR</label>
+            <select id="input-motor" class="cyber-input w-full rounded-lg px-3 py-2 text-xs touch-target">
               <option value="Nafta">Gasolina</option>
               <option value="Diesel">Diésel</option>
               <option value="Hibrido">Híbrido</option>
               <option value="Electrico">Eléctrico</option>
             </select>
           </div>
-          <div><label class="text-slate-400 text-[9px] font-bold text-teal-400 block mb-0.5">KM</label><input id="input-km" type="number" class="bg-slate-800 w-full rounded-lg px-3 py-2 text-xs focus:outline-none focus:ring-2 focus:ring-teal-500 border border-slate-700 touch-target" placeholder="85000"></div>
-          <div><label class="text-slate-400 text-[9px] font-bold text-teal-400 block mb-0.5">UPTIME</label><input id="input-uptime" type="number" class="bg-slate-800 w-full rounded-lg px-3 py-2 text-xs focus:outline-none focus:ring-2 focus:ring-teal-500 border border-slate-700 touch-target" placeholder="350h"></div>
-          <div><label class="text-slate-400 text-[9px] font-bold text-orange-400 block mb-0.5">DOWNTIME</label><input id="input-downtime" type="number" step="0.1" class="bg-slate-800 w-full rounded-lg px-3 py-2 text-xs focus:outline-none focus:ring-2 focus:ring-teal-500 border border-slate-700 touch-target" placeholder="3.5h"></div>
-          <div><label class="text-slate-400 text-[9px] font-bold block mb-0.5">VIB</label><input id="input-vibracion" type="number" step="0.1" class="bg-slate-800 w-full rounded-lg px-3 py-2 text-xs focus:outline-none focus:ring-2 focus:ring-teal-500 border border-slate-700 touch-target" placeholder="2.4"></div>
-          <div><label class="text-slate-400 text-[9px] font-bold block mb-0.5">TEMP</label><input id="input-ta" type="number" class="bg-slate-800 w-full rounded-lg px-3 py-2 text-xs focus:outline-none focus:ring-2 focus:ring-teal-500 border border-slate-700 touch-target" placeholder="92°"></div>
-          <div><label class="text-slate-400 text-[9px] font-bold block mb-0.5">RPM</label><input id="input-rpm" type="number" class="bg-slate-800 w-full rounded-lg px-3 py-2 text-xs focus:outline-none focus:ring-2 focus:ring-teal-500 border border-slate-700 touch-target" placeholder="2450"></div>
-          <div><label class="text-slate-400 text-[9px] font-bold block mb-0.5">PSI DI</label><input id="input-psi-di" type="number" class="bg-slate-800 w-full rounded-lg px-3 py-2 text-xs focus:outline-none border border-slate-700 touch-target" placeholder="32"></div>
-          <div><label class="text-slate-400 text-[9px] font-bold block mb-0.5">PSI DD</label><input id="input-psi-dd" type="number" class="bg-slate-800 w-full rounded-lg px-3 py-2 text-xs focus:outline-none border border-slate-700 touch-target" placeholder="32"></div>
-          <div><label class="text-slate-400 text-[9px] font-bold block mb-0.5">PSI TI</label><input id="input-psi-ti" type="number" class="bg-slate-800 w-full rounded-lg px-3 py-2 text-xs focus:outline-none border border-slate-700 touch-target" placeholder="28"></div>
-          <div><label class="text-slate-400 text-[9px] font-bold block mb-0.5">PSI TD</label><input id="input-psi-td" type="number" class="bg-slate-800 w-full rounded-lg px-3 py-2 text-xs focus:outline-none border border-slate-700 touch-target" placeholder="32"></div>
+          <div><label class="text-cyan-400/60 text-[9px] font-bold block mb-0.5 tracking-wider">KM</label><input id="input-km" type="number" class="cyber-input w-full rounded-lg px-3 py-2 text-xs touch-target" placeholder="85000"></div>
+          <div><label class="text-cyan-400/60 text-[9px] font-bold block mb-0.5 tracking-wider">UPTIME</label><input id="input-uptime" type="number" class="cyber-input w-full rounded-lg px-3 py-2 text-xs touch-target" placeholder="350h"></div>
+          <div><label class="text-orange-400/60 text-[9px] font-bold block mb-0.5 tracking-wider">DOWNTIME</label><input id="input-downtime" type="number" step="0.1" class="cyber-input w-full rounded-lg px-3 py-2 text-xs touch-target" placeholder="3.5h"></div>
+          <div><label class="text-cyan-400/60 text-[9px] font-bold block mb-0.5 tracking-wider">VIB</label><input id="input-vibracion" type="number" step="0.1" class="cyber-input w-full rounded-lg px-3 py-2 text-xs touch-target" placeholder="2.4"></div>
+          <div><label class="text-cyan-400/60 text-[9px] font-bold block mb-0.5 tracking-wider">TEMP</label><input id="input-ta" type="number" class="cyber-input w-full rounded-lg px-3 py-2 text-xs touch-target" placeholder="92°"></div>
+          <div><label class="text-cyan-400/60 text-[9px] font-bold block mb-0.5 tracking-wider">RPM</label><input id="input-rpm" type="number" class="cyber-input w-full rounded-lg px-3 py-2 text-xs touch-target" placeholder="4500"></div>
+          <div><label class="text-cyan-400/60 text-[9px] font-bold block mb-0.5 tracking-wider">PSI DI</label><input id="input-psi-di" type="number" class="cyber-input w-full rounded-lg px-3 py-2 text-xs touch-target" placeholder="32"></div>
+          <div><label class="text-cyan-400/60 text-[9px] font-bold block mb-0.5 tracking-wider">PSI DD</label><input id="input-psi-dd" type="number" class="cyber-input w-full rounded-lg px-3 py-2 text-xs touch-target" placeholder="32"></div>
+          <div><label class="text-cyan-400/60 text-[9px] font-bold block mb-0.5 tracking-wider">PSI TI</label><input id="input-psi-ti" type="number" class="cyber-input w-full rounded-lg px-3 py-2 text-xs touch-target" placeholder="28"></div>
+          <div><label class="text-cyan-400/60 text-[9px] font-bold block mb-0.5 tracking-wider">PSI TD</label><input id="input-psi-td" type="number" class="cyber-input w-full rounded-lg px-3 py-2 text-xs touch-target" placeholder="34"></div>
         </div>
       </div>
     </div>
 
     <!-- DASHBOARD PRINCIPAL -->
-    <div class="flex-1 overflow-auto p-3 md:p-8 bg-transparent" id="content-area">
+    <div class="flex-1 overflow-auto p-3 md:p-8" id="content-area">
       <div class="max-w-[1400px] mx-auto px-1 md:px-4 pb-8 md:pb-12">
 
-        <!-- Tarjeta de Unidad -->
+        <!-- Tarjeta de Unidad - Estilo HUD -->
         <div class="mb-4 md:mb-8">
-          <div class="glass-card border-l-[4px] md:border-l-[6px] border-teal-500 p-4 md:p-6 rounded-xl md:rounded-2xl flex flex-col xs:flex-row items-center gap-4 shadow-[0_10px_40px_rgba(0,0,0,0.4)] relative overflow-hidden">
-             <div class="w-14 h-14 md:w-20 md:h-20 bg-gradient-to-br from-teal-500/20 to-teal-500/5 text-teal-400 border border-teal-500/30 rounded-xl md:rounded-2xl flex items-center justify-center text-2xl md:text-4xl shrink-0 z-10 shadow-inner">
-                 <i class="fas fa-truck-pickup"></i>
+          <div class="glass-card rounded-xl md:rounded-2xl p-4 md:p-6 flex flex-col xs:flex-row items-center gap-4 shadow-lg relative overflow-hidden">
+             <!-- HUD Corners -->
+             <div class="hud-corner hud-corner-tl"></div>
+             <div class="hud-corner hud-corner-tr"></div>
+             <div class="hud-corner hud-corner-bl"></div>
+             <div class="hud-corner hud-corner-br"></div>
+             
+             <div class="w-14 h-14 md:w-20 md:h-20 bg-gradient-to-br from-cyan-500/20 to-blue-500/5 text-cyan-400 border border-cyan-500/30 rounded-xl md:rounded-2xl flex items-center justify-center text-2xl md:text-4xl shrink-0 z-10 shadow-inner relative">
+                 <i class="fas fa-car-side float-anim"></i>
+                 <div class="absolute -bottom-1 -right-1 w-4 h-4 bg-cyan-400 rounded-full animate-pulse opacity-60"></div>
              </div>
              <div class="flex-1 z-10 w-full text-center xs:text-left">
-               <p class="text-slate-400 text-[9px] md:text-xs font-bold uppercase tracking-widest mb-1 flex items-center xs:justify-start justify-center gap-2">
-                 <span class="w-1.5 h-1.5 md:w-2 md:h-2 rounded-full bg-teal-500 animate-pulse"></span> <span class="hidden xs:inline">Sistema Seleccionado</span><span class="xs:hidden">Unidad</span>
+               <p class="text-cyan-400/60 text-[9px] md:text-xs font-bold uppercase tracking-widest mb-1 flex items-center xs:justify-start justify-center gap-2">
+                 <span class="status-dot"></span> <span class="hidden xs:inline">Sistema Seleccionado</span><span class="xs:hidden">Unidad</span>
                </p>
                <div class="flex flex-col xs:flex-row items-center xs:items-baseline gap-2 md:gap-4 mt-1">
-                 <h3 id="card-unidad" class="text-2xl md:text-4xl lg:text-5xl font-black text-white drop-shadow-md tracking-tight glow-text">--</h3>
-                 <span id="card-motor" class="text-teal-400 border border-teal-500/30 bg-teal-500/10 px-3 py-1 rounded-full text-[10px] md:text-sm font-bold uppercase tracking-wide">Motor --</span>
-                 <span id="card-km" class="text-slate-400 bg-slate-900/80 px-2 md:px-3 py-1 rounded-full text-[10px] md:text-sm font-bold tracking-widest shadow-inner border border-slate-700"><i class="fas fa-road"></i> -- KM</span>
+                 <h3 id="card-unidad" class="text-2xl md:text-4xl lg:text-5xl font-black text-white tracking-tight glow-text font-tech">--</h3>
+                 <span id="card-motor" class="text-cyan-400 border border-cyan-500/30 bg-cyan-500/10 px-3 py-1 rounded-full text-[10px] md:text-sm font-bold uppercase tracking-wide">Motor --</span>
+                 <span id="card-km" class="text-slate-400 bg-black/40 px-2 md:px-3 py-1 rounded-full text-[10px] md:text-sm font-bold tracking-widest shadow-inner border border-cyan-500/10 font-tech"><i class="fas fa-road"></i> -- KM</span>
                </div>
              </div>
              <div class="flex gap-2 md:gap-4 z-10 w-full xs:w-auto justify-center">
-                 <div class="bg-slate-950/60 rounded-lg md:rounded-xl p-2 md:p-3 border border-slate-800 text-center min-w-[70px] md:min-w-[100px]">
+                 <div class="bg-black/40 rounded-lg md:rounded-xl p-2 md:p-3 border border-cyan-500/20 text-center min-w-[70px] md:min-w-[100px]">
                      <p class="text-[8px] md:text-[10px] text-slate-400 uppercase font-bold tracking-widest mb-0.5">RPM</p>
-                     <p id="card-rpm" class="text-lg md:text-xl font-bold text-white">--</p>
+                     <p id="card-rpm" class="text-lg md:text-xl font-bold text-cyan-400 font-tech">--</p>
                  </div>
-                 <div class="bg-slate-950/60 rounded-lg md:rounded-xl p-2 md:p-3 border border-slate-800 text-center min-w-[70px] md:min-w-[100px]">
+                 <div class="bg-black/40 rounded-lg md:rounded-xl p-2 md:p-3 border border-cyan-500/20 text-center min-w-[70px] md:min-w-[100px]">
                      <p class="text-[8px] md:text-[10px] text-slate-400 uppercase font-bold tracking-widest mb-0.5">Estado</p>
-                     <p class="text-xs md:text-base font-bold text-teal-400 mt-0.5"><i class="fas fa-check-circle"></i> <span class="hidden xs:inline">Online</span></p>
+                     <p class="text-xs md:text-base font-bold text-cyan-400 mt-0.5"><i class="fas fa-circle text-[8px] animate-pulse"></i> <span class="hidden xs:inline">Online</span></p>
                  </div>
              </div>
-             <div class="hidden md:block absolute right-0 top-0 h-full w-96 bg-gradient-to-l from-teal-500/10 to-transparent pointer-events-none"></div>
-             <i class="fas fa-cogs absolute -right-2 md:-right-4 -bottom-2 md:-bottom-4 text-6xl md:text-9xl text-slate-800/40 pointer-events-none"></i>
+             <div class="hidden md:block absolute right-0 top-0 h-full w-96 bg-gradient-to-l from-cyan-500/5 to-transparent pointer-events-none"></div>
           </div>
         </div>
 
         <!-- KPIs Section -->
-        <h2 class="text-lg md:text-xl font-bold text-white mb-4 md:mb-6 flex items-center gap-2"><i class="fas fa-chart-line text-teal-400"></i> <span class="hidden xs:inline">Rendimiento de la Flota</span><span class="xs:hidden">KPIs</span></h2>
+        <h2 class="text-lg md:text-xl font-bold text-white mb-4 md:mb-6 flex items-center gap-2 font-tech tracking-wider"><i class="fas fa-chart-line text-cyan-400"></i> <span class="hidden xs:inline">Rendimiento de la Flota</span><span class="xs:hidden">KPIs</span></h2>
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-4 md:gap-6">
           
           <!-- Gauge Disponibilidad -->
-          <div class="lg:col-span-4 glass-card rounded-2xl md:rounded-3xl p-4 md:p-8 flex flex-col items-center justify-center shadow-[0_0_40px_rgba(20,184,166,0.08)]">
-            <h3 class="uppercase text-teal-400 text-[9px] md:text-[11px] font-bold tracking-widest mb-3 md:mb-6 text-center">DISPONIBILIDAD</h3>
+          <div class="lg:col-span-4 glass-card rounded-2xl md:rounded-3xl p-4 md:p-8 flex flex-col items-center justify-center shadow-lg relative overflow-hidden">
+            <div class="absolute inset-0 bg-gradient-to-b from-cyan-500/5 to-transparent pointer-events-none"></div>
+            <h3 class="uppercase text-cyan-400 text-[9px] md:text-[11px] font-bold tracking-widest mb-3 md:mb-6 text-center font-tech">DISPONIBILIDAD</h3>
             <div class="gauge-wrapper mt-1 md:mt-2">
-              <svg class="gauge-circle w-full h-full -rotate-90 drop-shadow-[0_0_15px_rgba(0,212,255,0.3)]" viewBox="0 0 100 100" preserveAspectRatio="xMidYMid meet">
-                <circle cx="50" cy="50" r="45" fill="none" stroke="#1e293b" stroke-width="8"/>
-                <circle id="svg-disp" cx="50" cy="50" r="45" fill="none" stroke="#06b6d4" stroke-width="8" stroke-dasharray="0 282.7" stroke-linecap="round" class="transition-all duration-1000 ease-out"/>
+              <svg class="gauge-circle w-full h-full -rotate-90" viewBox="0 0 100 100" preserveAspectRatio="xMidYMid meet">
+                <circle cx="50" cy="50" r="45" fill="none" stroke="rgba(6,182,212,0.1)" stroke-width="8"/>
+                <circle id="svg-disp" cx="50" cy="50" r="45" fill="none" stroke="#06b6d4" stroke-width="8" stroke-dasharray="0 282.7" stroke-linecap="round" class="transition-all duration-1000 ease-out" style="filter: drop-shadow(0 0 8px rgba(6,182,212,0.5));"/>
               </svg>
               <div class="absolute inset-0 flex flex-col items-center justify-center text-center">
-                <!-- 🔹 NÚMERO MÁS PEQUEÑO PARA MEJOR UX -->
-                <span id="kpi-disp" class="text-2xl md:text-3xl lg:text-4xl font-black text-cyan-400 mt-1 md:mt-2">0.0%</span>
+                <span id="kpi-disp" class="text-2xl md:text-3xl lg:text-4xl font-black text-cyan-400 mt-1 md:mt-2 font-tech">0.0%</span>
               </div>
             </div>
-            <p id="trend-disp" class="text-[10px] md:text-sm font-semibold mt-3 md:mt-6 bg-teal-500/10 text-teal-400 px-3 md:px-4 py-1 md:py-1.5 rounded-full border border-teal-500/20"><i class="fas fa-arrow-up"></i> <span class="hidden xs:inline">Óptimo</span></p>
+            <p id="trend-disp" class="text-[10px] md:text-sm font-semibold mt-3 md:mt-6 bg-cyan-500/10 text-cyan-400 px-3 md:px-4 py-1 md:py-1.5 rounded-full border border-cyan-500/20"><i class="fas fa-arrow-up"></i> <span class="hidden xs:inline">Óptimo</span></p>
           </div>
 
           <!-- MTBF & MTTR -->
           <div class="lg:col-span-8 grid grid-cols-2 gap-3 md:gap-6">
-            <!-- MTBF -->
             <div class="glass-card rounded-2xl md:rounded-3xl p-4 md:p-6 flex flex-col items-center justify-center text-center shadow-lg relative overflow-hidden group">
-              <div class="absolute top-0 right-0 w-24 h-24 md:w-32 md:h-32 bg-teal-500/5 rounded-bl-full transition-all group-hover:scale-110 pointer-events-none"></div>
-              <div class="w-12 h-12 md:w-16 md:h-16 rounded-xl md:rounded-2xl bg-slate-800/80 flex items-center justify-center text-teal-400 text-2xl md:text-3xl shadow-inner border border-slate-700 mb-3 md:mb-4 z-10"><i class="fas fa-clock"></i></div>
+              <div class="absolute top-0 right-0 w-24 h-24 md:w-32 md:h-32 bg-cyan-500/5 rounded-bl-full transition-all group-hover:scale-110 pointer-events-none"></div>
+              <div class="w-12 h-12 md:w-16 md:h-16 rounded-xl md:rounded-2xl bg-black/40 flex items-center justify-center text-cyan-400 text-2xl md:text-3xl shadow-inner border border-cyan-500/20 mb-3 md:mb-4 z-10"><i class="fas fa-clock"></i></div>
               <div class="z-10">
-                <h4 class="text-slate-400 text-[10px] md:text-lg font-bold tracking-wider uppercase">MTBF</h4>
+                <h4 class="text-slate-400 text-[10px] md:text-lg font-bold tracking-wider uppercase font-tech">MTBF</h4>
                 <p class="text-[8px] md:text-xs text-slate-500 mb-2 md:mb-4 hidden xs:block">Tiempo entre fallas</p>
-                <p class="text-3xl md:text-6xl font-black text-white"><span id="kpi-mtbf">0</span><span class="text-lg md:text-3xl text-slate-500 font-medium ml-1">h</span></p>
+                <p class="text-3xl md:text-6xl font-black text-white font-tech"><span id="kpi-mtbf">0</span><span class="text-lg md:text-3xl text-slate-500 font-medium ml-1">h</span></p>
               </div>
             </div>
-            <!-- MTTR -->
             <div class="glass-card rounded-2xl md:rounded-3xl p-4 md:p-6 flex flex-col items-center justify-center text-center shadow-lg relative overflow-hidden group">
               <div class="absolute top-0 right-0 w-24 h-24 md:w-32 md:h-32 bg-orange-500/5 rounded-bl-full transition-all group-hover:scale-110 pointer-events-none"></div>
-              <div class="w-12 h-12 md:w-16 md:h-16 rounded-xl md:rounded-2xl bg-slate-800/80 flex items-center justify-center text-orange-400 text-2xl md:text-3xl shadow-inner border border-slate-700 mb-3 md:mb-4 z-10"><i class="fas fa-tools"></i></div>
+              <div class="w-12 h-12 md:w-16 md:h-16 rounded-xl md:rounded-2xl bg-black/40 flex items-center justify-center text-orange-400 text-2xl md:text-3xl shadow-inner border border-orange-500/20 mb-3 md:mb-4 z-10"><i class="fas fa-wrench"></i></div>
               <div class="z-10">
-                <h4 class="text-slate-400 text-[10px] md:text-lg font-bold tracking-wider uppercase">MTTR</h4>
+                <h4 class="text-slate-400 text-[10px] md:text-lg font-bold tracking-wider uppercase font-tech">MTTR</h4>
                 <p class="text-[8px] md:text-xs text-slate-500 mb-2 md:mb-4 hidden xs:block">Tiempo de reparación</p>
-                <p class="text-3xl md:text-6xl font-black text-white"><span id="kpi-mttr">0</span><span class="text-lg md:text-3xl text-slate-500 font-medium ml-1">h</span></p>
+                <p class="text-3xl md:text-6xl font-black text-white font-tech"><span id="kpi-mttr">0</span><span class="text-lg md:text-3xl text-slate-500 font-medium ml-1">h</span></p>
               </div>
             </div>
           </div>
         </div>
         
         <!-- GRÁFICOS -->
-        <h2 class="text-lg md:text-xl font-bold text-white mb-4 md:mb-6 mt-6 md:mt-10 flex items-center gap-2"><i class="fas fa-chart-area text-purple-400"></i> <span class="hidden xs:inline">Tendencia Temporal</span><span class="xs:hidden">Gráficos</span></h2>
+        <h2 class="text-lg md:text-xl font-bold text-white mb-4 md:mb-6 mt-6 md:mt-10 flex items-center gap-2 font-tech tracking-wider"><i class="fas fa-chart-area text-purple-400"></i> <span class="hidden xs:inline">Tendencia Temporal</span><span class="xs:hidden">Gráficos</span></h2>
         <div class="glass-card rounded-2xl md:rounded-3xl p-3 md:p-6 shadow-lg">
           <div class="relative w-full" style="aspect-ratio: 16/9; min-height: 200px;">
             <canvas id="timelineChart" class="w-full h-full"></canvas>
@@ -286,94 +395,90 @@
         </div>
 
         <!-- Matriz de Correlación -->
-        <h2 class="text-lg md:text-xl font-bold text-white mb-4 md:mb-6 mt-6 md:mt-10 flex items-center gap-2"><i class="fas fa-th text-green-400"></i> <span class="hidden xs:inline">Matriz de Correlación</span><span class="xs:hidden">Correlación</span></h2>
+        <h2 class="text-lg md:text-xl font-bold text-white mb-4 md:mb-6 mt-6 md:mt-10 flex items-center gap-2 font-tech tracking-wider"><i class="fas fa-th text-green-400"></i> <span class="hidden xs:inline">Matriz de Correlación</span><span class="xs:hidden">Correlación</span></h2>
         <div class="glass-card rounded-2xl md:rounded-3xl p-3 md:p-6 shadow-lg overflow-x-auto">
           <div id="correlation-matrix" class="min-w-[400px] md:min-w-[600px] text-white text-[10px] md:text-sm"></div>
           <div class="mt-4 md:mt-6 flex justify-end items-center gap-1 md:gap-2 text-[8px] md:text-xs text-slate-400 flex-wrap">
              <span class="hidden xs:inline">Escala:</span>
              <div class="flex items-center gap-1"><div class="w-3 h-3 md:w-4 md:h-4 bg-rose-500 rounded-sm"></div><span class="hidden xs:inline">Inversa</span></div>
              <div class="flex items-center gap-1"><div class="w-3 h-3 md:w-4 md:h-4 bg-slate-800 border border-slate-600 rounded-sm"></div><span class="hidden xs:inline">Nula</span></div>
-             <div class="flex items-center gap-1"><div class="w-3 h-3 md:w-4 md:h-4 bg-teal-500 rounded-sm"></div><span class="hidden xs:inline">Directa</span></div>
+             <div class="flex items-center gap-1"><div class="w-3 h-3 md:w-4 md:h-4 bg-cyan-500 rounded-sm"></div><span class="hidden xs:inline">Directa</span></div>
           </div>
         </div>
 
-        <!-- 🔹 NUEVA SECCIÓN: DATASET ACUMULADO + DESCRIBE() -->
+        <!-- DATASET ACUMULADO + DESCRIBE() -->
         <div class="mt-6 md:mt-10">
-          <h2 class="text-lg md:text-xl font-bold text-white mb-4 md:mb-6 flex items-center gap-2">
-            <i class="fas fa-table text-cyan-400"></i> <span class="hidden xs:inline">Dataset Acumulado en Memoria</span><span class="xs:hidden">Dataset</span>
+          <h2 class="text-lg md:text-xl font-bold text-white mb-4 md:mb-6 flex items-center gap-2 font-tech tracking-wider">
+            <i class="fas fa-database text-cyan-400"></i> <span class="hidden xs:inline">Dataset Acumulado en Memoria</span><span class="xs:hidden">Dataset</span>
           </h2>
           
           <!-- Tabla del Dataset -->
           <div class="glass-card rounded-2xl md:rounded-3xl p-3 md:p-6 shadow-lg mb-4 md:mb-6">
             <div class="flex justify-between items-center mb-3 md:mb-4">
-              <h3 class="text-teal-400 font-bold text-sm"><i class="fas fa-database mr-1"></i> Registros Almacenados (<span id="dataset-count">0</span>/20)</h3>
+              <h3 class="text-cyan-400 font-bold text-sm font-tech"><i class="fas fa-table mr-1"></i> Registros (<span id="dataset-count">0</span>/20)</h3>
               <div class="flex gap-2">
-                <button onclick="exportCSV()" class="bg-emerald-600 hover:bg-emerald-500 text-white text-[10px] md:text-xs px-3 py-1.5 rounded-lg flex items-center gap-1 touch-target">
+                <button onclick="exportCSV()" class="bg-emerald-600/80 hover:bg-emerald-500 text-white text-[10px] md:text-xs px-3 py-1.5 rounded-lg flex items-center gap-1 touch-target border border-emerald-500/30">
                   <i class="fas fa-file-csv"></i> <span class="hidden xs:inline">CSV</span>
                 </button>
-                <button onclick="generateEnhancedPDF()" class="bg-indigo-600 hover:bg-indigo-500 text-white text-[10px] md:text-xs px-3 py-1.5 rounded-lg flex items-center gap-1 touch-target">
+                <button onclick="generateEnhancedPDF()" class="btn-purple text-white text-[10px] md:text-xs px-3 py-1.5 rounded-lg flex items-center gap-1 touch-target">
                   <i class="fas fa-file-pdf"></i> <span class="hidden xs:inline">PDF</span>
                 </button>
               </div>
             </div>
             <div class="overflow-x-auto custom-scrollbar">
-              <table class="w-full border-collapse text-[9px] md:text-xs" id="dataset-table">
-                <!-- Se llena dinámicamente con JS -->
-              </table>
+              <table class="w-full border-collapse cyber-table text-[9px] md:text-xs" id="dataset-table"></table>
             </div>
-            <p class="text-[9px] text-slate-500 mt-2 text-center">* Los datos persisten en memoria. Usa RESET para borrar.</p>
+            <p class="text-[9px] text-slate-500 mt-2 text-center italic">* Datos persisten en memoria local. RESET para borrar.</p>
           </div>
 
-          <!-- Tabla DESCRIBE() estilo pandas -->
+          <!-- Tabla DESCRIBE() -->
           <div class="glass-card rounded-2xl md:rounded-3xl p-3 md:p-6 shadow-lg">
-            <h3 class="text-indigo-400 font-bold text-sm mb-3 md:mb-4 flex items-center gap-2">
+            <h3 class="text-purple-400 font-bold text-sm mb-3 md:mb-4 flex items-center gap-2 font-tech">
               <i class="fas fa-calculator mr-1"></i> DESCRIBE() - Estadísticas del Dataset
             </h3>
             <p class="text-[9px] md:text-xs text-slate-400 mb-3 md:mb-4">
               <i class="fas fa-info-circle mr-1"></i> 
-              <span class="hidden xs:inline">Estadísticas básicas por columna numérica: count, mean, std, min, 25%, 50%, 75%, max. Útil para detectar outliers y calidad de datos.</span>
-              <span class="xs:hidden">Estadísticas básicas para análisis de datos.</span>
+              <span class="hidden xs:inline">Estadísticas básicas por columna: count, mean, std, min, 25%, 50%, 75%, max. Detecta outliers y calidad de datos.</span>
+              <span class="xs:hidden">Estadísticas básicas para análisis.</span>
             </p>
-            <div id="describe-table-container" class="overflow-x-auto custom-scrollbar">
-              <!-- Se llena dinámicamente con JS -->
-            </div>
+            <div id="describe-table-container" class="overflow-x-auto custom-scrollbar"></div>
           </div>
         </div>
 
         <!-- Predicciones IA -->
-        <h2 class="text-lg md:text-xl font-bold text-white mb-4 md:mb-6 mt-6 md:mt-10 flex items-center gap-2"><i class="fas fa-robot text-indigo-400"></i> <span class="hidden xs:inline">Recomendaciones IA</span><span class="xs:hidden">IA</span></h2>
+        <h2 class="text-lg md:text-xl font-bold text-white mb-4 md:mb-6 mt-6 md:mt-10 flex items-center gap-2 font-tech tracking-wider"><i class="fas fa-brain text-indigo-400"></i> <span class="hidden xs:inline">Recomendaciones IA</span><span class="xs:hidden">IA</span></h2>
         <div class="glass-card border-indigo-500/30 rounded-2xl md:rounded-3xl p-4 md:p-6 shadow-lg relative overflow-hidden">
-          <div class="absolute top-0 left-0 w-1 md:w-1.5 h-full bg-indigo-500"></div>
+          <div class="absolute top-0 left-0 w-1 md:w-1.5 h-full bg-gradient-to-b from-indigo-500 to-purple-500"></div>
           <div class="flex flex-col md:flex-row gap-4 md:gap-8">
             <div class="flex-1 flex flex-col justify-between" id="predictive-panel"></div>
-            <div class="w-full md:w-1/3 bg-slate-950/60 p-3 md:p-5 rounded-xl md:rounded-2xl border border-slate-800 shrink-0">
-               <h4 class="text-slate-300 font-bold mb-2 md:mb-3 text-xs md:text-sm">Última Ingesta</h4>
+            <div class="w-full md:w-1/3 bg-black/40 p-3 md:p-5 rounded-xl md:rounded-2xl border border-cyan-500/10 shrink-0">
+               <h4 class="text-slate-300 font-bold mb-2 md:mb-3 text-xs md:text-sm font-tech">Última Ingesta</h4>
                <ul id="ml-status-list" class="space-y-2 text-[9px] md:text-xs text-slate-400"></ul>
             </div>
           </div>
         </div>
 
         <!-- RESUMEN EJECUTIVO -->
-        <div class="mt-8 md:mt-12 bg-slate-900/80 backdrop-blur-sm border border-slate-700 rounded-2xl md:rounded-3xl p-4 md:p-8 shadow-2xl relative overflow-hidden">
-          <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-teal-500 via-indigo-500 to-cyan-500"></div>
-          <h2 class="text-lg md:text-2xl font-bold text-white mb-4 md:mb-6 flex items-center gap-2 md:gap-3">
+        <div class="mt-8 md:mt-12 glass-card rounded-2xl md:rounded-3xl p-4 md:p-8 shadow-2xl relative overflow-hidden">
+          <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-cyan-500 via-purple-500 to-blue-500"></div>
+          <h2 class="text-lg md:text-2xl font-bold text-white mb-4 md:mb-6 flex items-center gap-2 md:gap-3 font-tech tracking-wider">
             <i class="fas fa-book-open text-cyan-400"></i> <span class="hidden xs:inline">Resumen Explicado</span><span class="xs:hidden">Ayuda</span>
           </h2>
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 md:gap-6 text-slate-300 text-[10px] md:text-sm leading-relaxed">
-            <div class="bg-slate-800/50 p-3 md:p-5 rounded-lg md:rounded-xl border border-slate-700/50">
-              <h3 class="text-teal-400 font-bold mb-2 flex items-center gap-2 text-xs md:text-base"><i class="fas fa-chart-pie"></i> 1. KPIs</h3>
-              <p class="mb-1.5"><span class="text-white font-semibold bg-slate-900 px-1.5 py-0.5 rounded text-[9px]">Disponibilidad:</span> % de tiempo operativo. Cerca de 100% = ideal.</p>
-              <p class="mb-1.5"><span class="text-white font-semibold bg-slate-900 px-1.5 py-0.5 rounded text-[9px]">MTBF:</span> Horas entre fallas. <strong>Más alto = más confiable.</strong></p>
-              <p><span class="text-white font-semibold bg-slate-900 px-1.5 py-0.5 rounded text-[9px]">MTTR:</span> Tiempo de reparación. <strong>Más bajo = taller más eficiente.</strong></p>
+            <div class="bg-black/30 p-3 md:p-5 rounded-lg md:rounded-xl border border-cyan-500/10">
+              <h3 class="text-cyan-400 font-bold mb-2 flex items-center gap-2 text-xs md:text-base font-tech"><i class="fas fa-chart-pie"></i> 1. KPIs</h3>
+              <p class="mb-1.5"><span class="text-white font-semibold bg-black/40 px-1.5 py-0.5 rounded text-[9px]">Disponibilidad:</span> % tiempo operativo. ~100% = ideal.</p>
+              <p class="mb-1.5"><span class="text-white font-semibold bg-black/40 px-1.5 py-0.5 rounded text-[9px]">MTBF:</span> Horas entre fallas. <strong>Más alto = confiable.</strong></p>
+              <p><span class="text-white font-semibold bg-black/40 px-1.5 py-0.5 rounded text-[9px]">MTTR:</span> Tiempo reparación. <strong>Más bajo = eficiente.</strong></p>
             </div>
-            <div class="bg-slate-800/50 p-3 md:p-5 rounded-lg md:rounded-xl border border-slate-700/50">
-              <h3 class="text-indigo-400 font-bold mb-2 flex items-center gap-2 text-xs md:text-base"><i class="fas fa-brain"></i> 2. IA Predictiva</h3>
+            <div class="bg-black/30 p-3 md:p-5 rounded-lg md:rounded-xl border border-cyan-500/10">
+              <h3 class="text-purple-400 font-bold mb-2 flex items-center gap-2 text-xs md:text-base font-tech"><i class="fas fa-brain"></i> 2. IA Predictiva</h3>
               <p class="mb-1.5">Alertas si <span class="text-rose-400 font-semibold">temp &gt;105°C</span> o <span class="text-orange-400 font-semibold">vibración &gt;5 mm/s</span>.</p>
-              <p>Cruza datos con <strong>kilometraje</strong> para anticipar mantenimientos preventivos.</p>
+              <p>Cruza datos con <strong>kilometraje</strong> para anticipar mantenimientos.</p>
             </div>
-            <div class="bg-slate-800/50 p-3 md:p-5 rounded-lg md:rounded-xl border border-slate-700/50 sm:col-span-2">
-              <h3 class="text-cyan-400 font-bold mb-2 flex items-center gap-2 text-xs md:text-base"><i class="fas fa-lightbulb"></i> 💡 Recomendación</h3>
-              <p>Prioriza unidades con alertas, usa <strong>aceites sintéticos</strong> y mantén registros actualizados. La detección temprana evita paradas costosas y alarga la vida útil de la flota.</p>
+            <div class="bg-black/30 p-3 md:p-5 rounded-lg md:rounded-xl border border-cyan-500/10 sm:col-span-2">
+              <h3 class="text-cyan-400 font-bold mb-2 flex items-center gap-2 text-xs md:text-base font-tech"><i class="fas fa-lightbulb"></i> 💡 Recomendación</h3>
+              <p>Prioriza unidades con alertas, usa <strong>aceites sintéticos</strong> y mantén registros actualizados. La detección temprana evita paradas costosas.</p>
             </div>
           </div>
         </div>
@@ -384,9 +489,9 @@
 </div>
 
 <!-- Mobile Bottom Navigation -->
-<nav id="mobile-nav" class="fixed bottom-0 left-0 right-0 bg-slate-900/95 border-t border-slate-800 p-2 md:hidden z-20 backdrop-blur-md">
+<nav id="mobile-nav" class="fixed bottom-0 left-0 right-0 bg-black/90 border-t border-cyan-500/20 p-2 md:hidden z-20 backdrop-blur-xl">
   <div class="flex justify-around items-center">
-    <button onclick="document.getElementById('mobile-menu-btn').click()" class="flex flex-col items-center gap-1 p-2 text-teal-400 touch-target">
+    <button onclick="document.getElementById('mobile-menu-btn').click()" class="flex flex-col items-center gap-1 p-2 text-cyan-400 touch-target">
       <i class="fas fa-bars text-lg"></i>
       <span class="text-[9px]">Menú</span>
     </button>
@@ -398,7 +503,7 @@
       <i class="fas fa-file-pdf text-lg"></i>
       <span class="text-[9px]">PDF</span>
     </button>
-    <button onclick="submitData()" class="flex flex-col items-center gap-1 p-2 text-teal-400 touch-target">
+    <button onclick="submitData()" class="flex flex-col items-center gap-1 p-2 text-cyan-400 touch-target">
       <i class="fas fa-plus-circle text-lg"></i>
       <span class="text-[9px]">Nuevo</span>
     </button>
@@ -409,9 +514,9 @@
 <div id="pdf-report-template-enhanced" class="hidden w-[794px] bg-white text-slate-800 p-8 font-sans" style="min-height: 1123px; box-sizing: border-box; font-size: 11px;">
     <div class="flex justify-between items-center border-b-4 border-slate-900 pb-4 mb-6">
         <div class="flex items-center gap-3">
-            <div class="w-10 h-10 bg-gradient-to-br from-teal-500 to-cyan-600 text-white rounded-lg flex items-center justify-center text-xl font-bold shadow-lg">⚙️</div>
+            <div class="w-10 h-10 bg-gradient-to-br from-cyan-500 to-blue-600 text-white rounded-lg flex items-center justify-center text-xl font-bold shadow-lg">⚙️</div>
             <div>
-                <h1 class="text-2xl font-black text-slate-900 tracking-tighter">NEXO-ART</h1>
+                <h1 class="text-2xl font-black text-slate-900 tracking-tighter font-tech">NEXO-ART</h1>
                 <p class="text-[9px] font-bold text-slate-500 uppercase tracking-wider">Reporte Predictivo</p>
             </div>
         </div>
@@ -420,89 +525,39 @@
             <p id="pdf-fecha" class="text-[10px] font-bold text-indigo-700">--</p>
         </div>
     </div>
-    
     <div class="bg-gradient-to-r from-slate-50 to-white rounded-xl p-4 mb-5 border border-slate-200">
         <h2 class="text-[9px] font-black text-slate-400 uppercase tracking-wider mb-3">📋 Unidad en Análisis</h2>
         <div class="grid grid-cols-2 gap-3">
-            <div>
-                <p class="text-[9px] text-slate-400 uppercase">Identificador</p>
-                <p id="pdf-unidad" class="text-lg font-black text-slate-900">--</p>
-                <p id="pdf-id" class="text-[10px] font-bold text-slate-500">ID: --</p>
-            </div>
-            <div class="text-right">
-                <p class="text-[9px] text-slate-400 uppercase">Configuración</p>
-                <p id="pdf-motor" class="text-base font-black text-indigo-600 bg-indigo-50 px-3 py-1 rounded-lg inline-block">--</p>
-            </div>
-            <div>
-                <p class="text-[9px] text-slate-400 uppercase">Kilometraje</p>
-                <p id="pdf-km" class="text-base font-black text-teal-700">-- KM</p>
-            </div>
-            <div class="text-right">
-                <p class="text-[9px] text-slate-400 uppercase">Última Lectura</p>
-                <p class="text-[10px] font-bold text-slate-600" id="pdf-last-reading">--</p>
-            </div>
+            <div><p class="text-[9px] text-slate-400 uppercase">Identificador</p><p id="pdf-unidad" class="text-lg font-black text-slate-900">--</p><p id="pdf-id" class="text-[10px] font-bold text-slate-500">ID: --</p></div>
+            <div class="text-right"><p class="text-[9px] text-slate-400 uppercase">Configuración</p><p id="pdf-motor" class="text-base font-black text-indigo-600 bg-indigo-50 px-3 py-1 rounded-lg inline-block">--</p></div>
+            <div><p class="text-[9px] text-slate-400 uppercase">Kilometraje</p><p id="pdf-km" class="text-base font-black text-teal-700">-- KM</p></div>
+            <div class="text-right"><p class="text-[9px] text-slate-400 uppercase">Última Lectura</p><p class="text-[10px] font-bold text-slate-600" id="pdf-last-reading">--</p></div>
         </div>
     </div>
-    
     <div class="grid grid-cols-3 gap-3 mb-5">
-        <div class="bg-indigo-50 border border-indigo-200 rounded-xl p-3 text-center">
-            <p class="text-[8px] text-indigo-600 font-black uppercase">Disponibilidad</p>
-            <p id="pdf-disp-val" class="text-xl font-black text-indigo-900">--</p>
-        </div>
-        <div class="bg-teal-50 border border-teal-200 rounded-xl p-3 text-center">
-            <p class="text-[8px] text-teal-600 font-black uppercase">MTBF Prom.</p>
-            <p id="pdf-mtbf-val" class="text-xl font-black text-teal-900">--</p>
-        </div>
-        <div class="bg-orange-50 border border-orange-200 rounded-xl p-3 text-center">
-            <p class="text-[8px] text-orange-600 font-black uppercase">MTTR Prom.</p>
-            <p id="pdf-mttr-val" class="text-xl font-black text-orange-900">--</p>
-        </div>
+        <div class="bg-indigo-50 border border-indigo-200 rounded-xl p-3 text-center"><p class="text-[8px] text-indigo-600 font-black uppercase">Disponibilidad</p><p id="pdf-disp-val" class="text-xl font-black text-indigo-900">--</p></div>
+        <div class="bg-teal-50 border border-teal-200 rounded-xl p-3 text-center"><p class="text-[8px] text-teal-600 font-black uppercase">MTBF</p><p id="pdf-mtbf-val" class="text-xl font-black text-teal-900">--</p></div>
+        <div class="bg-orange-50 border border-orange-200 rounded-xl p-3 text-center"><p class="text-[8px] text-orange-600 font-black uppercase">MTTR</p><p id="pdf-mttr-val" class="text-xl font-black text-orange-900">--</p></div>
     </div>
-    
     <div class="mb-5">
-        <h2 class="text-[9px] font-black text-slate-700 uppercase tracking-wider mb-3 pb-2 border-b border-slate-200 flex items-center gap-2">
-            <span>📈</span> Resumen Estadístico
-        </h2>
+        <h2 class="text-[9px] font-black text-slate-700 uppercase tracking-wider mb-3 pb-2 border-b border-slate-200">📈 Resumen Estadístico</h2>
         <div class="grid grid-cols-2 gap-2 text-[10px]">
-            <div class="bg-slate-50 rounded-lg p-2">
-                <p class="font-bold text-slate-600 mb-1">Uptime</p>
-                <p>Media: <span id="stat-uptime-mean" class="font-black text-slate-900">--</span>h</p>
-                <p class="text-[9px] text-slate-500">Rango: <span id="stat-uptime-range">--</span></p>
-            </div>
-            <div class="bg-slate-50 rounded-lg p-2">
-                <p class="font-bold text-slate-600 mb-1">Downtime</p>
-                <p>Media: <span id="stat-downtime-mean" class="font-black text-slate-900">--</span>h</p>
-            </div>
-            <div class="bg-slate-50 rounded-lg p-2">
-                <p class="font-bold text-slate-600 mb-1">Kilometraje</p>
-                <p>Media: <span id="stat-km-mean" class="font-black text-slate-900">--</span> KM</p>
-            </div>
-            <div class="bg-slate-50 rounded-lg p-2">
-                <p class="font-bold text-slate-600 mb-1">Temperatura</p>
-                <p>Media: <span id="stat-temp-mean" class="font-black text-slate-900">--</span></p>
-            </div>
+            <div class="bg-slate-50 rounded-lg p-2"><p class="font-bold text-slate-600 mb-1">Uptime</p><p>Media: <span id="stat-uptime-mean" class="font-black text-slate-900">--</span>h</p></div>
+            <div class="bg-slate-50 rounded-lg p-2"><p class="font-bold text-slate-600 mb-1">Downtime</p><p>Media: <span id="stat-downtime-mean" class="font-black text-slate-900">--</span>h</p></div>
+            <div class="bg-slate-50 rounded-lg p-2"><p class="font-bold text-slate-600 mb-1">KM</p><p>Media: <span id="stat-km-mean" class="font-black text-slate-900">--</span></p></div>
+            <div class="bg-slate-50 rounded-lg p-2"><p class="font-bold text-slate-600 mb-1">Temp</p><p>Media: <span id="stat-temp-mean" class="font-black text-slate-900">--</span></p></div>
         </div>
     </div>
-    
     <div class="mb-5">
-        <h2 class="text-[9px] font-black text-slate-700 uppercase tracking-wider mb-3 pb-2 border-b border-slate-200 flex items-center gap-2">
-            <span>🔍</span> Observaciones
-        </h2>
+        <h2 class="text-[9px] font-black text-slate-700 uppercase tracking-wider mb-3 pb-2 border-b border-slate-200">🔍 Observaciones</h2>
         <div id="pdf-observaciones" class="space-y-2"></div>
     </div>
-    
     <div class="mb-4">
-        <h2 class="text-[9px] font-black text-slate-700 uppercase tracking-wider mb-3 pb-2 border-b border-slate-200 flex items-center gap-2">
-            <span>🗃️</span> Dataset (Últimos 20)
-        </h2>
-        <div class="overflow-x-auto border border-slate-200 rounded-lg">
-            <table class="pdf-table w-full text-[9px] border-collapse" id="pdf-dataset-table"></table>
-        </div>
+        <h2 class="text-[9px] font-black text-slate-700 uppercase tracking-wider mb-3 pb-2 border-b border-slate-200">🗃️ Dataset</h2>
+        <div class="overflow-x-auto border border-slate-200 rounded-lg"><table class="w-full text-[9px] border-collapse" id="pdf-dataset-table"></table></div>
     </div>
-    
     <div class="mt-auto pt-4 border-t-2 border-slate-200 flex justify-between items-center text-[8px] text-slate-400 uppercase tracking-wider font-bold">
-        <p><i class="fas fa-shield-alt mr-1"></i> NEXO-ART v1.3.0</p>
-        <p>Generado automáticamente</p>
+        <p>⚙️ NEXO-ART v1.3.0</p><p>Auto-generado</p>
     </div>
 </div>
 
@@ -520,14 +575,13 @@
     if (stored) {
       try { db = JSON.parse(stored); } catch (e) { db = []; }
     } else {
-      const now = Date.now();
-      const dayMs = 86400000;
+      const now = Date.now(); const dayMs = 86400000;
       db = [
-        {unidad:"V-001", id:"V-001", motor:"Diesel", km: 82000, uptime: 420, downtime: 3.5, vibracion: 2.4, ta: 92, rpm: 2450, psiDi: 32, psiDd: 32, psiTi: 28, psiTd: 32, timestamp: new Date(now - 19*dayMs).toISOString()},
-        {unidad:"V-002", id:"V-002", motor:"Nafta", km: 45000, uptime: 380, downtime: 4.1, vibracion: 3.1, ta: 88, rpm: 2380, psiDi: 31, psiDd: 31, psiTi: 29, psiTd: 31, timestamp: new Date(now - 18*dayMs).toISOString()},
-        {unidad:"V-003", id:"V-003", motor:"Diesel", km: 110000, uptime: 310, downtime: 5.2, vibracion: 3.8, ta: 95, rpm: 2200, psiDi: 30, psiDd: 30, psiTi: 27, psiTd: 30, timestamp: new Date(now - 17*dayMs).toISOString()},
-        {unidad:"V-004", id:"V-004", motor:"Nafta", km: 38000, uptime: 455, downtime: 2.8, vibracion: 1.9, ta: 85, rpm: 2520, psiDi: 33, psiDd: 33, psiTi: 30, psiTd: 33, timestamp: new Date(now - 16*dayMs).toISOString()},
-        {unidad:"V-005", id:"V-005", motor:"Diesel", km: 65000, uptime: 290, downtime: 6.1, vibracion: 4.3, ta: 90, rpm: 2150, psiDi: 29, psiDd: 29, psiTi: 26, psiTd: 29, timestamp: new Date(now - 15*dayMs).toISOString()}
+        {unidad:"V-001", id:"V-001", motor:"Diesel", km: 82000, uptime: 420, downtime: 3.5, vibracion: 2.4, ta: 92, rpm: 4500, psiDi: 32, psiDd: 32, psiTi: 28, psiTd: 34, timestamp: new Date(now - 19*dayMs).toISOString()},
+        {unidad:"V-002", id:"V-002", motor:"Nafta", km: 45000, uptime: 380, downtime: 4.1, vibracion: 3.1, ta: 88, rpm: 4200, psiDi: 31, psiDd: 31, psiTi: 29, psiTd: 31, timestamp: new Date(now - 18*dayMs).toISOString()},
+        {unidad:"V-003", id:"V-003", motor:"Diesel", km: 110000, uptime: 310, downtime: 5.2, vibracion: 3.8, ta: 95, rpm: 3800, psiDi: 30, psiDd: 30, psiTi: 27, psiTd: 30, timestamp: new Date(now - 17*dayMs).toISOString()},
+        {unidad:"V-004", id:"V-004", motor:"Nafta", km: 38000, uptime: 455, downtime: 2.8, vibracion: 1.9, ta: 85, rpm: 4600, psiDi: 33, psiDd: 33, psiTi: 30, psiTd: 33, timestamp: new Date(now - 16*dayMs).toISOString()},
+        {unidad:"V-005", id:"V-005", motor:"Diesel", km: 65000, uptime: 290, downtime: 6.1, vibracion: 4.3, ta: 90, rpm: 3500, psiDi: 29, psiDd: 29, psiTi: 26, psiTd: 29, timestamp: new Date(now - 15*dayMs).toISOString()}
       ];
       saveToStorage();
     }
@@ -579,7 +633,7 @@
     const km = parseFloat(document.getElementById("input-km").value) || 0;
 
     if(isNaN(uptime) || isNaN(downtime) || uptime <= 0) {
-      showNotification("⚠️ Valores inválidos en Uptime/Downtime", "error");
+      showNotification("⚠️ Valores inválidos", "error");
       return;
     }
 
@@ -612,12 +666,12 @@
     updateCorrelationMatrix();
     renderDatasetTable();
     renderDescribeTable();
-    showNotification("✅ Datos acumulados en memoria", "success");
+    showNotification("✅ Datos acumulados", "success");
   }
 
   function resetDataset() {
-    if(db.length === 0) { showNotification("ℹ️ Dataset ya vacío", "info"); return; }
-    if(confirm("⚠️ ¿BORRAR permanentemente todos los datos de memoria?")) {
+    if(db.length === 0) { showNotification("ℹ️ Vacío", "info"); return; }
+    if(confirm("⚠️ ¿BORRAR todos los datos permanentemente?")) {
       db = [];
       localStorage.removeItem(STORAGE_KEY);
       updateMemoryCounter();
@@ -634,25 +688,23 @@
       document.getElementById("trend-disp").className = "text-[10px] md:text-sm font-semibold mt-3 md:mt-6 bg-slate-700/10 text-slate-400 px-3 md:px-4 py-1 md:py-1.5 rounded-full";
       if(timelineChartIns) { timelineChartIns.destroy(); timelineChartIns = null; }
       document.getElementById("correlation-matrix").innerHTML = '<p class="text-slate-500 text-center py-4 md:py-8 text-[10px]">Sin datos</p>';
-      document.getElementById("predictive-panel").innerHTML = '<p class="text-slate-400 text-[10px] md:text-sm">Ingresa datos para activar IA</p>';
+      document.getElementById("predictive-panel").innerHTML = '<p class="text-slate-400 text-[10px] md:text-sm">Ingresa datos</p>';
       document.getElementById("ml-status-list").innerHTML = '';
       renderDatasetTable();
       renderDescribeTable();
-      showNotification("🗑️ Memoria borrada permanentemente", "warning");
+      showNotification("🗑️ Memoria borrada", "warning");
     }
   }
 
   function showNotification(message, type = "info") {
     const notification = document.createElement("div");
-    const colors = { success: "bg-teal-500 border-teal-300", warning: "bg-amber-500 border-amber-300", error: "bg-rose-500 border-rose-300", info: "bg-indigo-500 border-indigo-300" };
+    const colors = { success: "bg-cyan-600 border-cyan-400", warning: "bg-amber-600 border-amber-400", error: "bg-rose-600 border-rose-400", info: "bg-indigo-600 border-indigo-400" };
     const icons = { success: "✅", warning: "⚠️", error: "❌", info: "ℹ️" };
-    notification.className = `fixed top-4 right-4 z-50 px-4 py-2.5 rounded-xl border-2 shadow-2xl flex items-center gap-2 animate-[slideIn_0.3s_ease-out] ${colors[type]} text-white max-w-[90vw]`;
+    notification.className = `fixed top-4 right-4 z-50 px-4 py-2.5 rounded-xl border-2 shadow-2xl flex items-center gap-2 animate-[slideIn_0.3s_ease-out] ${colors[type]} text-white max-w-[90vw] backdrop-blur-md`;
     notification.innerHTML = `<span class="text-base">${icons[type]}</span><span class="font-medium text-xs md:text-sm">${message}</span>`;
     document.body.appendChild(notification);
     setTimeout(() => {
-      notification.style.opacity = "0"; 
-      notification.style.transform = "translateX(100%)"; 
-      notification.style.transition = "all 0.3s ease-in";
+      notification.style.opacity = "0"; notification.style.transform = "translateX(100%)"; notification.style.transition = "all 0.3s ease-in";
       setTimeout(() => notification.remove(), 300);
     }, 3000);
   }
@@ -682,7 +734,7 @@
     const trendEl = document.getElementById("trend-disp");
     if(disponibilidad >= 95) { 
       trendEl.innerHTML = `<i class="fas fa-arrow-up"></i> <span class="hidden xs:inline">Óptimo</span>`; 
-      trendEl.className = "text-[10px] md:text-sm font-semibold mt-3 md:mt-6 bg-teal-500/10 text-teal-400 px-3 md:px-4 py-1 md:py-1.5 rounded-full border border-teal-500/20"; 
+      trendEl.className = "text-[10px] md:text-sm font-semibold mt-3 md:mt-6 bg-cyan-500/10 text-cyan-400 px-3 md:px-4 py-1 md:py-1.5 rounded-full border border-cyan-500/20"; 
     } else if(disponibilidad >= 85) { 
       trendEl.innerHTML = `<i class="fas fa-arrow-right"></i> <span class="hidden xs:inline">Estable</span>`; 
       trendEl.className = "text-[10px] md:text-sm font-semibold mt-3 md:mt-6 bg-amber-500/10 text-amber-400 px-3 md:px-4 py-1 md:py-1.5 rounded-full border border-amber-500/20"; 
@@ -692,74 +744,46 @@
     }
   }
 
-  // 🔹 FUNCIÓN: Renderizar tabla del dataset acumulado
+  // 🔹 Renderizar tabla dataset
   function renderDatasetTable() {
     const container = document.getElementById('dataset-table');
     if (!container) return;
-    
     if (db.length === 0) {
-      container.innerHTML = '<tr><td colspan="11" class="text-center py-6 text-slate-500 text-[10px]">📭 Sin datos acumulados aún. Ingresa registros o usa los datos de demostración.</td></tr>';
+      container.innerHTML = '<tr><td colspan="11" class="text-center py-6 text-slate-500 text-[10px]">📭 Sin datos acumulados</td></tr>';
       return;
     }
-    
-    const headers = ['Unidad', 'Motor', 'KM', 'UP(h)', 'DOWN(h)', 'VIB', 'TEMP', 'RPM', 'PSI-DI', 'PSI-DD', 'Fecha'];
-    let html = `<thead><tr class="bg-slate-800 text-teal-400">`;
-    headers.forEach(h => { html += `<th class="p-2 text-left font-bold border-b border-slate-700 text-[9px] md:text-xs sticky top-0 bg-slate-800 z-10">${h}</th>`; });
-    html += `</tr></thead><tbody>`;
-    
-    // Mostrar últimos registros primero
+    const headers = ['Unidad', 'Motor', 'KM', 'UP', 'DOWN', 'VIB', 'TEMP', 'RPM', 'PSI-DI', 'PSI-DD', 'Fecha'];
+    let html = `<thead><tr class="cyber-table"><th class="p-2 text-left font-bold border-b border-cyan-500/30 text-[9px] md:text-xs sticky top-0 bg-slate-900 z-10 text-cyan-400 font-tech">${headers.join('</th><th class="p-2 text-left font-bold border-b border-cyan-500/30 text-[9px] md:text-xs sticky top-0 bg-slate-900 z-10 text-cyan-400 font-tech">')}</th></tr></thead><tbody>`;
     [...db].reverse().forEach((row, idx) => {
       const fecha = new Date(row.timestamp).toLocaleDateString('es-ES', {day:'2-digit', month:'2-digit', hour:'2-digit'});
-      const isLast = idx === 0;
-      html += `<tr class="${isLast ? 'bg-teal-500/10 border-l-2 border-teal-500' : 'border-b border-slate-800'} hover:bg-slate-800/30 transition-colors">`;
-      html += `<td class="p-2 font-medium text-[9px] md:text-xs">${row.unidad}</td>`;
-      html += `<td class="p-2 text-[9px] md:text-xs">${row.motor}</td>`;
-      html += `<td class="p-2 text-right text-[9px] md:text-xs">${row.km?.toLocaleString()}</td>`;
-      html += `<td class="p-2 text-right text-[9px] md:text-xs">${row.uptime}</td>`;
-      html += `<td class="p-2 text-right text-[9px] md:text-xs">${row.downtime}</td>`;
-      html += `<td class="p-2 text-right text-[9px] md:text-xs">${row.vibracion}</td>`;
-      html += `<td class="p-2 text-right text-[9px] md:text-xs">${row.ta}°</td>`;
-      html += `<td class="p-2 text-right text-[9px] md:text-xs">${row.rpm}</td>`;
-      html += `<td class="p-2 text-right text-[9px] md:text-xs">${row.psiDi}</td>`;
-      html += `<td class="p-2 text-right text-[9px] md:text-xs">${row.psiDd}</td>`;
-      html += `<td class="p-2 text-[9px] md:text-xs text-slate-400">${fecha}</td>`;
-      html += `</tr>`;
+      html += `<tr class="${idx === 0 ? 'bg-cyan-500/10 border-l-2 border-cyan-500' : 'border-b border-cyan-500/10'} hover:bg-cyan-500/5 transition-colors">`;
+      html += `<td class="p-2 font-medium text-[9px] md:text-xs">${row.unidad}</td><td class="p-2 text-[9px] md:text-xs">${row.motor}</td><td class="p-2 text-right text-[9px] md:text-xs font-tech">${row.km?.toLocaleString()}</td>`;
+      html += `<td class="p-2 text-right text-[9px] md:text-xs">${row.uptime}</td><td class="p-2 text-right text-[9px] md:text-xs">${row.downtime}</td><td class="p-2 text-right text-[9px] md:text-xs">${row.vibracion}</td>`;
+      html += `<td class="p-2 text-right text-[9px] md:text-xs">${row.ta}°</td><td class="p-2 text-right text-[9px] md:text-xs font-tech">${row.rpm}</td><td class="p-2 text-right text-[9px] md:text-xs">${row.psiDi}</td>`;
+      html += `<td class="p-2 text-right text-[9px] md:text-xs">${row.psiDd}</td><td class="p-2 text-[9px] md:text-xs text-slate-400">${fecha}</td></tr>`;
     });
-    html += `</tbody>`;
+    html += '</tbody>';
     container.innerHTML = html;
   }
 
-  // 🔹 FUNCIÓN: Calcular estadísticas estilo pandas.describe()
+  // 🔹 Calcular estadísticas DESCRIBE()
   function calculateDescribeStats() {
     if (db.length === 0) return null;
-    
     const numericColumns = [
-      {key: 'km', label: 'KM'},
-      {key: 'uptime', label: 'Uptime'},
-      {key: 'downtime', label: 'Downtime'},
-      {key: 'vibracion', label: 'Vibración'},
-      {key: 'ta', label: 'Temp°C'},
-      {key: 'rpm', label: 'RPM'},
-      {key: 'psiDi', label: 'PSI-DI'},
-      {key: 'psiDd', label: 'PSI-DD'},
-      {key: 'psiTi', label: 'PSI-TI'},
-      {key: 'psiTd', label: 'PSI-TD'}
+      {key: 'km', label: 'KM'}, {key: 'uptime', label: 'Uptime'}, {key: 'downtime', label: 'Downtime'},
+      {key: 'vibracion', label: 'Vibración'}, {key: 'ta', label: 'Temp°C'}, {key: 'rpm', label: 'RPM'},
+      {key: 'psiDi', label: 'PSI-DI'}, {key: 'psiDd', label: 'PSI-DD'}, {key: 'psiTi', label: 'PSI-TI'}, {key: 'psiTd', label: 'PSI-TD'}
     ];
-    
     const stats = {};
-    
     numericColumns.forEach(col => {
       const values = db.map(d => d[col.key]).filter(v => v !== undefined && v !== null && !isNaN(v));
       if (values.length === 0) return;
-      
       values.sort((a, b) => a - b);
       const n = values.length;
       const sum = values.reduce((a, b) => a + b, 0);
       const mean = sum / n;
       const variance = values.reduce((acc, val) => acc + Math.pow(val - mean, 2), 0) / n;
       const std = Math.sqrt(variance);
-      
-      // Percentiles
       const percentile = (p) => {
         const idx = (n - 1) * p;
         const lower = Math.floor(idx);
@@ -767,86 +791,52 @@
         if (lower === upper) return values[lower];
         return values[lower] + (values[upper] - values[lower]) * (idx - lower);
       };
-      
-      stats[col.key] = {
-        label: col.label,
-        count: n,
-        mean: mean.toFixed(2),
-        std: std.toFixed(2),
-        min: values[0].toFixed(2),
-        '25%': percentile(0.25).toFixed(2),
-        '50%': percentile(0.50).toFixed(2),
-        '75%': percentile(0.75).toFixed(2),
-        max: values[n-1].toFixed(2)
-      };
+      stats[col.key] = { label: col.label, count: n, mean: mean.toFixed(2), std: std.toFixed(2), min: values[0].toFixed(2), '25%': percentile(0.25).toFixed(2), '50%': percentile(0.50).toFixed(2), '75%': percentile(0.75).toFixed(2), max: values[n-1].toFixed(2) };
     });
-    
     return stats;
   }
 
-  // 🔹 FUNCIÓN: Renderizar tabla DESCRIBE()
+  // 🔹 Renderizar DESCRIBE()
   function renderDescribeTable() {
     const container = document.getElementById('describe-table-container');
     if (!container) return;
-    
     if (db.length === 0) {
-      container.innerHTML = '<p class="text-slate-500 text-center py-4 text-[10px]">📊 Sin datos para calcular estadísticas</p>';
+      container.innerHTML = '<p class="text-slate-500 text-center py-4 text-[10px]">📊 Sin datos</p>';
       return;
     }
-    
     const stats = calculateDescribeStats();
     if (!stats || Object.keys(stats).length === 0) {
-      container.innerHTML = '<p class="text-slate-500 text-center py-4 text-[10px]">⚠️ No hay columnas numéricas válidas</p>';
+      container.innerHTML = '<p class="text-slate-500 text-center py-4 text-[10px]">⚠️ Sin columnas numéricas</p>';
       return;
     }
-    
     const metrics = [
       {key: 'count', label: 'count', color: 'text-slate-300'},
-      {key: 'mean', label: 'mean', color: 'text-teal-400 font-bold'},
-      {key: 'std', label: 'std', color: 'text-indigo-400'},
+      {key: 'mean', label: 'mean', color: 'text-cyan-400 font-bold'},
+      {key: 'std', label: 'std', color: 'text-purple-400'},
       {key: 'min', label: 'min', color: 'text-rose-400'},
       {key: '25%', label: '25%', color: 'text-amber-400'},
       {key: '50%', label: '50%', color: 'text-cyan-400'},
       {key: '75%', label: '75%', color: 'text-amber-400'},
       {key: 'max', label: 'max', color: 'text-rose-400'}
     ];
-    
     const columns = Object.keys(stats);
-    
     let html = '<div class="overflow-x-auto"><table class="w-full border-collapse text-[9px] md:text-xs">';
-    
-    // Header
-    html += '<thead><tr class="bg-slate-800"><th class="p-2 text-left font-bold text-teal-400 border border-slate-700 sticky left-0 bg-slate-800 z-10">Estadística</th>';
-    columns.forEach(col => {
-      html += `<th class="p-2 text-center font-bold text-slate-300 border border-slate-700 min-w-[70px]">${stats[col].label}</th>`;
-    });
+    html += '<thead><tr class="bg-slate-900/50"><th class="p-2 text-left font-bold text-cyan-400 border border-cyan-500/20 sticky left-0 bg-slate-900 z-10 font-tech">Estadística</th>';
+    columns.forEach(col => { html += `<th class="p-2 text-center font-bold text-slate-300 border border-cyan-500/20 min-w-[70px] font-tech">${stats[col].label}</th>`; });
     html += '</tr></thead><tbody>';
-    
-    // Rows
     metrics.forEach(metric => {
-      html += `<tr class="border-b border-slate-800 hover:bg-slate-800/30 transition-colors">`;
-      html += `<td class="p-2 font-bold ${metric.color} border border-slate-700 sticky left-0 bg-slate-900/80 z-10">${metric.label}</td>`;
-      columns.forEach(col => {
-        const value = stats[col][metric.key];
-        let cellClass = 'text-slate-300';
-        if (metric.key === 'min' || metric.key === 'max') cellClass = 'text-rose-400';
-        if (metric.key === 'mean') cellClass = 'text-teal-400 font-bold';
-        if (metric.key === 'std') cellClass = 'text-indigo-400';
-        html += `<td class="p-2 text-center border border-slate-700 ${cellClass}">${value}</td>`;
-      });
+      html += `<tr class="border-b border-cyan-500/10 hover:bg-cyan-500/5 transition-colors">`;
+      html += `<td class="p-2 font-bold ${metric.color} border border-cyan-500/20 sticky left-0 bg-slate-900/80 z-10 font-tech">${metric.label}</td>`;
+      columns.forEach(col => { html += `<td class="p-2 text-center border border-cyan-500/20 ${metric.color === 'text-slate-300' ? '' : metric.color}">${stats[col][metric.key]}</td>`; });
       html += '</tr>';
     });
-    
     html += '</tbody></table></div>';
-    
-    // Leyenda
     html += '<div class="mt-3 flex flex-wrap gap-2 text-[8px] md:text-[9px] text-slate-400">';
-    html += '<span><span class="text-teal-400 font-bold">● mean</span>=promedio</span>';
-    html += '<span><span class="text-indigo-400">● std</span>=desviación</span>';
+    html += '<span><span class="text-cyan-400 font-bold">● mean</span>=promedio</span>';
+    html += '<span><span class="text-purple-400">● std</span>=desviación</span>';
     html += '<span><span class="text-rose-400">● min/max</span>=extremos</span>';
     html += '<span><span class="text-cyan-400">● 50%</span>=mediana</span>';
     html += '</div>';
-    
     container.innerHTML = html;
   }
 
@@ -858,37 +848,37 @@
     let explicacionContexto = "";
     
     if (ultimaEntrada.motor.toLowerCase().includes("diesel")) {
-        explicacionContexto = `<strong>Diagnóstico Diésel:</strong> Mayor eficiencia pero costos de reparación 20-25% más elevados.`;
+        explicacionContexto = `<strong class="text-cyan-400">Diagnóstico Diésel:</strong> Mayor eficiencia, costos de reparación 20-25% más elevados.`;
         if (ultimaEntrada.km >= 30000 && ultimaEntrada.km % 30000 < 5000) reportKM.push("Filtro combustible: Cambio recomendado");
     } else {
-        explicacionContexto = `<strong>Diagnóstico Gasolina:</strong> Ideal para uso urbano, mantenimiento más económico.`;
+        explicacionContexto = `<strong class="text-cyan-400">Diagnóstico Gasolina:</strong> Ideal para uso urbano, mantenimiento económico.`;
         if (ultimaEntrada.km >= 15000 && ultimaEntrada.km % 15000 < 3000) reportKM.push("Bujías: Verificar desgaste");
     }
     
     if (ultimaEntrada.km >= 10000 && ultimaEntrada.km % 10000 < 2000) reportKM.push("Filtro aire: Próximo cambio");
     if (ultimaEntrada.km >= 60000) reportKM.push("⚠️ Correa distribución: Verificar urgentemente");
 
-    let tempStatus = `<span class="text-teal-400"><i class="fas fa-check"></i> OK</span>`;
+    let tempStatus = `<span class="text-cyan-400"><i class="fas fa-check"></i> OK</span>`;
     if (ultimaEntrada.ta > 105) {
       tempStatus = `<span class="text-rose-400"><i class="fas fa-times"></i> ${ultimaEntrada.ta}°C</span>`;
-      predicciones.push(`<div class="p-2 md:p-3 bg-rose-500/10 border border-rose-500/40 rounded-lg md:rounded-xl flex items-start gap-3 mb-2"><div class="text-rose-500 text-lg"><i class="fas fa-temperature-high"></i></div><div><p class="font-bold text-rose-400 text-[10px]">Sobrecalentamiento</p><p class="text-[9px] text-slate-300">Riesgo por temperatura alta (${ultimaEntrada.ta}°C).</p></div></div>`);
+      predicciones.push(`<div class="p-2 md:p-3 bg-rose-500/10 border border-rose-500/40 rounded-lg md:rounded-xl flex items-start gap-3 mb-2"><div class="text-rose-500 text-lg"><i class="fas fa-temperature-high"></i></div><div><p class="font-bold text-rose-400 text-[10px]">Sobrecalentamiento</p><p class="text-[9px] text-slate-300">Riesgo: ${ultimaEntrada.ta}°C.</p></div></div>`);
     }
     
-    let vibStatus = `<span class="text-teal-400"><i class="fas fa-check"></i> OK</span>`;
+    let vibStatus = `<span class="text-cyan-400"><i class="fas fa-check"></i> OK</span>`;
     if (ultimaEntrada.vibracion >= 5.0) {
       vibStatus = `<span class="text-rose-400"><i class="fas fa-times"></i> ${ultimaEntrada.vibracion}</span>`;
-      predicciones.push(`<div class="p-2 md:p-3 bg-orange-500/10 border border-orange-500/40 rounded-lg md:rounded-xl flex items-start gap-3 mb-2"><div class="text-orange-500 text-lg"><i class="fas fa-wave-square"></i></div><div><p class="font-bold text-orange-400 text-[10px]">Vibración alta</p><p class="text-[9px] text-slate-300">Posible desgaste de rodamientos.</p></div></div>`);
+      predicciones.push(`<div class="p-2 md:p-3 bg-orange-500/10 border border-orange-500/40 rounded-lg md:rounded-xl flex items-start gap-3 mb-2"><div class="text-orange-500 text-lg"><i class="fas fa-wave-square"></i></div><div><p class="font-bold text-orange-400 text-[10px]">Vibración alta</p><p class="text-[9px] text-slate-300">Posible desgaste.</p></div></div>`);
     }
     
     if (reportKM.length > 0) {
        let repList = reportKM.map(r => `<li>- ${r}</li>`).join("");
-       predicciones.push(`<div class="p-2 md:p-3 bg-indigo-500/10 border border-indigo-500/40 rounded-lg md:rounded-xl mb-2"><p class="font-bold text-indigo-400 text-[10px]"><i class="fas fa-road"></i> Por KM (${ultimaEntrada.km})</p><ul class="text-[9px] text-slate-300 mt-1">${repList}</ul></div>`);
+       predicciones.push(`<div class="p-2 md:p-3 bg-purple-500/10 border border-purple-500/40 rounded-lg md:rounded-xl mb-2"><p class="font-bold text-purple-400 text-[10px]"><i class="fas fa-road"></i> Por KM (${ultimaEntrada.km})</p><ul class="text-[9px] text-slate-300 mt-1">${repList}</ul></div>`);
     }
     
-    if (predicciones.length === 0) predicciones.push(`<div class="p-3 md:p-4 bg-teal-500/10 border border-teal-500/40 rounded-lg md:rounded-xl"><p class="font-bold text-teal-400 text-[10px]"><i class="fas fa-shield-alt mr-1"></i> Parámetros óptimos</p></div>`);
+    if (predicciones.length === 0) predicciones.push(`<div class="p-3 md:p-4 bg-cyan-500/10 border border-cyan-500/40 rounded-lg md:rounded-xl"><p class="font-bold text-cyan-400 text-[10px]"><i class="fas fa-shield-alt mr-1"></i> Parámetros óptimos</p></div>`);
     
-    panel.innerHTML = `<div class="bg-slate-950 p-3 md:p-4 rounded-lg md:rounded-xl border border-slate-800 text-slate-300 text-[10px] md:text-xs leading-relaxed mb-3">${explicacionContexto}</div><div class="flex-1">${predicciones.join("")}</div>`;
-    statusList.innerHTML = `<li class="flex justify-between items-center border-b border-slate-800 pb-2 text-[9px]"><span>Unidad:</span> <span class="font-bold text-white">${ultimaEntrada.unidad}</span></li><li class="flex justify-between items-center border-b border-slate-800 pb-2 text-[9px]"><span>Temp:</span> ${tempStatus}</li><li class="flex justify-between items-center pb-2 text-[9px]"><span>Vibración:</span> ${vibStatus}</li>`;
+    panel.innerHTML = `<div class="bg-black/40 p-3 md:p-4 rounded-lg md:rounded-xl border border-cyan-500/10 text-slate-300 text-[10px] md:text-xs leading-relaxed mb-3">${explicacionContexto}</div><div class="flex-1">${predicciones.join("")}</div>`;
+    statusList.innerHTML = `<li class="flex justify-between items-center border-b border-cyan-500/10 pb-2 text-[9px]"><span>Unidad:</span> <span class="font-bold text-white font-tech">${ultimaEntrada.unidad}</span></li><li class="flex justify-between items-center border-b border-cyan-500/10 pb-2 text-[9px]"><span>Temp:</span> ${tempStatus}</li><li class="flex justify-between items-center pb-2 text-[9px]"><span>VIB:</span> ${vibStatus}</li>`;
   }
 
   function generateReport() {
@@ -897,21 +887,16 @@
     container.classList.remove("hidden");
     if(placeholder) placeholder.classList.add("hidden");
     if(db.length === 0) { container.innerHTML = "<p class='text-rose-400 text-xs'>Ingresa datos primero.</p>"; return; }
-    
     const last = db[db.length - 1];
     const mtbf = document.getElementById("kpi-mtbf").innerText;
     const mttr = document.getElementById("kpi-mttr").innerText;
     const disp = document.getElementById("kpi-disp").innerText;
-    
-    let reportHTML = `<h4 class="text-white font-bold mb-3 flex items-center gap-2 border-b border-slate-800 pb-2 text-xs uppercase"><i class="fas fa-file-alt text-indigo-400"></i> Informe</h4><p class="mb-3 text-slate-300 text-xs">Disponibilidad: <span class="text-teal-400 font-bold">${disp}</span>. MTBF: <b>${mtbf}h</b>. MTTR: <b>${mttr}h</b>.</p>`;
-    
+    let reportHTML = `<h4 class="text-white font-bold mb-3 flex items-center gap-2 border-b border-cyan-500/20 pb-2 text-xs uppercase font-tech"><i class="fas fa-file-alt text-indigo-400"></i> Informe</h4><p class="mb-3 text-slate-300 text-xs">Disp: <span class="text-cyan-400 font-bold">${disp}</span>. MTBF: <b>${mtbf}h</b>. MTTR: <b>${mttr}h</b>.</p>`;
     let alertas = [];
-    if (last.ta > 105) alertas.push("🔥 Temperatura crítica");
-    if (last.vibracion >= 5.0) alertas.push("〰️ Vibración elevada");
+    if (last.ta > 105) alertas.push("🔥 Temp crítica");
+    if (last.vibracion >= 5.0) alertas.push("〰️ Vibración alta");
     if (last.km >= 60000) alertas.push("⚠️ Correa distribución");
-    
     if (alertas.length > 0) reportHTML += `<div class="bg-rose-500/10 border-l-2 border-rose-500 pl-3 py-2 my-3 rounded-r"><p class="font-bold text-rose-400 text-[10px] mb-1">Alertas:</p><ul class="list-disc pl-4 space-y-0.5 text-slate-300 text-[9px]">` + alertas.map(a => `<li>${a}</li>`).join("") + `</ul></div>`;
-    
     container.innerHTML = reportHTML;
   }
 
@@ -919,43 +904,30 @@
     const canvas = document.getElementById('timelineChart');
     const ctx = canvas?.getContext('2d');
     if(!ctx) return;
-    
     if(db.length === 0) { 
       if(timelineChartIns) timelineChartIns.destroy(); 
       canvas.parentNode.innerHTML = '<div class="absolute inset-0 flex items-center justify-center text-slate-500 text-xs">Sin datos</div>'; 
       return; 
     }
-    
     const labels = db.map(d => new Date(d.timestamp).toLocaleDateString('es-ES', { day: '2-digit', month: 'short' }));
     const uptimeData = db.map(d => d.uptime);
     const downtimeData = db.map(d => d.downtime);
     const dispData = db.map(d => (d.uptime + d.downtime) > 0 ? ((d.uptime / (d.uptime + d.downtime)) * 100).toFixed(1) : 0);
-    
     if(timelineChartIns) timelineChartIns.destroy();
-    
     timelineChartIns = new Chart(ctx, {
       type: 'line',
       data: {
         labels: labels,
         datasets: [
-          { label: 'Disponibilidad %', data: dispData, borderColor: '#00d4ff', backgroundColor: 'rgba(0, 212, 255, 0.1)', borderWidth: 2, tension: 0.4, yAxisID: 'y1', fill: true, pointRadius: window.innerWidth < 480 ? 2 : 3 },
+          { label: 'Disponibilidad %', data: dispData, borderColor: '#06b6d4', backgroundColor: 'rgba(6, 182, 212, 0.1)', borderWidth: 2, tension: 0.4, yAxisID: 'y1', fill: true, pointRadius: window.innerWidth < 480 ? 2 : 3 },
           { label: 'Uptime (h)', data: uptimeData, borderColor: '#14b8a6', borderDash: [5, 5], borderWidth: 2, tension: 0.2, yAxisID: 'y', pointRadius: 0 },
           { label: 'Downtime (h)', data: downtimeData, borderColor: '#f97316', borderWidth: 2, tension: 0.2, yAxisID: 'y', pointRadius: 0 }
         ]
       },
       options: { 
-        responsive: true, 
-        maintainAspectRatio: false, 
-        interaction: { mode: 'index', intersect: false }, 
-        plugins: { 
-          legend: { labels: { color: '#cbd5e1', font: { size: window.innerWidth < 480 ? 9 : 11 } }, position: 'bottom' },
-          tooltip: { bodyFont: { size: 10 }, titleFont: { size: 11 } }
-        }, 
-        scales: { 
-          x: { ticks: { color: '#64748b', font: { size: 9 } }, grid: { color: '#334155' } }, 
-          y: { type: 'linear', display: true, position: 'left', title: { display: true, text: 'Horas', color: '#94a3b8' }, ticks: { color: '#94a3b8', font: { size: 9 } }, grid: { color: '#334155' } }, 
-          y1: { type: 'linear', display: true, position: 'right', title: { display: true, text: '%', color: '#00d4ff' }, ticks: { color: '#00d4ff', font: { size: 9 } }, grid: { drawOnChartArea: false } } 
-        } 
+        responsive: true, maintainAspectRatio: false, interaction: { mode: 'index', intersect: false }, 
+        plugins: { legend: { labels: { color: '#cbd5e1', font: { size: window.innerWidth < 480 ? 9 : 11 } }, position: 'bottom' }, tooltip: { bodyFont: { size: 10 }, titleFont: { size: 11 } } }, 
+        scales: { x: { ticks: { color: '#64748b', font: { size: 9 } }, grid: { color: 'rgba(6,182,212,0.1)' } }, y: { type: 'linear', display: true, position: 'left', title: { display: true, text: 'Horas', color: '#94a3b8' }, ticks: { color: '#94a3b8', font: { size: 9 } }, grid: { color: 'rgba(6,182,212,0.1)' } }, y1: { type: 'linear', display: true, position: 'right', title: { display: true, text: '%', color: '#06b6d4' }, ticks: { color: '#06b6d4', font: { size: 9 } }, grid: { drawOnChartArea: false } } } 
       }
     });
   }
@@ -984,52 +956,37 @@
   }
 
   function updateCorrelationMatrix() {
-    if(db.length < 2) { document.getElementById('correlation-matrix').innerHTML = '<p class="text-slate-500 text-center py-4 md:py-8 text-[10px]">Mínimo 2 registros necesarios</p>'; return; }
+    if(db.length < 2) { document.getElementById('correlation-matrix').innerHTML = '<p class="text-slate-500 text-center py-4 md:py-8 text-[10px]">Mínimo 2 registros</p>'; return; }
     const variables = ['km', 'uptime', 'downtime', 'vibracion', 'ta', 'rpm', 'psiDi'];
     const labels = ['KM', 'UP', 'DOWN', 'VIB', 'TEMP', 'RPM', 'PSI'];
     let html = '<table class="w-full border-collapse text-[9px] md:text-sm"><tr><td class="p-1 md:p-2"></td>';
-    html += labels.map(l => `<td class="p-1 md:p-2 font-bold text-slate-300 text-center border-b border-slate-700">${l}</td>`).join('') + '</tr>';
+    html += labels.map(l => `<td class="p-1 md:p-2 font-bold text-cyan-400 text-center border-b border-cyan-500/20 font-tech">${l}</td>`).join('') + '</tr>';
     for(let i = 0; i < variables.length; i++) {
-        html += `<tr><td class="p-1 md:p-2 font-bold text-slate-300 text-right pr-2 border-r border-slate-700">${labels[i]}</td>`;
+        html += `<tr><td class="p-1 md:p-2 font-bold text-cyan-400 text-right pr-2 border-r border-cyan-500/20 font-tech">${labels[i]}</td>`;
         for(let j = 0; j < variables.length; j++) {
             const arr1 = db.map(d => d[variables[i]] || 0); const arr2 = db.map(d => d[variables[j]] || 0);
             const val = pearsonCorrelation(arr1, arr2); let opacity = Math.min(Math.abs(val), 1);
-            let colorStyle = val > 0 ? `rgba(20, 184, 166, ${opacity})` : `rgba(244, 63, 94, ${opacity})`;
-            if (i === j) html += `<td class="p-1 md:p-2 border border-slate-800 text-center text-slate-500" style="background-color: rgba(148, 163, 184, 0.1)">1</td>`;
-            else html += `<td class="p-1 md:p-2 border border-slate-800 text-center font-medium" style="background-color: ${colorStyle}; color: ${opacity > 0.5 ? 'white' : '#94a3b8'}">${val.toFixed(2)}</td>`;
+            let colorStyle = val > 0 ? `rgba(6, 182, 212, ${opacity})` : `rgba(244, 63, 94, ${opacity})`;
+            if (i === j) html += `<td class="p-1 md:p-2 border border-cyan-500/10 text-center text-slate-500" style="background-color: rgba(6, 182, 212, 0.05)">1</td>`;
+            else html += `<td class="p-1 md:p-2 border border-cyan-500/10 text-center font-medium" style="background-color: ${colorStyle}; color: ${opacity > 0.5 ? 'white' : '#94a3b8'}">${val.toFixed(2)}</td>`;
         } html += '</tr>';
     } html += '</table>';
     document.getElementById('correlation-matrix').innerHTML = html;
   }
 
-  // 🔹 FUNCIÓN: Exportar CSV (funciona con datos acumulados, sin necesidad de ingresar nuevos)
   function exportCSV() {
-    if (db.length === 0) { showNotification("📭 No hay datos para exportar", "info"); return; }
-    
+    if (db.length === 0) { showNotification("📭 Sin datos", "info"); return; }
     const headers = ["Unidad","ID","Motor","KM","Uptime","Downtime","Vibración","Temp°C","RPM","PSI-DI","PSI-DD","PSI-TI","PSI-TD","Timestamp"];
     let csv = headers.join(";") + "\n";
-    
-    db.forEach(row => { 
-      csv += [
-        row.unidad, row.id, row.motor, row.km, row.uptime, row.downtime, 
-        row.vibracion, row.ta, row.rpm, row.psiDi, row.psiDd, row.psiTi, row.psiTd, 
-        new Date(row.timestamp).toLocaleString('es-ES')
-      ].join(";") + "\n"; 
-    });
-    
+    db.forEach(row => { csv += [row.unidad, row.id, row.motor, row.km, row.uptime, row.downtime, row.vibracion, row.ta, row.rpm, row.psiDi, row.psiDd, row.psiTi, row.psiTd, new Date(row.timestamp).toLocaleString('es-ES')].join(";") + "\n"; });
     const blob = new Blob(["\uFEFF" + csv], { type: 'text/csv;charset=utf-8;' });
-    const link = document.createElement("a"); 
-    link.href = URL.createObjectURL(blob); 
-    link.download = `NEXO-ART_Dataset_${new Date().toISOString().slice(0,10)}.csv`; 
-    link.click();
-    
-    showNotification("📥 CSV descargado exitosamente", "success");
+    const link = document.createElement("a"); link.href = URL.createObjectURL(blob); link.download = `NEXO-ART_Dataset_${new Date().toISOString().slice(0,10)}.csv`; link.click();
+    showNotification("📥 CSV descargado", "success");
   }
 
-  // 🔹 FUNCIÓN: Exportar PDF (funciona con datos acumulados, sin necesidad de ingresar nuevos)
   async function generateEnhancedPDF() {
-    if(db.length === 0) { showNotification("⚠️ No hay datos suficientes para generar el reporte", "warning"); return; }
-    showNotification("🔄 Generando reporte PDF...", "info");
+    if(db.length === 0) { showNotification("⚠️ Sin datos", "warning"); return; }
+    showNotification("🔄 Generando PDF...", "info");
     const last = db[db.length - 1]; const now = new Date();
     try {
         const stats = calculateStatistics();
@@ -1039,37 +996,17 @@
         const template = document.getElementById('pdf-report-template-enhanced');
         template.classList.remove('hidden');
         await new Promise(resolve => setTimeout(resolve, 100));
-        const opt = { 
-          margin: 10, 
-          filename: `NEXO-ART_Reporte_${last.unidad}_${now.toISOString().slice(0,10)}.pdf`, 
-          image: { type: 'jpeg', quality: 1.0 }, 
-          html2canvas: { scale: 3, useCORS: true, windowWidth: 794, logging: false, backgroundColor: '#ffffff' }, 
-          jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait', compress: true } 
-        };
+        const opt = { margin: 10, filename: `NEXO-ART_Reporte_${last.unidad}_${now.toISOString().slice(0,10)}.pdf`, image: { type: 'jpeg', quality: 1.0 }, html2canvas: { scale: 3, useCORS: true, windowWidth: 794, logging: false, backgroundColor: '#ffffff' }, jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait', compress: true } };
         await html2pdf().set(opt).from(template).save();
         template.classList.add('hidden');
-        showNotification("✅ PDF generado y descargado", "success");
-    } catch (error) { 
-      console.error("Error PDF:", error); 
-      showNotification("❌ Error: " + error.message, "error"); 
-    }
+        showNotification("✅ PDF descargado", "success");
+    } catch (error) { console.error("Error PDF:", error); showNotification("❌ Error: " + error.message, "error"); }
   }
 
   function calculateStatistics() {
     if(db.length === 0) return null;
-    const getStats = (arr) => { 
-      if(arr.length === 0) return { min: 0, max: 0, mean: 0 }; 
-      const mean = arr.reduce((a,b) => a+b, 0) / arr.length; 
-      return { min: Math.min(...arr).toFixed(1), max: Math.max(...arr).toFixed(1), mean: mean.toFixed(1) }; 
-    };
-    return { 
-      uptime: getStats(db.map(d => d.uptime)), 
-      downtime: getStats(db.map(d => d.downtime)), 
-      km: getStats(db.map(d => d.km)), 
-      vibracion: getStats(db.map(d => d.vibracion)), 
-      ta: getStats(db.map(d => d.ta)),
-      disponibilidad: getStats(db.map(d => (d.uptime + d.downtime) > 0 ? (d.uptime / (d.uptime + d.downtime)) * 100 : 0)) 
-    };
+    const getStats = (arr) => { if(arr.length === 0) return { min: 0, max: 0, mean: 0 }; const mean = arr.reduce((a,b) => a+b, 0) / arr.length; return { min: Math.min(...arr).toFixed(1), max: Math.max(...arr).toFixed(1), mean: mean.toFixed(1) }; };
+    return { uptime: getStats(db.map(d => d.uptime)), downtime: getStats(db.map(d => d.downtime)), km: getStats(db.map(d => d.km)), vibracion: getStats(db.map(d => d.vibracion)), ta: getStats(db.map(d => d.ta)), disponibilidad: getStats(db.map(d => (d.uptime + d.downtime) > 0 ? (d.uptime / (d.uptime + d.downtime)) * 100 : 0)) };
   }
 
   function generateHighlightedObservations(stats, last) {
@@ -1079,7 +1016,7 @@
     if(last.vibracion >= 5.0) obs.push({ tipo: 'crítico', icono: '〰️', texto: `Vibración: ${last.vibracion} mm/s` });
     if(last.km >= 60000) obs.push({ tipo: 'mantenimiento', icono: '🔧', texto: `KM crítico: ${last.km.toLocaleString()}` });
     const dispActual = (last.uptime / (last.uptime + last.downtime)) * 100;
-    if(dispActual < 85) obs.push({ tipo: 'operativo', icono: '📉', texto: `Disponibilidad baja: ${dispActual.toFixed(1)}%` });
+    if(dispActual < 85) obs.push({ tipo: 'operativo', icono: '📉', texto: `Disp baja: ${dispActual.toFixed(1)}%` });
     if(obs.length === 0) obs.push({ tipo: 'ok', icono: '✅', texto: 'Parámetros óptimos' });
     return obs;
   }
@@ -1090,54 +1027,29 @@
     let html = `<thead><tr class="bg-slate-100">`;
     headers.forEach(h => { html += `<th class="border border-slate-300 px-1 py-1.5 text-left font-bold text-slate-700 text-[8px]">${h}</th>`; });
     html += `</tr></thead><tbody>`;
-    data.slice(-10).forEach(row => { 
-      const fecha = new Date(row.timestamp).toLocaleDateString('es-ES', {day:'2-digit', month:'2-digit'}); 
-      html += `<tr><td class="border border-slate-200 px-1 py-1.5 font-medium text-[8px]">${row.unidad}</td><td class="border border-slate-200 px-1 py-1.5 text-[8px]">${row.motor}</td><td class="border border-slate-200 px-1 py-1.5 text-right text-[8px]">${row.km?.toLocaleString()}</td><td class="border border-slate-200 px-1 py-1.5 text-right text-[8px]">${row.uptime}</td><td class="border border-slate-200 px-1 py-1.5 text-right text-[8px]">${row.downtime}</td><td class="border border-slate-200 px-1 py-1.5 text-right text-[8px]">${row.vibracion}</td><td class="border border-slate-200 px-1 py-1.5 text-right text-[8px]">${row.ta}</td><td class="border border-slate-200 px-1 py-1.5 text-right text-[8px]">${row.rpm}</td><td class="border border-slate-200 px-1 py-1.5 text-right text-[8px]">${row.psiDi}</td><td class="border border-slate-200 px-1 py-1.5 text-[8px]">${fecha}</td></tr>`; 
-    });
+    data.slice(-10).forEach(row => { const fecha = new Date(row.timestamp).toLocaleDateString('es-ES', {day:'2-digit', month:'2-digit'}); html += `<tr class="hover:bg-slate-50 transition-colors"><td class="border border-slate-200 px-1 py-1.5 font-medium text-[8px]">${row.unidad}</td><td class="border border-slate-200 px-1 py-1.5 text-[8px]">${row.motor}</td><td class="border border-slate-200 px-1 py-1.5 text-right text-[8px]">${row.km?.toLocaleString()}</td><td class="border border-slate-200 px-1 py-1.5 text-right text-[8px]">${row.uptime}</td><td class="border border-slate-200 px-1 py-1.5 text-right text-[8px]">${row.downtime}</td><td class="border border-slate-200 px-1 py-1.5 text-right text-[8px]">${row.vibracion}</td><td class="border border-slate-200 px-1 py-1.5 text-right text-[8px]">${row.ta}</td><td class="border border-slate-200 px-1 py-1.5 text-right text-[8px]">${row.rpm}</td><td class="border border-slate-200 px-1 py-1.5 text-right text-[8px]">${row.psiDi}</td><td class="border border-slate-200 px-1 py-1.5 text-[8px]">${fecha}</td></tr>`; });
     html += `</tbody>`; return html;
   }
 
   function updatePDFTemplate({ stats, observaciones, datasetTable, last, now }) {
     document.getElementById('pdf-fecha').innerText = now.toLocaleDateString('es-ES');
-    document.getElementById('pdf-unidad').innerText = last.unidad; 
-    document.getElementById('pdf-id').innerText = "ID: " + last.id; 
-    document.getElementById('pdf-motor').innerText = last.motor; 
-    document.getElementById('pdf-km').innerText = last.km.toLocaleString() + " KM"; 
-    document.getElementById('pdf-last-reading').innerText = new Date(last.timestamp).toLocaleDateString('es-ES');
-    document.getElementById('pdf-disp-val').innerText = document.getElementById('kpi-disp').innerText; 
-    document.getElementById('pdf-mtbf-val').innerText = document.getElementById('kpi-mtbf').innerText + "h"; 
-    document.getElementById('pdf-mttr-val').innerText = document.getElementById('kpi-mttr').innerText + "h";
-    if(stats) { 
-      document.getElementById('stat-uptime-mean').innerText = stats.uptime.mean; 
-      document.getElementById('stat-uptime-range').innerText = `${stats.uptime.min}-${stats.uptime.max}`; 
-      document.getElementById('stat-downtime-mean').innerText = stats.downtime.mean; 
-      document.getElementById('stat-km-mean').innerText = parseFloat(stats.km.mean).toLocaleString(); 
-      document.getElementById('stat-temp-mean').innerText = stats.ta.mean + "°C"; 
-      document.getElementById('stat-disp-mean').innerText = stats.disponibilidad.mean + "%"; 
-    }
+    document.getElementById('pdf-unidad').innerText = last.unidad; document.getElementById('pdf-id').innerText = "ID: " + last.id; document.getElementById('pdf-motor').innerText = last.motor; document.getElementById('pdf-km').innerText = last.km.toLocaleString() + " KM"; document.getElementById('pdf-last-reading').innerText = new Date(last.timestamp).toLocaleDateString('es-ES');
+    document.getElementById('pdf-disp-val').innerText = document.getElementById('kpi-disp').innerText; document.getElementById('pdf-mtbf-val').innerText = document.getElementById('kpi-mtbf').innerText + "h"; document.getElementById('pdf-mttr-val').innerText = document.getElementById('kpi-mttr').innerText + "h";
+    if(stats) { document.getElementById('stat-uptime-mean').innerText = stats.uptime.mean; document.getElementById('stat-uptime-range').innerText = `${stats.uptime.min}-${stats.uptime.max}`; document.getElementById('stat-downtime-mean').innerText = stats.downtime.mean; document.getElementById('stat-km-mean').innerText = parseFloat(stats.km.mean).toLocaleString(); document.getElementById('stat-temp-mean').innerText = stats.ta.mean + "°C"; document.getElementById('stat-disp-mean').innerText = stats.disponibilidad.mean + "%"; }
     const obsContainer = document.getElementById('pdf-observaciones');
-    obsContainer.innerHTML = observaciones.map(obs => { 
-      const colors = { 'crítico': 'bg-rose-50 border-rose-300 text-rose-800', 'advertencia': 'bg-orange-50 border-orange-300 text-orange-800', 'mantenimiento': 'bg-indigo-50 border-indigo-300 text-indigo-800', 'operativo': 'bg-amber-50 border-amber-300 text-amber-800', 'ok': 'bg-teal-50 border-teal-300 text-teal-800' }; 
-      return `<div class="flex items-start gap-2 p-2 rounded border-l-4 ${colors[obs.tipo]}"><span class="text-base">${obs.icono}</span><p class="text-[9px] leading-tight">${obs.texto}</p></div>`; 
-    }).join('');
+    obsContainer.innerHTML = observaciones.map(obs => { const colors = { 'crítico': 'bg-rose-50 border-rose-300 text-rose-800', 'advertencia': 'bg-orange-50 border-orange-300 text-orange-800', 'mantenimiento': 'bg-indigo-50 border-indigo-300 text-indigo-800', 'operativo': 'bg-amber-50 border-amber-300 text-amber-800', 'ok': 'bg-teal-50 border-teal-300 text-teal-800' }; return `<div class="flex items-start gap-2 p-2 rounded border-l-4 ${colors[obs.tipo]}"><span class="text-base">${obs.icono}</span><p class="text-[9px] leading-tight">${obs.texto}</p></div>`; }).join('');
     document.getElementById('pdf-dataset-table').innerHTML = datasetTable;
   }
 
   // === INICIALIZACIÓN ===
   window.onload = () => {
     calculateKPIs();
-    if(db.length > 0) { 
-      updateUnidadCard(db[db.length - 1]); 
-      runPredictiveAI(db[db.length - 1]); 
-    }
+    if(db.length > 0) { updateUnidadCard(db[db.length - 1]); runPredictiveAI(db[db.length - 1]); }
     updateTimelineChart();
     updateCorrelationMatrix();
-    renderDatasetTable();    // 🔹 Renderizar tabla dataset al cargar
-    renderDescribeTable();   // 🔹 Renderizar tabla DESCRIBE() al cargar
-    
-    window.addEventListener('orientationchange', () => {
-      if (window.innerWidth < 768 && isSidebarOpen) toggleSidebar();
-    });
+    renderDatasetTable();
+    renderDescribeTable();
+    window.addEventListener('orientationchange', () => { if (window.innerWidth < 768 && isSidebarOpen) toggleSidebar(); });
   };
 </script>
 </body>
