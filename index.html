@@ -27,7 +27,6 @@
     body { 
       font-family: 'Inter', sans-serif; 
       -webkit-tap-highlight-color: transparent;
-      /* 🔹 IMAGEN DE FONDO PROFESIONAL */
       background: 
         linear-gradient(135deg, rgba(0,0,0,0.85) 0%, rgba(0,20,40,0.80) 50%, rgba(0,0,0,0.90) 100%),
         url('https://image.pollinations.ai/prompt/futuristic%20dark%20garage%20with%20black%20sports%20car%20Chevrolet%20Camaro%20neon%20blue%20cyan%20lighting%20holographic%20data%20displays%20HUD%20interface%20automotive%20dashboard%20sci-fi%20technology%20motor%20intelligence%208k%20ultra%20detailed?width=1920&height=1080&nologo=true') center center / cover no-repeat fixed;
@@ -35,16 +34,13 @@
     
     .font-tech { font-family: 'Orbitron', monospace; }
     
-    /* Gauge responsive */
     .gauge-wrapper { position: relative; width: 100%; max-width: 240px; margin: 0 auto; aspect-ratio: 1/1; }
     .gauge-circle { position: absolute; inset: 0; }
     
-    /* Scroll personalizado */
     .custom-scrollbar::-webkit-scrollbar { width: 6px; height: 6px; }
     .custom-scrollbar::-webkit-scrollbar-thumb { background-color: #06b6d4; border-radius: 4px; }
     .custom-scrollbar::-webkit-scrollbar-track { background-color: rgba(0,0,0,0.5); }
     
-    /* Animaciones */
     @keyframes pulse-glow {
       0%, 100% { box-shadow: 0 0 15px rgba(6, 182, 212, 0.3); }
       50% { box-shadow: 0 0 30px rgba(6, 182, 212, 0.6); }
@@ -70,7 +66,6 @@
     .neon-text { animation: neon-flicker 3s ease-in-out infinite; }
     .float-anim { animation: float 4s ease-in-out infinite; }
     
-    /* Glassmorphism mejorado */
     .glass-card {
       background: rgba(5, 15, 30, 0.75);
       backdrop-filter: blur(16px);
@@ -82,15 +77,13 @@
       box-shadow: 0 8px 40px rgba(6, 182, 212, 0.15), inset 0 1px 0 rgba(6, 182, 212, 0.2);
     }
     .glow-text { text-shadow: 0 0 20px rgba(6, 182, 212, 0.5), 0 0 40px rgba(6, 182, 212, 0.2); }
-    .glow-border { box-shadow: 0 0 15px rgba(6, 182, 212, 0.3); }
     
-    /* Neon line accents */
-    .neon-line {
-      height: 1px;
-      background: linear-gradient(90deg, transparent, rgba(6, 182, 212, 0.6), transparent);
-    }
+    .hud-corner { position: absolute; width: 20px; height: 20px; border-color: rgba(6, 182, 212, 0.4); border-style: solid; }
+    .hud-corner-tl { top: -1px; left: -1px; border-width: 2px 0 0 2px; }
+    .hud-corner-tr { top: -1px; right: -1px; border-width: 2px 2px 0 0; }
+    .hud-corner-bl { bottom: -1px; left: -1px; border-width: 0 0 2px 2px; }
+    .hud-corner-br { bottom: -1px; right: -1px; border-width: 0 2px 2px 0; }
     
-    /* Input styling futurista */
     .cyber-input {
       background: rgba(0, 20, 40, 0.8) !important;
       border: 1px solid rgba(6, 182, 212, 0.25) !important;
@@ -104,64 +97,26 @@
     }
     .cyber-input::placeholder { color: rgba(148, 163, 184, 0.5); }
     
-    /* Botones estilo neon */
     .btn-neon {
       background: linear-gradient(135deg, rgba(6, 182, 212, 0.8), rgba(8, 145, 178, 0.8));
       border: 1px solid rgba(6, 182, 212, 0.5);
       box-shadow: 0 0 20px rgba(6, 182, 212, 0.3);
       transition: all 0.3s ease;
     }
-    .btn-neon:hover {
-      box-shadow: 0 0 35px rgba(6, 182, 212, 0.5);
-      transform: translateY(-1px);
-    }
+    .btn-neon:hover { box-shadow: 0 0 35px rgba(6, 182, 212, 0.5); transform: translateY(-1px); }
     .btn-danger {
       background: linear-gradient(135deg, rgba(220, 38, 38, 0.8), rgba(185, 28, 28, 0.8));
       border: 1px solid rgba(220, 38, 38, 0.5);
       box-shadow: 0 0 15px rgba(220, 38, 38, 0.3);
     }
-    .btn-danger:hover {
-      box-shadow: 0 0 25px rgba(220, 38, 38, 0.5);
-    }
+    .btn-danger:hover { box-shadow: 0 0 25px rgba(220, 38, 38, 0.5); }
     .btn-purple {
       background: linear-gradient(135deg, rgba(139, 92, 246, 0.8), rgba(109, 40, 217, 0.8));
       border: 1px solid rgba(139, 92, 246, 0.5);
       box-shadow: 0 0 15px rgba(139, 92, 246, 0.3);
     }
-    .btn-purple:hover {
-      box-shadow: 0 0 25px rgba(139, 92, 246, 0.5);
-    }
+    .btn-purple:hover { box-shadow: 0 0 25px rgba(139, 92, 246, 0.5); }
     
-    /* HUD overlay elements */
-    .hud-corner {
-      position: absolute;
-      width: 20px;
-      height: 20px;
-      border-color: rgba(6, 182, 212, 0.4);
-      border-style: solid;
-    }
-    .hud-corner-tl { top: -1px; left: -1px; border-width: 2px 0 0 2px; }
-    .hud-corner-tr { top: -1px; right: -1px; border-width: 2px 2px 0 0; }
-    .hud-corner-bl { bottom: -1px; left: -1px; border-width: 0 0 2px 2px; }
-    .hud-corner-br { bottom: -1px; right: -1px; border-width: 0 2px 2px 0; }
-    
-    /* Touch targets */
-    .touch-target { min-height: 44px; min-width: 44px; }
-    input, select, textarea { font-size: 16px !important; }
-    
-    /* Table styling */
-    .cyber-table th {
-      background: rgba(6, 182, 212, 0.1);
-      border-bottom: 1px solid rgba(6, 182, 212, 0.3);
-    }
-    .cyber-table td {
-      border-bottom: 1px solid rgba(6, 182, 212, 0.1);
-    }
-    .cyber-table tr:hover td {
-      background: rgba(6, 182, 212, 0.05);
-    }
-    
-    /* Status indicator */
     .status-dot {
       width: 8px; height: 8px;
       border-radius: 50%;
@@ -170,15 +125,23 @@
       animation: pulse-glow 2s ease-in-out infinite;
     }
     
-    /* Mobile nav */
     @media (max-width: 767px) {
       .mobile-hidden { display: none !important; }
     }
+    
+    .touch-target { min-height: 44px; min-width: 44px; }
+    input, select, textarea { font-size: 16px !important; }
+    
+    .cyber-table th {
+      background: rgba(6, 182, 212, 0.1);
+      border-bottom: 1px solid rgba(6, 182, 212, 0.3);
+    }
+    .cyber-table td { border-bottom: 1px solid rgba(6, 182, 212, 0.1); }
+    .cyber-table tr:hover td { background: rgba(6, 182, 212, 0.05); }
   </style>
 </head>
 <body class="text-slate-200 overflow-x-hidden min-h-screen">
 
-<!-- Mobile Menu Toggle -->
 <button id="mobile-menu-btn" class="fixed top-4 left-4 z-50 md:hidden touch-target bg-black/60 backdrop-blur-md p-3 rounded-xl border border-cyan-500/30 text-cyan-400 shadow-lg">
   <i class="fas fa-bars text-xl"></i>
 </button>
@@ -187,12 +150,10 @@
 
   <!-- SIDEBAR -->
   <aside id="sidebar" class="w-[22rem] bg-black/80 border-r border-cyan-500/20 flex flex-col fixed md:static inset-y-0 left-0 z-40 transform -translate-x-full md:translate-x-0 transition-transform duration-300 shadow-2xl backdrop-blur-xl">
-    
     <button id="sidebar-close" class="md:hidden absolute top-4 right-4 touch-target text-slate-400 hover:text-cyan-400">
       <i class="fas fa-times text-xl"></i>
     </button>
     
-    <!-- Logo Section -->
     <div class="p-4 md:p-6 border-b border-cyan-500/20 flex items-center gap-3 shrink-0 bg-gradient-to-r from-black/80 to-transparent relative overflow-hidden">
       <div class="absolute inset-0 bg-gradient-to-r from-cyan-500/5 to-transparent"></div>
       <div class="w-12 h-12 bg-gradient-to-br from-cyan-400 to-blue-600 rounded-xl flex items-center justify-center text-white font-bold text-xl shadow-lg shadow-cyan-500/30 flex-shrink-0 relative z-10">
@@ -202,40 +163,28 @@
         <h1 class="text-xl md:text-3xl font-black tracking-tighter text-transparent bg-clip-text bg-gradient-to-r from-cyan-300 via-cyan-400 to-blue-400 font-tech truncate glow-text">NEXO-ART</h1>
         <p class="text-[9px] md:text-[10px] uppercase font-bold text-cyan-500/60 tracking-widest -mt-0.5 hidden xs:block">Motor Intelligence</p>
       </div>
-      <div class="absolute top-0 right-0 w-32 h-full bg-gradient-to-l from-cyan-500/5 to-transparent"></div>
     </div>
     
     <div class="flex-1 overflow-hidden flex flex-col p-3 md:p-5 bg-gradient-to-b from-black/30 to-black/60 relative">
-      <div class="absolute top-10 -right-20 w-40 h-40 bg-cyan-500/5 rounded-full blur-3xl pointer-events-none"></div>
-      
-      <!-- Botón Informe -->
-      <button onclick="generateReport()" class="w-full btn-purple text-white font-bold py-3 px-3 md:py-3.5 md:px-4 rounded-xl transition-all flex items-center justify-center gap-2 shrink-0 hover:scale-[1.02] touch-target text-sm relative overflow-hidden group">
-        <div class="absolute inset-0 bg-gradient-to-r from-violet-500/20 to-purple-500/20 opacity-0 group-hover:opacity-100 transition-opacity"></div>
-        <i class="fas fa-file-signature text-lg relative z-10"></i> 
-        <span class="hidden xs:inline relative z-10">Exportar Informe</span><span class="xs:hidden relative z-10">Informe</span>
+      <button onclick="generateReport()" class="w-full btn-purple text-white font-bold py-3 px-3 md:py-3.5 md:px-4 rounded-xl transition-all flex items-center justify-center gap-2 shrink-0 hover:scale-[1.02] touch-target text-sm">
+        <i class="fas fa-file-signature text-lg"></i> <span class="hidden xs:inline">Exportar Informe</span><span class="xs:hidden">Informe</span>
       </button>
-      
-      <!-- Container del Reporte IA -->
-      <div id="ai-report-container" class="mt-3 md:mt-5 flex-1 overflow-y-auto bg-black/60 rounded-xl p-3 md:p-5 border border-cyan-500/20 text-xs md:text-sm text-slate-300 hidden leading-relaxed shadow-inner backdrop-blur-sm z-10 custom-scrollbar">
-      </div>
-      
+      <div id="ai-report-container" class="mt-3 md:mt-5 flex-1 overflow-y-auto bg-black/60 rounded-xl p-3 md:p-5 border border-cyan-500/20 text-xs md:text-sm text-slate-300 hidden leading-relaxed shadow-inner backdrop-blur-sm z-10 custom-scrollbar"></div>
       <div id="ai-report-placeholder" class="mt-6 md:mt-8 text-center px-2 flex flex-col items-center justify-center flex-1 z-10">
          <i class="fas fa-robot text-4xl md:text-5xl text-cyan-500/20 mb-3 md:mb-4 float-anim"></i>
          <p class="text-slate-500 text-xs md:text-sm">Presiona para sintetizar informe técnico de la flota.</p>
       </div>
     </div>
     
-    <!-- Footer Sidebar -->
     <div class="p-3 md:p-4 border-t border-cyan-500/20 text-slate-500 text-[10px] md:text-xs flex items-center justify-between bg-black/60">
       <span class="truncate flex items-center gap-1"><span class="status-dot inline-block"></span> <span class="hidden xs:inline">Data Server: Online</span></span>
       <span class="text-cyan-400 font-bold font-tech">V 1.3.0</span>
     </div>
   </aside>
 
-  <!-- Overlay mobile -->
   <div id="sidebar-overlay" class="fixed inset-0 bg-black/60 z-30 md:hidden hidden backdrop-blur-sm"></div>
 
-  <!-- MAIN CONTENT -->
+  <!-- MAIN -->
   <div class="flex-1 flex flex-col min-w-0">
 
     <!-- HEADER -->
@@ -263,7 +212,7 @@
       </div>
     </header>
 
-    <!-- FORMULARIO DE CARGA -->
+    <!-- FORMULARIO -->
     <div class="bg-black/60 border-b border-cyan-500/20 px-3 md:px-8 py-3 md:py-5 backdrop-blur-sm overflow-x-auto relative">
       <div class="absolute inset-0 bg-gradient-to-b from-cyan-500/3 to-transparent pointer-events-none"></div>
       <div class="min-w-[600px] md:min-w-0 max-w-[1400px] mx-auto px-1 relative z-10">
@@ -292,7 +241,7 @@
           <div><label class="text-cyan-400/60 text-[9px] font-bold block mb-0.5 tracking-wider">UPTIME</label><input id="input-uptime" type="number" class="cyber-input w-full rounded-lg px-3 py-2 text-xs touch-target" placeholder="350h"></div>
           <div><label class="text-orange-400/60 text-[9px] font-bold block mb-0.5 tracking-wider">DOWNTIME</label><input id="input-downtime" type="number" step="0.1" class="cyber-input w-full rounded-lg px-3 py-2 text-xs touch-target" placeholder="3.5h"></div>
           <div><label class="text-cyan-400/60 text-[9px] font-bold block mb-0.5 tracking-wider">VIB</label><input id="input-vibracion" type="number" step="0.1" class="cyber-input w-full rounded-lg px-3 py-2 text-xs touch-target" placeholder="2.4"></div>
-          <div><label class="text-cyan-400/60 text-[9px] font-bold block mb-0.5 tracking-wider">TEMP</label><input id="input-ta" type="number" class="cyber-input w-full rounded-lg px-3 py-2 text-xs touch-target" placeholder="92°"></div>
+          <div><label class="text-cyan-400/60 text-[9px] font-bold block mb-0.5 tracking-wider">TEMP</label><input id="input-ta" type="number" class="cyber-input w-full rounded-lg px-3 py-2 text-xs touch-target" placeholder="92"></div>
           <div><label class="text-cyan-400/60 text-[9px] font-bold block mb-0.5 tracking-wider">RPM</label><input id="input-rpm" type="number" class="cyber-input w-full rounded-lg px-3 py-2 text-xs touch-target" placeholder="4500"></div>
           <div><label class="text-cyan-400/60 text-[9px] font-bold block mb-0.5 tracking-wider">PSI DI</label><input id="input-psi-di" type="number" class="cyber-input w-full rounded-lg px-3 py-2 text-xs touch-target" placeholder="32"></div>
           <div><label class="text-cyan-400/60 text-[9px] font-bold block mb-0.5 tracking-wider">PSI DD</label><input id="input-psi-dd" type="number" class="cyber-input w-full rounded-lg px-3 py-2 text-xs touch-target" placeholder="32"></div>
@@ -302,14 +251,13 @@
       </div>
     </div>
 
-    <!-- DASHBOARD PRINCIPAL -->
+    <!-- DASHBOARD -->
     <div class="flex-1 overflow-auto p-3 md:p-8" id="content-area">
       <div class="max-w-[1400px] mx-auto px-1 md:px-4 pb-8 md:pb-12">
 
-        <!-- Tarjeta de Unidad - Estilo HUD -->
+        <!-- Tarjeta de Unidad -->
         <div class="mb-4 md:mb-8">
           <div class="glass-card rounded-xl md:rounded-2xl p-4 md:p-6 flex flex-col xs:flex-row items-center gap-4 shadow-lg relative overflow-hidden">
-             <!-- HUD Corners -->
              <div class="hud-corner hud-corner-tl"></div>
              <div class="hud-corner hud-corner-tr"></div>
              <div class="hud-corner hud-corner-bl"></div>
@@ -339,15 +287,13 @@
                      <p class="text-xs md:text-base font-bold text-cyan-400 mt-0.5"><i class="fas fa-circle text-[8px] animate-pulse"></i> <span class="hidden xs:inline">Online</span></p>
                  </div>
              </div>
-             <div class="hidden md:block absolute right-0 top-0 h-full w-96 bg-gradient-to-l from-cyan-500/5 to-transparent pointer-events-none"></div>
           </div>
         </div>
 
-        <!-- KPIs Section -->
+        <!-- KPIs -->
         <h2 class="text-lg md:text-xl font-bold text-white mb-4 md:mb-6 flex items-center gap-2 font-tech tracking-wider"><i class="fas fa-chart-line text-cyan-400"></i> <span class="hidden xs:inline">Rendimiento de la Flota</span><span class="xs:hidden">KPIs</span></h2>
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-4 md:gap-6">
           
-          <!-- Gauge Disponibilidad -->
           <div class="lg:col-span-4 glass-card rounded-2xl md:rounded-3xl p-4 md:p-8 flex flex-col items-center justify-center shadow-lg relative overflow-hidden">
             <div class="absolute inset-0 bg-gradient-to-b from-cyan-500/5 to-transparent pointer-events-none"></div>
             <h3 class="uppercase text-cyan-400 text-[9px] md:text-[11px] font-bold tracking-widest mb-3 md:mb-6 text-center font-tech">DISPONIBILIDAD</h3>
@@ -363,7 +309,6 @@
             <p id="trend-disp" class="text-[10px] md:text-sm font-semibold mt-3 md:mt-6 bg-cyan-500/10 text-cyan-400 px-3 md:px-4 py-1 md:py-1.5 rounded-full border border-cyan-500/20"><i class="fas fa-arrow-up"></i> <span class="hidden xs:inline">Óptimo</span></p>
           </div>
 
-          <!-- MTBF & MTTR -->
           <div class="lg:col-span-8 grid grid-cols-2 gap-3 md:gap-6">
             <div class="glass-card rounded-2xl md:rounded-3xl p-4 md:p-6 flex flex-col items-center justify-center text-center shadow-lg relative overflow-hidden group">
               <div class="absolute top-0 right-0 w-24 h-24 md:w-32 md:h-32 bg-cyan-500/5 rounded-bl-full transition-all group-hover:scale-110 pointer-events-none"></div>
@@ -406,13 +351,12 @@
           </div>
         </div>
 
-        <!-- DATASET ACUMULADO + DESCRIBE() -->
+        <!-- DATASET + DESCRIBE() -->
         <div class="mt-6 md:mt-10">
           <h2 class="text-lg md:text-xl font-bold text-white mb-4 md:mb-6 flex items-center gap-2 font-tech tracking-wider">
             <i class="fas fa-database text-cyan-400"></i> <span class="hidden xs:inline">Dataset Acumulado en Memoria</span><span class="xs:hidden">Dataset</span>
           </h2>
           
-          <!-- Tabla del Dataset -->
           <div class="glass-card rounded-2xl md:rounded-3xl p-3 md:p-6 shadow-lg mb-4 md:mb-6">
             <div class="flex justify-between items-center mb-3 md:mb-4">
               <h3 class="text-cyan-400 font-bold text-sm font-tech"><i class="fas fa-table mr-1"></i> Registros (<span id="dataset-count">0</span>/20)</h3>
@@ -431,7 +375,6 @@
             <p class="text-[9px] text-slate-500 mt-2 text-center italic">* Datos persisten en memoria local. RESET para borrar.</p>
           </div>
 
-          <!-- Tabla DESCRIBE() -->
           <div class="glass-card rounded-2xl md:rounded-3xl p-3 md:p-6 shadow-lg">
             <h3 class="text-purple-400 font-bold text-sm mb-3 md:mb-4 flex items-center gap-2 font-tech">
               <i class="fas fa-calculator mr-1"></i> DESCRIBE() - Estadísticas del Dataset
@@ -510,7 +453,7 @@
   </div>
 </nav>
 
-<!-- TEMPLATE PDF (Oculto) -->
+<!-- TEMPLATE PDF -->
 <div id="pdf-report-template-enhanced" class="hidden w-[794px] bg-white text-slate-800 p-8 font-sans" style="min-height: 1123px; box-sizing: border-box; font-size: 11px;">
     <div class="flex justify-between items-center border-b-4 border-slate-900 pb-4 mb-6">
         <div class="flex items-center gap-3">
@@ -528,36 +471,89 @@
     <div class="bg-gradient-to-r from-slate-50 to-white rounded-xl p-4 mb-5 border border-slate-200">
         <h2 class="text-[9px] font-black text-slate-400 uppercase tracking-wider mb-3">📋 Unidad en Análisis</h2>
         <div class="grid grid-cols-2 gap-3">
-            <div><p class="text-[9px] text-slate-400 uppercase">Identificador</p><p id="pdf-unidad" class="text-lg font-black text-slate-900">--</p><p id="pdf-id" class="text-[10px] font-bold text-slate-500">ID: --</p></div>
-            <div class="text-right"><p class="text-[9px] text-slate-400 uppercase">Configuración</p><p id="pdf-motor" class="text-base font-black text-indigo-600 bg-indigo-50 px-3 py-1 rounded-lg inline-block">--</p></div>
-            <div><p class="text-[9px] text-slate-400 uppercase">Kilometraje</p><p id="pdf-km" class="text-base font-black text-teal-700">-- KM</p></div>
-            <div class="text-right"><p class="text-[9px] text-slate-400 uppercase">Última Lectura</p><p class="text-[10px] font-bold text-slate-600" id="pdf-last-reading">--</p></div>
+            <div>
+                <p class="text-[9px] text-slate-400 uppercase">Identificador</p>
+                <p id="pdf-unidad" class="text-lg font-black text-slate-900 font-tech">--</p>
+                <p id="pdf-id" class="text-[10px] font-bold text-slate-500">ID: --</p>
+            </div>
+            <div class="text-right">
+                <p class="text-[9px] text-slate-400 uppercase">Configuración</p>
+                <p id="pdf-motor" class="text-base font-black text-indigo-600 bg-indigo-50 px-3 py-1 rounded-lg inline-block">--</p>
+            </div>
+            <div>
+                <p class="text-[9px] text-slate-400 uppercase">Kilometraje</p>
+                <p id="pdf-km" class="text-base font-black text-teal-700 font-tech">-- KM</p>
+            </div>
+            <div class="text-right">
+                <p class="text-[9px] text-slate-400 uppercase">Última Lectura</p>
+                <p class="text-[10px] font-bold text-slate-600" id="pdf-last-reading">--</p>
+            </div>
         </div>
     </div>
     <div class="grid grid-cols-3 gap-3 mb-5">
-        <div class="bg-indigo-50 border border-indigo-200 rounded-xl p-3 text-center"><p class="text-[8px] text-indigo-600 font-black uppercase">Disponibilidad</p><p id="pdf-disp-val" class="text-xl font-black text-indigo-900">--</p></div>
-        <div class="bg-teal-50 border border-teal-200 rounded-xl p-3 text-center"><p class="text-[8px] text-teal-600 font-black uppercase">MTBF</p><p id="pdf-mtbf-val" class="text-xl font-black text-teal-900">--</p></div>
-        <div class="bg-orange-50 border border-orange-200 rounded-xl p-3 text-center"><p class="text-[8px] text-orange-600 font-black uppercase">MTTR</p><p id="pdf-mttr-val" class="text-xl font-black text-orange-900">--</p></div>
-    </div>
-    <div class="mb-5">
-        <h2 class="text-[9px] font-black text-slate-700 uppercase tracking-wider mb-3 pb-2 border-b border-slate-200">📈 Resumen Estadístico</h2>
-        <div class="grid grid-cols-2 gap-2 text-[10px]">
-            <div class="bg-slate-50 rounded-lg p-2"><p class="font-bold text-slate-600 mb-1">Uptime</p><p>Media: <span id="stat-uptime-mean" class="font-black text-slate-900">--</span>h</p></div>
-            <div class="bg-slate-50 rounded-lg p-2"><p class="font-bold text-slate-600 mb-1">Downtime</p><p>Media: <span id="stat-downtime-mean" class="font-black text-slate-900">--</span>h</p></div>
-            <div class="bg-slate-50 rounded-lg p-2"><p class="font-bold text-slate-600 mb-1">KM</p><p>Media: <span id="stat-km-mean" class="font-black text-slate-900">--</span></p></div>
-            <div class="bg-slate-50 rounded-lg p-2"><p class="font-bold text-slate-600 mb-1">Temp</p><p>Media: <span id="stat-temp-mean" class="font-black text-slate-900">--</span></p></div>
+        <div class="bg-indigo-50 border border-indigo-200 rounded-xl p-3 text-center">
+            <p class="text-[8px] text-indigo-600 font-black uppercase">Disponibilidad</p>
+            <p id="pdf-disp-val" class="text-xl font-black text-indigo-900 font-tech">--</p>
+        </div>
+        <div class="bg-teal-50 border border-teal-200 rounded-xl p-3 text-center">
+            <p class="text-[8px] text-teal-600 font-black uppercase">MTBF</p>
+            <p id="pdf-mtbf-val" class="text-xl font-black text-teal-900 font-tech">--</p>
+        </div>
+        <div class="bg-orange-50 border border-orange-200 rounded-xl p-3 text-center">
+            <p class="text-[8px] text-orange-600 font-black uppercase">MTTR</p>
+            <p id="pdf-mttr-val" class="text-xl font-black text-orange-900 font-tech">--</p>
         </div>
     </div>
     <div class="mb-5">
-        <h2 class="text-[9px] font-black text-slate-700 uppercase tracking-wider mb-3 pb-2 border-b border-slate-200">🔍 Observaciones</h2>
+        <h2 class="text-[9px] font-black text-slate-700 uppercase tracking-wider mb-3 pb-2 border-b border-slate-200 flex items-center gap-2">
+            <span>📈</span> Resumen Estadístico
+        </h2>
+        <div class="grid grid-cols-2 gap-2 text-[10px]">
+            <div class="bg-slate-50 rounded-lg p-2">
+                <p class="font-bold text-slate-600 mb-1">Uptime (horas)</p>
+                <p>Media: <span id="stat-uptime-mean" class="font-black text-slate-900 font-tech">--</span>h</p>
+                <p class="text-[9px] text-slate-500">Rango: <span id="stat-uptime-range" class="font-tech">--</span></p>
+            </div>
+            <div class="bg-slate-50 rounded-lg p-2">
+                <p class="font-bold text-slate-600 mb-1">Downtime (horas)</p>
+                <p>Media: <span id="stat-downtime-mean" class="font-black text-slate-900 font-tech">--</span>h</p>
+            </div>
+            <div class="bg-slate-50 rounded-lg p-2">
+                <p class="font-bold text-slate-600 mb-1">Kilometraje</p>
+                <p>Media: <span id="stat-km-mean" class="font-black text-slate-900 font-tech">--</span> KM</p>
+            </div>
+            <div class="bg-slate-50 rounded-lg p-2">
+                <p class="font-bold text-slate-600 mb-1">Temperatura</p>
+                <p>Media: <span id="stat-temp-mean" class="font-black text-slate-900 font-tech">--</span>°C</p>
+            </div>
+            <div class="bg-slate-50 rounded-lg p-2">
+                <p class="font-bold text-slate-600 mb-1">Disponibilidad</p>
+                <p>Media: <span id="stat-disp-mean" class="font-black text-slate-900 font-tech">--</span>%</p>
+            </div>
+            <div class="bg-slate-50 rounded-lg p-2">
+                <p class="font-bold text-slate-600 mb-1">Vibración</p>
+                <p>Media: <span id="stat-vib-mean" class="font-black text-slate-900 font-tech">--</span> mm/s</p>
+            </div>
+        </div>
+    </div>
+    <div class="mb-5">
+        <h2 class="text-[9px] font-black text-slate-700 uppercase tracking-wider mb-3 pb-2 border-b border-slate-200 flex items-center gap-2">
+            <span>🔍</span> Observaciones
+        </h2>
         <div id="pdf-observaciones" class="space-y-2"></div>
     </div>
     <div class="mb-4">
-        <h2 class="text-[9px] font-black text-slate-700 uppercase tracking-wider mb-3 pb-2 border-b border-slate-200">🗃️ Dataset</h2>
-        <div class="overflow-x-auto border border-slate-200 rounded-lg"><table class="w-full text-[9px] border-collapse" id="pdf-dataset-table"></table></div>
+        <h2 class="text-[9px] font-black text-slate-700 uppercase tracking-wider mb-3 pb-2 border-b border-slate-200 flex items-center gap-2">
+            <span>🗃️</span> Dataset (Últimos 20)
+        </h2>
+        <div class="overflow-x-auto border border-slate-200 rounded-lg">
+            <table class="pdf-table w-full text-[9px] border-collapse" id="pdf-dataset-table"></table>
+        </div>
+        <p class="text-[8px] text-slate-400 mt-2 text-center italic">* Datos almacenados en memoria local del navegador.</p>
     </div>
     <div class="mt-auto pt-4 border-t-2 border-slate-200 flex justify-between items-center text-[8px] text-slate-400 uppercase tracking-wider font-bold">
-        <p>⚙️ NEXO-ART v1.3.0</p><p>Auto-generado</p>
+        <p><i class="fas fa-shield-alt mr-1"></i> NEXO-ART Motor Intelligence v1.3.0</p>
+        <p>Documento generado automáticamente</p>
     </div>
 </div>
 
@@ -618,7 +614,7 @@
   sidebarClose?.addEventListener('click', toggleSidebar);
   overlay?.addEventListener('click', toggleSidebar);
 
-  // === FUNCIONES UI ===
+  // === FUNCIONES ===
   function updateUnidadCard(entrada) {
     if (!entrada) return;
     document.getElementById("card-unidad").innerText = entrada.unidad;
@@ -753,7 +749,9 @@
       return;
     }
     const headers = ['Unidad', 'Motor', 'KM', 'UP', 'DOWN', 'VIB', 'TEMP', 'RPM', 'PSI-DI', 'PSI-DD', 'Fecha'];
-    let html = `<thead><tr class="cyber-table"><th class="p-2 text-left font-bold border-b border-cyan-500/30 text-[9px] md:text-xs sticky top-0 bg-slate-900 z-10 text-cyan-400 font-tech">${headers.join('</th><th class="p-2 text-left font-bold border-b border-cyan-500/30 text-[9px] md:text-xs sticky top-0 bg-slate-900 z-10 text-cyan-400 font-tech">')}</th></tr></thead><tbody>`;
+    let html = `<thead><tr class="cyber-table">`;
+    headers.forEach(h => { html += `<th class="p-2 text-left font-bold border-b border-cyan-500/30 text-[9px] md:text-xs sticky top-0 bg-slate-900 z-10 text-cyan-400 font-tech">${h}</th>`; });
+    html += '</tr></thead><tbody>';
     [...db].reverse().forEach((row, idx) => {
       const fecha = new Date(row.timestamp).toLocaleDateString('es-ES', {day:'2-digit', month:'2-digit', hour:'2-digit'});
       html += `<tr class="${idx === 0 ? 'bg-cyan-500/10 border-l-2 border-cyan-500' : 'border-b border-cyan-500/10'} hover:bg-cyan-500/5 transition-colors">`;
@@ -827,7 +825,7 @@
     metrics.forEach(metric => {
       html += `<tr class="border-b border-cyan-500/10 hover:bg-cyan-500/5 transition-colors">`;
       html += `<td class="p-2 font-bold ${metric.color} border border-cyan-500/20 sticky left-0 bg-slate-900/80 z-10 font-tech">${metric.label}</td>`;
-      columns.forEach(col => { html += `<td class="p-2 text-center border border-cyan-500/20 ${metric.color === 'text-slate-300' ? '' : metric.color}">${stats[col][metric.key]}</td>`; });
+      columns.forEach(col => { html += `<td class="p-2 text-center border border-cyan-500/20 ${metric.key === 'count' ? '' : metric.color}">${stats[col][metric.key]}</td>`; });
       html += '</tr>';
     });
     html += '</tbody></table></div>';
@@ -1033,9 +1031,26 @@
 
   function updatePDFTemplate({ stats, observaciones, datasetTable, last, now }) {
     document.getElementById('pdf-fecha').innerText = now.toLocaleDateString('es-ES');
-    document.getElementById('pdf-unidad').innerText = last.unidad; document.getElementById('pdf-id').innerText = "ID: " + last.id; document.getElementById('pdf-motor').innerText = last.motor; document.getElementById('pdf-km').innerText = last.km.toLocaleString() + " KM"; document.getElementById('pdf-last-reading').innerText = new Date(last.timestamp).toLocaleDateString('es-ES');
-    document.getElementById('pdf-disp-val').innerText = document.getElementById('kpi-disp').innerText; document.getElementById('pdf-mtbf-val').innerText = document.getElementById('kpi-mtbf').innerText + "h"; document.getElementById('pdf-mttr-val').innerText = document.getElementById('kpi-mttr').innerText + "h";
-    if(stats) { document.getElementById('stat-uptime-mean').innerText = stats.uptime.mean; document.getElementById('stat-uptime-range').innerText = `${stats.uptime.min}-${stats.uptime.max}`; document.getElementById('stat-downtime-mean').innerText = stats.downtime.mean; document.getElementById('stat-km-mean').innerText = parseFloat(stats.km.mean).toLocaleString(); document.getElementById('stat-temp-mean').innerText = stats.ta.mean + "°C"; document.getElementById('stat-disp-mean').innerText = stats.disponibilidad.mean + "%"; }
+    document.getElementById('pdf-unidad').innerText = last.unidad; 
+    document.getElementById('pdf-id').innerText = "ID: " + last.id; 
+    document.getElementById('pdf-motor').innerText = last.motor; 
+    document.getElementById('pdf-km').innerText = last.km.toLocaleString() + " KM"; 
+    document.getElementById('pdf-last-reading').innerText = new Date(last.timestamp).toLocaleDateString('es-ES');
+    document.getElementById('pdf-disp-val').innerText = document.getElementById('kpi-disp').innerText; 
+    document.getElementById('pdf-mtbf-val').innerText = document.getElementById('kpi-mtbf').innerText + "h"; 
+    document.getElementById('pdf-mttr-val').innerText = document.getElementById('kpi-mttr').innerText + "h";
+    
+    // ✅ ACTUALIZAR TODAS LAS ESTADÍSTICAS EN EL PDF
+    if(stats) { 
+      document.getElementById('stat-uptime-mean').innerText = stats.uptime.mean; 
+      document.getElementById('stat-uptime-range').innerText = `${stats.uptime.min}-${stats.uptime.max}`; 
+      document.getElementById('stat-downtime-mean').innerText = stats.downtime.mean; 
+      document.getElementById('stat-km-mean').innerText = parseFloat(stats.km.mean).toLocaleString(); 
+      document.getElementById('stat-temp-mean').innerText = stats.ta.mean + "°C"; 
+      document.getElementById('stat-disp-mean').innerText = stats.disponibilidad.mean + "%"; 
+      document.getElementById('stat-vib-mean').innerText = stats.vibracion.mean + " mm/s"; 
+    }
+    
     const obsContainer = document.getElementById('pdf-observaciones');
     obsContainer.innerHTML = observaciones.map(obs => { const colors = { 'crítico': 'bg-rose-50 border-rose-300 text-rose-800', 'advertencia': 'bg-orange-50 border-orange-300 text-orange-800', 'mantenimiento': 'bg-indigo-50 border-indigo-300 text-indigo-800', 'operativo': 'bg-amber-50 border-amber-300 text-amber-800', 'ok': 'bg-teal-50 border-teal-300 text-teal-800' }; return `<div class="flex items-start gap-2 p-2 rounded border-l-4 ${colors[obs.tipo]}"><span class="text-base">${obs.icono}</span><p class="text-[9px] leading-tight">${obs.texto}</p></div>`; }).join('');
     document.getElementById('pdf-dataset-table').innerHTML = datasetTable;
