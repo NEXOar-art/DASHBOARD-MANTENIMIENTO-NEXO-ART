@@ -146,6 +146,15 @@ input,select,textarea{font-size:16px!important}
 body{background:white;color:black}
 .no-print{display:none!important}
 }
+/* ✅ CORRECCIÓN PDF: Forzar centrado y evitar desplazamiento */
+#pdf-report-template-enhanced {
+  margin: 0 auto !important;
+  position: relative !important;
+  left: 0 !important;
+  transform: none !important;
+  display: block !important;
+  width: 794px !important;
+}
 </style>
 </head>
 <body class="text-slate-200 overflow-x-hidden">
@@ -616,7 +625,8 @@ Limpiar
 <span><kbd>?</kbd> Mostrar ayuda</span>
 </div>
 <!-- PDF TEMPLATE -->
-<div id="pdf-report-template-enhanced" class="hidden w-[794px] bg-white text-slate-800 p-6 font-sans no-print" style="min-height:1123px;box-sizing:border-box;font-size:10px;">
+<!-- ✅ CORREGIDO: Estilos inline forzados para centrado perfecto y sin margen desplazado -->
+<div id="pdf-report-template-enhanced" class="hidden bg-white text-slate-800 p-6 font-sans no-print" style="min-height:1123px;box-sizing:border-box;font-size:10px;margin:0 auto;position:relative;left:0;transform:none;display:block;width:794px;">
 <div class="flex justify-between items-center border-b-4 border-slate-900 pb-3 mb-4">
 <div class="flex items-center gap-2">
 <div class="w-10 h-10 bg-gradient-to-br from-cyan-500 to-blue-600 text-white rounded-lg flex items-center justify-center text-xl font-bold shadow-lg">⚙️</div>
@@ -801,1394 +811,1351 @@ let isSidebarOpen = false;
 let selectedRows = new Set();
 let currentModalUnit = null;
 let isGeneratingPDF = false;
-
 // === CATEGORÍAS VTV ===
 const VTV_CATEGORIES = [
-    {id:'luces',icon:'fa-lightbulb',color:'text-amber-400',emoji:'💡',title:'ILUMINACIÓN'},
-    {id:'frenos',icon:'fa-circle-stop',color:'text-rose-400',emoji:'🛑',title:'FRENOS'},
-    {id:'direccion',icon:'fa-gears',color:'text-cyan-400',emoji:'⚙️',title:'DIRECCIÓN/SUSPENSIÓN'},
-    {id:'neumaticos',icon:'fa-circle',color:'text-slate-400',emoji:'🚗',title:'NEUMÁTICOS'},
-    {id:'escape',icon:'fa-wind',color:'text-slate-400',emoji:'🌫️',title:'ESCAPE'},
-    {id:'otros',icon:'fa-shield-halved',color:'text-green-400',emoji:'🪪',title:'OTROS'},
-    {id:'documentacion',icon:'fa-id-card',color:'text-purple-400',emoji:'📄',title:'DOCUMENTACIÓN'}
+{id:'luces',icon:'fa-lightbulb',color:'text-amber-400',emoji:'💡',title:'ILUMINACIÓN'},
+{id:'frenos',icon:'fa-circle-stop',color:'text-rose-400',emoji:'🛑',title:'FRENOS'},
+{id:'direccion',icon:'fa-gears',color:'text-cyan-400',emoji:'⚙️',title:'DIRECCIÓN/SUSPENSIÓN'},
+{id:'neumaticos',icon:'fa-circle',color:'text-slate-400',emoji:'🚗',title:'NEUMÁTICOS'},
+{id:'escape',icon:'fa-wind',color:'text-slate-400',emoji:'🌫️',title:'ESCAPE'},
+{id:'otros',icon:'fa-shield-halved',color:'text-green-400',emoji:'🪪',title:'OTROS'},
+{id:'documentacion',icon:'fa-id-card',color:'text-purple-400',emoji:'📄',title:'DOCUMENTACIÓN'}
 ];
 const VTV_ITEMS_MAP = {
-    luces:[{id:'luces-bajas',label:'Luces bajas y altas'},{id:'luces-freno',label:'Luces de freno'},{id:'luces-giro',label:'Luces de giro e intermitentes'},{id:'luces-balizas',label:'Balizas'},{id:'luces-patente',label:'Luz de patente'}],
-    frenos:[{id:'freno-servicio',label:'Freno de servicio (pedal)'},{id:'freno-mano',label:'Freno de mano'},{id:'freno-equilibrio',label:'Equilibrio entre ruedas'}],
-    direccion:[{id:'dir-juego',label:'Dirección sin juego excesivo'},{id:'amortiguadores',label:'Amortiguadores en buen estado'},{id:'rotulas',label:'Rótulas y bujes firmes'}],
-    neumaticos:[{id:'neum-dibujo',label:'Dibujo mínimo 1,6 mm'},{id:'neum-cortes',label:'Sin cortes ni deformaciones'},{id:'neum-desgaste',label:'Desgaste parejo'}],
-    escape:[{id:'escape-fugas',label:'Caño de escape sin fugas'},{id:'emisiones',label:'Emisiones dentro de lo permitido'}],
-    otros:[{id:'bocina',label:'Bocina funcionando'},{id:'cinturones',label:'Cinturones de seguridad'},{id:'parabrisas',label:'Parabrisas sin roturas'},{id:'limpia',label:'Limpiaparabrisas operativo'},{id:'carroceria',label:'Carrocería sin daños estructurales'}],
-    documentacion:[{id:'doc-cedula',label:'Cédula verde/azul'},{id:'doc-dni',label:'DNI'},{id:'doc-seguro',label:'Seguro vigente'},{id:'doc-vtv',label:'Comprobante de pago VTV'}]
+luces:[{id:'luces-bajas',label:'Luces bajas y altas'},{id:'luces-freno',label:'Luces de freno'},{id:'luces-giro',label:'Luces de giro e intermitentes'},{id:'luces-balizas',label:'Balizas'},{id:'luces-patente',label:'Luz de patente'}],
+frenos:[{id:'freno-servicio',label:'Freno de servicio (pedal)'},{id:'freno-mano',label:'Freno de mano'},{id:'freno-equilibrio',label:'Equilibrio entre ruedas'}],
+direccion:[{id:'dir-juego',label:'Dirección sin juego excesivo'},{id:'amortiguadores',label:'Amortiguadores en buen estado'},{id:'rotulas',label:'Rótulas y bujes firmes'}],
+neumaticos:[{id:'neum-dibujo',label:'Dibujo mínimo 1,6 mm'},{id:'neum-cortes',label:'Sin cortes ni deformaciones'},{id:'neum-desgaste',label:'Desgaste parejo'}],
+escape:[{id:'escape-fugas',label:'Caño de escape sin fugas'},{id:'emisiones',label:'Emisiones dentro de lo permitido'}],
+otros:[{id:'bocina',label:'Bocina funcionando'},{id:'cinturones',label:'Cinturones de seguridad'},{id:'parabrisas',label:'Parabrisas sin roturas'},{id:'limpia',label:'Limpiaparabrisas operativo'},{id:'carroceria',label:'Carrocería sin daños estructurales'}],
+documentacion:[{id:'doc-cedula',label:'Cédula verde/azul'},{id:'doc-dni',label:'DNI'},{id:'doc-seguro',label:'Seguro vigente'},{id:'doc-vtv',label:'Comprobante de pago VTV'}]
 };
 let VTV_ITEMS = [];
 VTV_CATEGORIES.forEach(cat => {
-    (VTV_ITEMS_MAP[cat.id]||[]).forEach(item => {
-        VTV_ITEMS.push({...item, category: cat.id, icon: cat.icon, emoji: cat.emoji});
-    });
+(VTV_ITEMS_MAP[cat.id]||[]).forEach(item => {
+VTV_ITEMS.push({...item, category: cat.id, icon: cat.icon, emoji: cat.emoji});
+});
 });
 let vtvState = {};
-
+// === FUNCIÓN NÚCLEO: CALCULO DE VARIABLES SINTÉTICAS ===
+function getSyntheticMetrics(row) {
+    if (!row) return { desgaste: 0, termovib: 0, eficiencia: 0, estres: 0 };
+    return {
+        desgaste: row.uptime > 0 ? (row.km / row.uptime) : 0,
+        termovib: row.rpm > 0 ? ((row.ta * row.vibracion) / row.rpm * 1000) : 0,
+        eficiencia: row.ta > 0 ? (row.rpm / row.ta) : 0,
+        estres: (row.vibracion * row.rpm) / 1000
+    };
+}
 // === CONFIGURACIÓN DE MÉTRICAS AVANZADAS ===
 const METRIC_CONFIG = {
-    desgaste: { min: 20, optMin: 40, optMax: 80, max: 100, unit: '', tooltip: (v) => { if(v < 20) return '⚠️ Muy bajo'; if(v < 40) return '🟡 Bajo'; if(v <= 80) return '✅ ÓPTIMO'; return '🔴 CRÍTICO'; } },
-    termovib: { min: 5000, optMin: 10000, optMax: 50000, max: 80000, unit: '', tooltip: (v) => { if(v < 5000) return '🟡 Bajo'; if(v <= 50000) return '✅ ÓPTIMO'; return '🔴 CRÍTICO'; } },
-    inactividad: { min: 0, optMin: 20, optMax: 40, max: 60, unit: '%', isPercent: true, tooltip: (v) => { if(v < 20) return '🟡 Bajo uso'; if(v <= 40) return '✅ ÓPTIMO'; return '🔴 CRÍTICO'; } },
-    eficiencia: { min: 0.2, optMin: 0.3, optMax: 0.45, max: 0.5, unit: '', isFloat: true, tooltip: (v) => { if(v < 0.3) return '🟡 Baja'; if(v <= 0.45) return '✅ ÓPTIMO'; return '🔴 CRÍTICO'; } },
-    presion: { min: 28, optMin: 30, optMax: 35, max: 38, unit: ' PSI', tooltip: (v) => { if(v < 30) return '🟡 Bajo'; if(v <= 35) return '✅ ÓPTIMO'; return '🔴 CRÍTICO'; } },
-    balance: { min: 0, optMin: 0, optMax: 1, max: 2, unit: '', tooltip: (v) => { if(v <= 1) return '✅ BUENO'; if(v <= 2) return '🟡 Aceptable'; return '🔴 CRÍTICO'; } },
-    estres: { min: 20, optMin: 30, optMax: 70, max: 100, unit: '', tooltip: (v) => { if(v < 30) return '🟡 Moderado'; if(v <= 70) return '✅ ÓPTIMO'; return '🔴 CRÍTICO'; } },
-    'disp-op': { min: 70, optMin: 85, optMax: 95, max: 100, unit: '%', isPercent: true, tooltip: (v) => { if(v < 85) return '🟡 Aceptable'; if(v <= 95) return '✅ ÓPTIMO'; return '✅ EXCELENTE'; } }
+desgaste: { min: 20, optMin: 40, optMax: 80, max: 100, unit: '', tooltip: (v) => { if(v < 20) return '⚠️ Muy bajo'; if(v < 40) return '🟡 Bajo'; if(v <= 80) return '✅ ÓPTIMO'; return '🔴 CRÍTICO'; } },
+termovib: { min: 5000, optMin: 10000, optMax: 50000, max: 80000, unit: '', tooltip: (v) => { if(v < 5000) return '🟡 Bajo'; if(v <= 50000) return '✅ ÓPTIMO'; return '🔴 CRÍTICO'; } },
+inactividad: { min: 0, optMin: 20, optMax: 40, max: 60, unit: '%', isPercent: true, tooltip: (v) => { if(v < 20) return '🟡 Bajo uso'; if(v <= 40) return '✅ ÓPTIMO'; return '🔴 CRÍTICO'; } },
+eficiencia: { min: 0.2, optMin: 0.3, optMax: 0.45, max: 0.5, unit: '', isFloat: true, tooltip: (v) => { if(v < 0.3) return '🟡 Baja'; if(v <= 0.45) return '✅ ÓPTIMO'; return '🔴 CRÍTICO'; } },
+presion: { min: 28, optMin: 30, optMax: 35, max: 38, unit: ' PSI', tooltip: (v) => { if(v < 30) return '🟡 Bajo'; if(v <= 35) return '✅ ÓPTIMO'; return '🔴 CRÍTICO'; } },
+balance: { min: 0, optMin: 0, optMax: 1, max: 2, unit: '', tooltip: (v) => { if(v <= 1) return '✅ BUENO'; if(v <= 2) return '🟡 Aceptable'; return '🔴 CRÍTICO'; } },
+estres: { min: 20, optMin: 30, optMax: 70, max: 100, unit: '', tooltip: (v) => { if(v < 30) return '🟡 Moderado'; if(v <= 70) return '✅ ÓPTIMO'; return '🔴 CRÍTICO'; } },
+'disp-op': { min: 70, optMin: 85, optMax: 95, max: 100, unit: '%', isPercent: true, tooltip: (v) => { if(v < 85) return '🟡 Aceptable'; if(v <= 95) return '✅ ÓPTIMO'; return '✅ EXCELENTE'; } }
 };
-
 // === FUNCIONES DE ESTADO DE MÉTRICAS ===
 function getMetricStatus(metricKey, value) {
-    const cfg = METRIC_CONFIG[metricKey];
-    if(!cfg) return { status:'unknown', color:'blue', label:'Sin datos', barPct:0 };
-    const v = parseFloat(value);
-    if(isNaN(v)) return { status:'unknown', color:'blue', label:'Sin datos', barPct:0 };
-    let status, color, label, barPct;
-    if(metricKey === 'balance') {
-        if(v <= 0.5) { status='optimal'; color='green'; label='Óptimo'; }
-        else if(v <= 1) { status='optimal'; color='green'; label='Bueno'; }
-        else if(v <= 2) { status='warning'; color='yellow'; label='Aceptable'; }
-        else { status='critical'; color='red'; label='Crítico'; }
-        barPct = Math.min(100, (v / 3) * 100);
-    } else if(metricKey === 'eficiencia') {
-        if(v < cfg.min) { status='critical'; color='red'; label='Crítico'; }
-        else if(v < cfg.optMin) { status='warning'; color='yellow'; label='Bajo'; }
-        else if(v <= cfg.optMax) { status='optimal'; color='green'; label='Óptimo'; }
-        else if(v <= cfg.max) { status='warning'; color='yellow'; label='Alto'; }
-        else { status='critical'; color='red'; label='Crítico'; }
-        barPct = Math.min(100, (v / cfg.max) * 100);
-    } else {
-        if(v < cfg.min) { status='critical'; color='red'; label='Crítico'; }
-        else if(v < cfg.optMin) { status='warning'; color='yellow'; label='Bajo'; }
-        else if(v <= cfg.optMax) { status='optimal'; color='green'; label='Óptimo'; }
-        else if(v <= cfg.max) { status='warning'; color='yellow'; label='Alto'; }
-        else { status='critical'; color='red'; label='Crítico'; }
-        barPct = Math.min(100, (v / cfg.max) * 100);
-    }
-    return { status, color, label, barPct };
+const cfg = METRIC_CONFIG[metricKey];
+if(!cfg) return { status:'unknown', color:'blue', label:'Sin datos', barPct:0 };
+const v = parseFloat(value);
+if(isNaN(v)) return { status:'unknown', color:'blue', label:'Sin datos', barPct:0 };
+let status, color, label, barPct;
+if(metricKey === 'balance') {
+if(v <= 0.5) { status='optimal'; color='green'; label='Óptimo'; }
+else if(v <= 1) { status='optimal'; color='green'; label='Bueno'; }
+else if(v <= 2) { status='warning'; color='yellow'; label='Aceptable'; }
+else { status='critical'; color='red'; label='Crítico'; }
+barPct = Math.min(100, (v / 3) * 100);
+} else if(metricKey === 'eficiencia') {
+if(v < cfg.min) { status='critical'; color='red'; label='Crítico'; }
+else if(v < cfg.optMin) { status='warning'; color='yellow'; label='Bajo'; }
+else if(v <= cfg.optMax) { status='optimal'; color='green'; label='Óptimo'; }
+else if(v <= cfg.max) { status='warning'; color='yellow'; label='Alto'; }
+else { status='critical'; color='red'; label='Crítico'; }
+barPct = Math.min(100, (v / cfg.max) * 100);
+} else {
+if(v < cfg.min) { status='critical'; color='red'; label='Crítico'; }
+else if(v < cfg.optMin) { status='warning'; color='yellow'; label='Bajo'; }
+else if(v <= cfg.optMax) { status='optimal'; color='green'; label='Óptimo'; }
+else if(v <= cfg.max) { status='warning'; color='yellow'; label='Alto'; }
+else { status='critical'; color='red'; label='Crítico'; }
+barPct = Math.min(100, (v / cfg.max) * 100);
 }
-
+return { status, color, label, barPct };
+}
 function updateMetricCard(metricKey, value) {
-    const valEl = document.getElementById(`adv-${metricKey}`);
-    const statusEl = document.getElementById(`status-${metricKey}`);
-    const barEl = document.getElementById(`bar-${metricKey}`);
-    const cardEl = document.getElementById(`card-${metricKey.replace('-','')}`);
-    const tooltipEl = document.getElementById(`tooltip-${metricKey}`);
-    if(!valEl || !statusEl || !barEl) return;
-    const info = getMetricStatus(metricKey, value);
-    valEl.innerText = value;
-    const dotColor = info.color;
-    statusEl.className = `adv-status ${info.status}`;
-    statusEl.innerHTML = `<span class="adv-dot-indicator ${dotColor}"></span>${info.label}`;
-    barEl.style.width = `${info.barPct}%`;
-    barEl.className = `adv-range-bar-fill ${info.status}`;
-    if(cardEl) cardEl.className = `adv-kpi-card status-${info.status}`;
-    if(tooltipEl && METRIC_CONFIG[metricKey]) {
-        const cfg = METRIC_CONFIG[metricKey];
-        tooltipEl.innerHTML = `<strong>${info.label}</strong><br>${cfg.tooltip(parseFloat(value))}`;
-    }
+const valEl = document.getElementById(`adv-${metricKey}`);
+const statusEl = document.getElementById(`status-${metricKey}`);
+const barEl = document.getElementById(`bar-${metricKey}`);
+const cardEl = document.getElementById(`card-${metricKey.replace('-','')}`);
+const tooltipEl = document.getElementById(`tooltip-${metricKey}`);
+if(!valEl || !statusEl || !barEl) return;
+const info = getMetricStatus(metricKey, value);
+valEl.innerText = value;
+const dotColor = info.color;
+statusEl.className = `adv-status ${info.status}`;
+statusEl.innerHTML = `<span class="adv-dot-indicator ${dotColor}"></span>${info.label}`;
+barEl.style.width = `${info.barPct}%`;
+barEl.className = `adv-range-bar-fill ${info.status}`;
+if(cardEl) cardEl.className = `adv-kpi-card status-${info.status}`;
+if(tooltipEl && METRIC_CONFIG[metricKey]) {
+const cfg = METRIC_CONFIG[metricKey];
+tooltipEl.innerHTML = `<strong>${info.label}</strong><br>${cfg.tooltip(parseFloat(value))}`;
 }
-
+}
 // === PERSISTENCIA ===
 function loadFromStorage() {
-    try {
-        const stored = localStorage.getItem(STORAGE_KEY);
-        if(stored) {
-            db = JSON.parse(stored);
-            db = db.map(r => ({...r, trabajo: r.trabajo || ''}));
-        } else {
-            const now = Date.now(); const dayMs = 86400000;
-            db = [
-                {unidad:"V-001",id:"V-001",motor:"Diesel",km:82000,uptime:420,downtime:3.5,vibracion:2.4,ta:92,rpm:4500,psiDi:32,psiDd:32,psiTi:28,psiTd:34,trabajo:"Cambio de aceite sintético y filtros.",timestamp:new Date(now-19*dayMs).toISOString()},
-                {unidad:"V-002",id:"V-002",motor:"Nafta",km:45000,uptime:380,downtime:4.1,vibracion:3.1,ta:88,rpm:4200,psiDi:31,psiDd:31,psiTi:29,psiTd:31,trabajo:"Revisión de frenos. Cambio de pastillas.",timestamp:new Date(now-18*dayMs).toISOString()},
-                {unidad:"V-003",id:"V-003",motor:"Diesel",km:110000,uptime:310,downtime:5.2,vibracion:3.8,ta:95,rpm:3800,psiDi:30,psiDd:30,psiTi:27,psiTd:30,trabajo:"Diagnóstico de vibración. Balanceo.",timestamp:new Date(now-17*dayMs).toISOString()},
-                {unidad:"V-004",id:"V-004",motor:"Nafta",km:38000,uptime:455,downtime:2.8,vibracion:1.9,ta:85,rpm:4600,psiDi:33,psiDd:33,psiTi:30,psiTd:33,trabajo:"Mantenimiento preventivo. Todo OK.",timestamp:new Date(now-16*dayMs).toISOString()},
-                {unidad:"V-005",id:"V-005",motor:"Diesel",km:65000,uptime:290,downtime:6.1,vibracion:4.3,ta:90,rpm:3500,psiDi:29,psiDd:29,psiTi:26,psiTd:29,trabajo:"Cambio de correa de distribución.",timestamp:new Date(now-15*dayMs).toISOString()}
-            ];
-            saveToStorage();
-        }
-    } catch(e) { console.error('Error loading data:', e); db = []; }
-    updateMemoryCounter();
+try {
+const stored = localStorage.getItem(STORAGE_KEY);
+if(stored) {
+db = JSON.parse(stored);
+db = db.map(r => ({...r, trabajo: r.trabajo || ''}));
+} else {
+const now = Date.now(); const dayMs = 86400000;
+db = [
+{unidad:"V-001",id:"V-001",motor:"Diesel",km:82000,uptime:420,downtime:3.5,vibracion:2.4,ta:92,rpm:4500,psiDi:32,psiDd:32,psiTi:28,psiTd:34,trabajo:"Cambio de aceite sintético y filtros.",timestamp:new Date(now-19*dayMs).toISOString()},
+{unidad:"V-002",id:"V-002",motor:"Nafta",km:45000,uptime:380,downtime:4.1,vibracion:3.1,ta:88,rpm:4200,psiDi:31,psiDd:31,psiTi:29,psiTd:31,trabajo:"Revisión de frenos. Cambio de pastillas.",timestamp:new Date(now-18*dayMs).toISOString()},
+{unidad:"V-003",id:"V-003",motor:"Diesel",km:110000,uptime:310,downtime:5.2,vibracion:3.8,ta:95,rpm:3800,psiDi:30,psiDd:30,psiTi:27,psiTd:30,trabajo:"Diagnóstico de vibración. Balanceo.",timestamp:new Date(now-17*dayMs).toISOString()},
+{unidad:"V-004",id:"V-004",motor:"Nafta",km:38000,uptime:455,downtime:2.8,vibracion:1.9,ta:85,rpm:4600,psiDi:33,psiDd:33,psiTi:30,psiTd:33,trabajo:"Mantenimiento preventivo. Todo OK.",timestamp:new Date(now-16*dayMs).toISOString()},
+{unidad:"V-005",id:"V-005",motor:"Diesel",km:65000,uptime:290,downtime:6.1,vibracion:4.3,ta:90,rpm:3500,psiDi:29,psiDd:29,psiTi:26,psiTd:29,trabajo:"Cambio de correa de distribución.",timestamp:new Date(now-15*dayMs).toISOString()}
+];
+saveToStorage();
 }
-
+} catch(e) { console.error('Error loading ', e); db = []; }
+updateMemoryCounter();
+}
 function saveToStorage() {
-    try {
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(db));
-        updateMemoryCounter();
-    } catch(e) {
-        showToast('⚠️ Error al guardar: almacenamiento lleno', 'error');
-    }
+try {
+localStorage.setItem(STORAGE_KEY, JSON.stringify(db));
+updateMemoryCounter();
+} catch(e) {
+showToast('⚠️ Error al guardar: almacenamiento lleno', 'error');
 }
-
+}
 function updateMemoryCounter() {
-    const el = document.getElementById("mem-count");
-    if(el) el.innerText = `${db.length}/${MAX_RECORDS}`;
-    const dc = document.getElementById("dataset-count");
-    if(dc) dc.innerText = db.length;
+const el = document.getElementById("mem-count");
+if(el) el.innerText = `${db.length}/${MAX_RECORDS}`;
+const dc = document.getElementById("dataset-count");
+if(dc) dc.innerText = db.length;
 }
-
 function loadVTVState() {
-    try {
-        const stored = localStorage.getItem(VTV_KEY);
-        if(stored) { vtvState = JSON.parse(stored); }
-        else { VTV_ITEMS.forEach(i => { vtvState[i.id] = false; }); }
-    } catch(e) { vtvState = {}; VTV_ITEMS.forEach(i => { vtvState[i.id] = false; }); }
+try {
+const stored = localStorage.getItem(VTV_KEY);
+if(stored) { vtvState = JSON.parse(stored); }
+else { VTV_ITEMS.forEach(i => { vtvState[i.id] = false; }); }
+} catch(e) { vtvState = {}; VTV_ITEMS.forEach(i => { vtvState[i.id] = false; }); }
 }
-
 function saveVTVState() {
-    try { localStorage.setItem(VTV_KEY, JSON.stringify(vtvState)); }
-    catch(e) { showToast('⚠️ Error al guardar VTV', 'warning'); }
+try { localStorage.setItem(VTV_KEY, JSON.stringify(vtvState)); }
+catch(e) { showToast('⚠️ Error al guardar VTV', 'warning'); }
 }
-
 // === SELECCIÓN DE FILAS ===
 function toggleRowSelection(index) {
-    if(selectedRows.has(index)) selectedRows.delete(index);
-    else selectedRows.add(index);
-    renderDatasetTable();
-    updateFilterBadges();
+if(selectedRows.has(index)) selectedRows.delete(index);
+else selectedRows.add(index);
+renderDatasetTable();
+updateFilterBadges();
 }
-
 function toggleSelectAll() {
-    const checkbox = document.getElementById('select-all-rows');
-    if(checkbox.checked) db.forEach((_, i) => selectedRows.add(i));
-    else selectedRows.clear();
-    renderDatasetTable();
-    updateFilterBadges();
+const checkbox = document.getElementById('select-all-rows');
+if(checkbox.checked) db.forEach((_, i) => selectedRows.add(i));
+else selectedRows.clear();
+renderDatasetTable();
+updateFilterBadges();
 }
-
 function clearSelection() {
-    selectedRows.clear();
-    document.getElementById('select-all-rows').checked = false;
-    renderDatasetTable();
-    updateFilterBadges();
-    showToast('🧹 Selección limpiada', 'info');
+selectedRows.clear();
+document.getElementById('select-all-rows').checked = false;
+renderDatasetTable();
+updateFilterBadges();
+showToast('🧹 Selección limpiada', 'info');
 }
-
 function getSelectedData() {
-    if(selectedRows.size === 0) return db;
-    return db.filter((_, i) => selectedRows.has(i));
+if(selectedRows.size === 0) return db;
+return db.filter((_, i) => selectedRows.has(i));
 }
-
 function updateFilterBadges() {
-    const container = document.getElementById('filter-badge-container');
-    if(!container) return;
-    if(selectedRows.size === 0) {
-        container.innerHTML = '';
-        return;
-    }
-    const units = {};
-    selectedRows.forEach(idx => {
-        const unidad = db[idx]?.unidad;
-        if(unidad) units[unidad] = (units[unidad] || 0) + 1;
-    });
-    container.innerHTML = Object.entries(units).slice(0, 3).map(([unidad, count]) =>
-        `<span class="filter-badge">${unidad} ×${count} <span class="remove" onclick="removeUnitFilter('${unidad}')">×</span></span>`
-    ).join('');
-    if(Object.keys(units).length > 3) {
-        container.innerHTML += `<span class="filter-badge">+${Object.keys(units).length - 3} más</span>`;
-    }
+const container = document.getElementById('filter-badge-container');
+if(!container) return;
+if(selectedRows.size === 0) {
+container.innerHTML = '';
+return;
 }
-
+const units = {};
+selectedRows.forEach(idx => {
+const unidad = db[idx]?.unidad;
+if(unidad) units[unidad] = (units[unidad] || 0) + 1;
+});
+container.innerHTML = Object.entries(units).slice(0, 3).map(([unidad, count]) =>
+`<span class="filter-badge">${unidad} ×${count} <span class="remove" onclick="removeUnitFilter('${unidad}')">×</span></span>`
+).join('');
+if(Object.keys(units).length > 3) {
+container.innerHTML += `<span class="filter-badge">+${Object.keys(units).length - 3} más</span>`;
+}
+}
 function removeUnitFilter(unidad) {
-    db.forEach((row, idx) => {
-        if(row.unidad === unidad) selectedRows.delete(idx);
-    });
-    renderDatasetTable();
-    updateFilterBadges();
+db.forEach((row, idx) => {
+if(row.unidad === unidad) selectedRows.delete(idx);
+});
+renderDatasetTable();
+updateFilterBadges();
 }
-
 // === MODALES DE HISTORIAL Y NOTAS ===
 function showWorkHistory(unitId) {
-    currentModalUnit = unitId;
-    const modal = document.getElementById('work-history-modal');
-    const title = document.getElementById('modal-unidad-title');
-    const content = document.getElementById('modal-history-content');
-    title.innerText = `📋 Historial: ${unitId}`;
-    const unitHistory = db.filter(r => r.unidad === unitId).sort((a,b) => new Date(b.timestamp) - new Date(a.timestamp));
-    if(unitHistory.length === 0) {
-        content.innerHTML = '<p class="text-slate-400 text-center py-8"><i class="fas fa-inbox text-3xl mb-3 opacity-50"></i><br>Sin historial registrado para esta unidad</p>';
-    } else {
-        content.innerHTML = unitHistory.map((r, i) => {
-            const fecha = new Date(r.timestamp).toLocaleDateString('es-ES', {weekday:'long', year:'numeric', month:'long', day:'numeric', hour:'2-digit', minute:'2-digit'});
-            return `<div class="history-item" style="animation-delay:${i*0.05}s">
-                <div class="history-date"><i class="fas fa-calendar-alt"></i>${fecha}</div>
-                <div class="history-text">${r.trabajo ? r.trabajo.replace(/\n/g, '<br>') : '<span class="work-notes-empty">Sin detalles registrados</span>'}</div>
-            </div>`;
-        }).join('');
-    }
-    modal.classList.remove('hidden');
-    document.body.style.overflow = 'hidden';
+currentModalUnit = unitId;
+const modal = document.getElementById('work-history-modal');
+const title = document.getElementById('modal-unidad-title');
+const content = document.getElementById('modal-history-content');
+title.innerText = `📋 Historial: ${unitId}`;
+const unitHistory = db.filter(r => r.unidad === unitId).sort((a,b) => new Date(b.timestamp) - new Date(a.timestamp));
+if(unitHistory.length === 0) {
+content.innerHTML = '<p class="text-slate-400 text-center py-8"><i class="fas fa-inbox text-3xl mb-3 opacity-50"></i><br>Sin historial registrado para esta unidad</p>';
+} else {
+content.innerHTML = unitHistory.map((r, i) => {
+const fecha = new Date(r.timestamp).toLocaleDateString('es-ES', {weekday:'long', year:'numeric', month:'long', day:'numeric', hour:'2-digit', minute:'2-digit'});
+return `<div class="history-item" style="animation-delay:${i*0.05}s">
+<div class="history-date"><i class="fas fa-calendar-alt"></i>${fecha}</div>
+<div class="history-text">${r.trabajo ? r.trabajo.replace(/
+/g, '<br>') : '<span class="work-notes-empty">Sin detalles registrados</span>'}</div>
+</div>`;
+}).join('');
 }
-
+modal.classList.remove('hidden');
+document.body.style.overflow = 'hidden';
+}
 function closeWorkHistoryModal() {
-    document.getElementById('work-history-modal').classList.add('hidden');
-    currentModalUnit = null;
-    document.body.style.overflow = '';
+document.getElementById('work-history-modal').classList.add('hidden');
+currentModalUnit = null;
+document.body.style.overflow = '';
 }
-
 function showEditWorkNotes(index) {
-    const modal = document.getElementById('work-notes-modal');
-    const unitSpan = document.getElementById('modal-edit-unidad');
-    const textarea = document.getElementById('modal-work-notes');
-    const indexInput = document.getElementById('modal-edit-index');
-    unitSpan.innerText = db[index].unidad;
-    textarea.value = db[index].trabajo || '';
-    indexInput.value = index;
-    modal.classList.remove('hidden');
-    document.body.style.overflow = 'hidden';
-    textarea.focus();
+const modal = document.getElementById('work-notes-modal');
+const unitSpan = document.getElementById('modal-edit-unidad');
+const textarea = document.getElementById('modal-work-notes');
+const indexInput = document.getElementById('modal-edit-index');
+unitSpan.innerText = db[index].unidad;
+textarea.value = db[index].trabajo || '';
+indexInput.value = index;
+modal.classList.remove('hidden');
+document.body.style.overflow = 'hidden';
+textarea.focus();
 }
-
 function closeWorkNotesModal() {
-    document.getElementById('work-notes-modal').classList.add('hidden');
-    document.body.style.overflow = '';
+document.getElementById('work-notes-modal').classList.add('hidden');
+document.body.style.overflow = '';
 }
-
 function saveWorkNotes() {
-    const index = parseInt(document.getElementById('modal-edit-index').value);
-    const notes = document.getElementById('modal-work-notes').value.trim();
-    if(db[index]) {
-        db[index].trabajo = notes;
-        saveToStorage();
-        renderDatasetTable();
-        showToast('✅ Detalles actualizados correctamente', 'success');
-    }
-    closeWorkNotesModal();
+const index = parseInt(document.getElementById('modal-edit-index').value);
+const notes = document.getElementById('modal-work-notes').value.trim();
+if(db[index]) {
+db[index].trabajo = notes;
+saveToStorage();
+renderDatasetTable();
+showToast('✅ Detalles actualizados correctamente', 'success');
 }
-
+closeWorkNotesModal();
+}
 function exportUnitWorkHistoryPDF() {
-    if(!currentModalUnit) return;
-    const unitHistory = db.filter(r => r.unidad === currentModalUnit);
-    if(unitHistory.length === 0) { showToast('⚠️ Sin datos para exportar', 'warning'); return; }
-    showToast('🔄 Generando PDF de historial...', 'info');
-    const template = document.getElementById('pdf-report-template-enhanced');
-    document.getElementById('pdf-unidad').innerText = currentModalUnit;
-    document.getElementById('pdf-fecha').innerText = new Date().toLocaleDateString('es-ES', {weekday:'long',year:'numeric',month:'long',day:'numeric'});
-    document.getElementById('pdf-id').innerText = 'Historial de Trabajos';
-    document.getElementById('pdf-motor').innerText = 'Ver detalles';
-    document.getElementById('pdf-km').innerText = `${unitHistory.length} registros`;
-    const workHistoryContainer = document.getElementById('pdf-work-history');
-    workHistoryContainer.innerHTML = unitHistory.map(r => {
-        const fecha = new Date(r.timestamp).toLocaleDateString('es-ES', {day:'2-digit', month:'short', year:'numeric', hour:'2-digit'});
-        return `<div class="border border-slate-200 rounded-lg p-3 mb-3 bg-slate-50">
-            <p class="text-[9px] font-bold text-slate-600 mb-2">${fecha}</p>
-            <p class="text-[10px] text-slate-700 leading-relaxed">${(r.trabajo || 'Sin detalles').replace(/\n/g, '<br>')}</p>
-        </div>`;
-    }).join('') || '<p class="text-slate-400 text-center">Sin historial</p>';
-    template.classList.remove('hidden');
-    setTimeout(() => {
-        html2pdf().set({
-            margin:[10,10,10,10],
-            filename:`NEXO-ART_Historial_${currentModalUnit}_${new Date().toISOString().slice(0,10)}.pdf`,
-            image:{type:'jpeg',quality:0.95},
-            html2canvas:{scale:2,useCORS:true,windowWidth:794,logging:false,backgroundColor:'#ffffff'},
-            jsPDF:{unit:'mm',format:'a4',orientation:'portrait',compress:true}
-        }).from(template).save().then(() => {
-            template.classList.add('hidden');
-            showToast('✅ PDF de historial descargado', 'success');
-        }).catch(err => {
-            console.error(err);
-            template.classList.add('hidden');
-            showToast('❌ Error al generar PDF', 'error');
-        });
-    }, 400);
+if(!currentModalUnit) return;
+const unitHistory = db.filter(r => r.unidad === currentModalUnit);
+if(unitHistory.length === 0) { showToast('⚠️ Sin datos para exportar', 'warning'); return; }
+showToast('🔄 Generando PDF de historial...', 'info');
+const template = document.getElementById('pdf-report-template-enhanced');
+document.getElementById('pdf-unidad').innerText = currentModalUnit;
+document.getElementById('pdf-fecha').innerText = new Date().toLocaleDateString('es-ES', {weekday:'long',year:'numeric',month:'long',day:'numeric'});
+document.getElementById('pdf-id').innerText = 'Historial de Trabajos';
+document.getElementById('pdf-motor').innerText = 'Ver detalles';
+document.getElementById('pdf-km').innerText = `${unitHistory.length} registros`;
+const workHistoryContainer = document.getElementById('pdf-work-history');
+workHistoryContainer.innerHTML = unitHistory.map(r => {
+const fecha = new Date(r.timestamp).toLocaleDateString('es-ES', {day:'2-digit', month:'short', year:'numeric', hour:'2-digit'});
+return `<div class="border border-slate-200 rounded-lg p-3 mb-3 bg-slate-50">
+<p class="text-[9px] font-bold text-slate-600 mb-2">${fecha}</p>
+<p class="text-[10px] text-slate-700 leading-relaxed">${(r.trabajo || 'Sin detalles').replace(/
+/g, '<br>')}</p>
+</div>`;
+}).join('') || '<p class="text-slate-400 text-center">Sin historial</p>';
+template.classList.remove('hidden');
+setTimeout(() => {
+html2pdf().set({
+margin:[10,10,10,10],
+filename:`NEXO-ART_Historial_${currentModalUnit}_${new Date().toISOString().slice(0,10)}.pdf`,
+image:{type:'jpeg',quality:0.95},
+html2canvas:{scale:2,useCORS:true,windowWidth:794,scrollX:0,scrollY:0,x:0,y:0,logging:false,backgroundColor:'#ffffff'},
+jsPDF:{unit:'mm',format:'a4',orientation:'portrait',compress:true}
+}).from(template).save().then(() => {
+template.classList.add('hidden');
+showToast('✅ PDF de historial descargado', 'success');
+}).catch(err => {
+console.error(err);
+template.classList.add('hidden');
+showToast('❌ Error al generar PDF', 'error');
+});
+}, 400);
 }
-
 // === NOTIFICACIONES TOAST ===
 function showToast(message, type = 'info') {
-    const existing = document.querySelector('.toast-notification');
-    if(existing) existing.remove();
-    const colors = {
-        success:'bg-emerald-600/90 border-emerald-400/50 text-white',
-        warning:'bg-amber-600/90 border-amber-400/50 text-white',
-        error:'bg-rose-600/90 border-rose-400/50 text-white',
-        info:'bg-cyan-600/90 border-cyan-400/50 text-white'
-    };
-    const icons = {success:'✅',warning:'⚠️',error:'❌',info:'ℹ️'};
-    const n = document.createElement('div');
-    n.className = `toast-notification fixed top-4 right-4 px-4 py-3 rounded-xl border-2 shadow-2xl flex items-center gap-3 ${colors[type]||colors.info} max-w-[90vw] backdrop-blur-md`;
-    n.innerHTML = `<span class="text-lg">${icons[type]||icons.info}</span><span class="font-medium text-sm">${message}</span>`;
-    document.body.appendChild(n);
-    setTimeout(() => {
-        n.style.opacity = '0';
-        n.style.transform = 'translateX(100%)';
-        n.style.transition = 'all 0.3s ease-in';
-        setTimeout(() => n.remove(), 300);
-    }, 4000);
+const existing = document.querySelector('.toast-notification');
+if(existing) existing.remove();
+const colors = {
+success:'bg-emerald-600/90 border-emerald-400/50 text-white',
+warning:'bg-amber-600/90 border-amber-400/50 text-white',
+error:'bg-rose-600/90 border-rose-400/50 text-white',
+info:'bg-cyan-600/90 border-cyan-400/50 text-white'
+};
+const icons = {success:'✅',warning:'⚠️',error:'❌',info:'ℹ️'};
+const n = document.createElement('div');
+n.className = `toast-notification fixed top-4 right-4 px-4 py-3 rounded-xl border-2 shadow-2xl flex items-center gap-3 ${colors[type]||colors.info} max-w-[90vw] backdrop-blur-md`;
+n.innerHTML = `<span class="text-lg">${icons[type]||icons.info}</span><span class="font-medium text-sm">${message}</span>`;
+document.body.appendChild(n);
+setTimeout(() => {
+n.style.opacity = '0';
+n.style.transform = 'translateX(100%)';
+n.style.transition = 'all 0.3s ease-in';
+setTimeout(() => n.remove(), 300);
+}, 4000);
 }
-
 // === SIDEBAR MOBILE ===
 const sidebar = document.getElementById('sidebar');
 const overlay = document.getElementById('sidebar-overlay');
 const mobileMenuBtn = document.getElementById('mobile-menu-btn');
 const sidebarClose = document.getElementById('sidebar-close');
 function toggleSidebar() {
-    isSidebarOpen = !isSidebarOpen;
-    sidebar.classList.toggle('-translate-x-full', !isSidebarOpen);
-    overlay.classList.toggle('hidden', !isSidebarOpen);
-    document.body.style.overflow = isSidebarOpen ? 'hidden' : '';
+isSidebarOpen = !isSidebarOpen;
+sidebar.classList.toggle('-translate-x-full', !isSidebarOpen);
+overlay.classList.toggle('hidden', !isSidebarOpen);
+document.body.style.overflow = isSidebarOpen ? 'hidden' : '';
 }
 if(mobileMenuBtn) mobileMenuBtn.addEventListener('click', toggleSidebar);
 if(sidebarClose) sidebarClose.addEventListener('click', toggleSidebar);
 if(overlay) overlay.addEventListener('click', toggleSidebar);
-
 // === ACTUALIZAR TARJETA DE UNIDAD ===
 function updateUnidadCard(entrada) {
-    if(!entrada) return;
-    const cu=document.getElementById("card-unidad"); if(cu) cu.innerText=entrada.unidad;
-    const cm=document.getElementById("card-motor"); if(cm) cm.innerText="Motor "+entrada.motor;
-    const ck=document.getElementById("card-km"); if(ck) ck.innerHTML=`<i class="fas fa-road text-[7px]"></i> ${entrada.km.toLocaleString()} KM`;
-    const cr=document.getElementById("card-rpm"); if(cr) cr.innerText=entrada.rpm;
+if(!entrada) return;
+const cu=document.getElementById("card-unidad"); if(cu) cu.innerText=entrada.unidad;
+const cm=document.getElementById("card-motor"); if(cm) cm.innerText="Motor "+entrada.motor;
+const ck=document.getElementById("card-km"); if(ck) ck.innerHTML=`<i class="fas fa-road text-[7px]"></i> ${entrada.km.toLocaleString()} KM`;
+const cr=document.getElementById("card-rpm"); if(cr) cr.innerText=entrada.rpm;
 }
-
 // === PROCESAR DATOS ===
 function submitData() {
-    const uptime = parseFloat(document.getElementById("input-uptime").value);
-    const downtime = parseFloat(document.getElementById("input-downtime").value);
-    const km = parseFloat(document.getElementById("input-km").value) || 0;
-    if(isNaN(uptime) || isNaN(downtime) || uptime <= 0) {
-        showToast("⚠️ Ingresá Uptime y Downtime válidos", "error");
-        return;
-    }
-    const unidad = document.getElementById("input-unidad").value.trim() || "V-" + Math.floor(Math.random()*900+100);
-    const id = document.getElementById("input-id").value.trim() || "ID-" + Math.floor(Math.random()*900+100);
-    const motor = document.getElementById("input-motor").value;
-    const vibracion = parseFloat(document.getElementById("input-vibracion").value) || 0;
-    const ta = parseFloat(document.getElementById("input-ta").value) || 0;
-    const rpm = parseFloat(document.getElementById("input-rpm").value) || 0;
-    const psiDi = parseFloat(document.getElementById("input-psi-di").value) || 0;
-    const psiDd = parseFloat(document.getElementById("input-psi-dd").value) || 0;
-    const psiTi = parseFloat(document.getElementById("input-psi-ti").value) || 0;
-    const psiTd = parseFloat(document.getElementById("input-psi-td").value) || 0;
-    const trabajo = document.getElementById("input-trabajo").value.trim();
-    const nuevaEntrada = {
-        unidad, id, motor, km, uptime, downtime, vibracion, ta, rpm,
-        psiDi, psiDd, psiTi, psiTd, trabajo,
-        timestamp: new Date().toISOString()
-    };
-    if(db.length >= MAX_RECORDS) {
-        db.shift();
-        showToast('📦 Memoria llena: registro más antiguo eliminado', 'warning');
-    }
-    db.push(nuevaEntrada);
-    saveToStorage();
-    ['input-unidad','input-id','input-km','input-uptime','input-downtime','input-vibracion','input-ta','input-rpm','input-psi-di','input-psi-dd','input-psi-ti','input-psi-td','input-trabajo'].forEach(id => {
-        const el = document.getElementById(id);
-        if(el) el.value = "";
-    });
-    if(window.innerWidth < 768 && isSidebarOpen) toggleSidebar();
-    calculateKPIs();
-    updateUnidadCard(nuevaEntrada);
-    runPredictiveAI(nuevaEntrada);
-    updateTimelineChart();
-    updateCorrelationMatrix();
-    renderDatasetTable();
-    renderDescribeTable();
-    calculateAdvancedMetrics();
-    showToast(`✅ ${unidad} procesado (${db.length}/${MAX_RECORDS})`, "success");
+const uptime = parseFloat(document.getElementById("input-uptime").value);
+const downtime = parseFloat(document.getElementById("input-downtime").value);
+const km = parseFloat(document.getElementById("input-km").value) || 0;
+if(isNaN(uptime) || isNaN(downtime) || uptime <= 0) {
+showToast("⚠️ Ingresá Uptime y Downtime válidos", "error");
+return;
 }
-
+const unidad = document.getElementById("input-unidad").value.trim() || "V-" + Math.floor(Math.random()*900+100);
+const id = document.getElementById("input-id").value.trim() || "ID-" + Math.floor(Math.random()*900+100);
+const motor = document.getElementById("input-motor").value;
+const vibracion = parseFloat(document.getElementById("input-vibracion").value) || 0;
+const ta = parseFloat(document.getElementById("input-ta").value) || 0;
+const rpm = parseFloat(document.getElementById("input-rpm").value) || 0;
+const psiDi = parseFloat(document.getElementById("input-psi-di").value) || 0;
+const psiDd = parseFloat(document.getElementById("input-psi-dd").value) || 0;
+const psiTi = parseFloat(document.getElementById("input-psi-ti").value) || 0;
+const psiTd = parseFloat(document.getElementById("input-psi-td").value) || 0;
+const trabajo = document.getElementById("input-trabajo").value.trim();
+const nuevaEntrada = {
+unidad, id, motor, km, uptime, downtime, vibracion, ta, rpm,
+psiDi, psiDd, psiTi, psiTd, trabajo,
+timestamp: new Date().toISOString()
+};
+if(db.length >= MAX_RECORDS) {
+db.shift();
+showToast('📦 Memoria llena: registro más antiguo eliminado', 'warning');
+}
+db.push(nuevaEntrada);
+saveToStorage();
+['input-unidad','input-id','input-km','input-uptime','input-downtime','input-vibracion','input-ta','input-rpm','input-psi-di','input-psi-dd','input-psi-ti','input-psi-td','input-trabajo'].forEach(id => {
+const el = document.getElementById(id);
+if(el) el.value = "";
+});
+if(window.innerWidth < 768 && isSidebarOpen) toggleSidebar();
+calculateKPIs();
+updateUnidadCard(nuevaEntrada);
+runPredictiveAI(nuevaEntrada);
+updateTimelineChart();
+updateCorrelationMatrix();
+renderDatasetTable();
+renderDescribeTable();
+calculateAdvancedMetrics();
+showToast(`✅ ${unidad} procesado (${db.length}/${MAX_RECORDS})`, "success");
+}
 // === RESET COMPLETO ===
 function resetAllData() {
-    if(db.length === 0 && Object.values(vtvState).every(v => !v)) {
-        showToast("ℹ️ Todo está vacío", "info");
-        return;
-    }
-    if(confirm("⚠️ ¿BORRAR TODOS los datos y el checklist VTV? Esta acción no se puede deshacer.")) {
-        db = [];
-        localStorage.removeItem(STORAGE_KEY);
-        VTV_ITEMS.forEach(i => { vtvState[i.id] = false; });
-        localStorage.removeItem(VTV_KEY);
-        selectedRows.clear();
-        updateMemoryCounter();
-        ['card-unidad','card-rpm','kpi-mtbf','kpi-mttr','kpi-disp'].forEach(id => {
-            const el = document.getElementById(id);
-            if(el) el.innerText = id === 'kpi-disp' ? '0%' : '--';
-        });
-        const cm=document.getElementById("card-motor"); if(cm) cm.innerText="Motor --";
-        const ck=document.getElementById("card-km"); if(ck) ck.innerHTML=`<i class="fas fa-road"></i> -- KM`;
-        const svg=document.getElementById("svg-disp"); if(svg) svg.setAttribute("stroke-dasharray","0 282.7");
-        const td=document.getElementById("trend-disp");
-        if(td) {
-            td.innerHTML=`<i class="fas fa-arrow-down"></i> <span class="hidden xs:inline">Sin datos</span>`;
-            td.className="text-[8px] font-semibold mt-2 bg-slate-700/10 text-slate-400 px-2 py-0.5 rounded-full";
-        }
-        if(timelineChartIns) { timelineChartIns.destroy(); timelineChartIns = null; }
-        const cmEl=document.getElementById("correlation-matrix"); if(cmEl) cmEl.innerHTML='<p class="text-slate-500 text-center py-3 text-[8px]">Sin datos</p>';
-        const pp=document.getElementById("predictive-panel"); if(pp) pp.innerHTML='<p class="text-slate-400 text-[8px]">Ingresa datos para ver recomendaciones de IA</p>';
-        const msl=document.getElementById("ml-status-list"); if(msl) msl.innerHTML='';
-        renderDatasetTable();
-        renderDescribeTable();
-        renderVTVChecklist();
-        const canvas=document.getElementById('timelineChart');
-        if(canvas) {
-            const ctx=canvas.getContext('2d');
-            ctx.clearRect(0,0,canvas.width,canvas.height);
-            canvas.parentNode.innerHTML='<div class="absolute inset-0 flex items-center justify-center text-slate-500 text-xs">📭 Sin datos para graficar</div>';
-        }
-        ['desgaste','termovib','inactividad','eficiencia','presion','balance','estres','disp-op'].forEach(k => {
-            updateMetricCard(k, k==='inactividad'||k==='disp-op'?'0%':'0');
-        });
-        showToast("🗑️ Todos los datos borrados permanentemente", "warning");
-    }
+if(db.length === 0 && Object.values(vtvState).every(v => !v)) {
+showToast("ℹ️ Todo está vacío", "info");
+return;
 }
-
+if(confirm("⚠️ ¿BORRAR TODOS los datos y el checklist VTV? Esta acción no se puede deshacer.")) {
+db = [];
+localStorage.removeItem(STORAGE_KEY);
+VTV_ITEMS.forEach(i => { vtvState[i.id] = false; });
+localStorage.removeItem(VTV_KEY);
+selectedRows.clear();
+updateMemoryCounter();
+['card-unidad','card-rpm','kpi-mtbf','kpi-mttr','kpi-disp'].forEach(id => {
+const el = document.getElementById(id);
+if(el) el.innerText = id === 'kpi-disp' ? '0%' : '--';
+});
+const cm=document.getElementById("card-motor"); if(cm) cm.innerText="Motor --";
+const ck=document.getElementById("card-km"); if(ck) ck.innerHTML=`<i class="fas fa-road"></i> -- KM`;
+const svg=document.getElementById("svg-disp"); if(svg) svg.setAttribute("stroke-dasharray","0 282.7");
+const td=document.getElementById("trend-disp");
+if(td) {
+td.innerHTML=`<i class="fas fa-arrow-down"></i> <span class="hidden xs:inline">Sin datos</span>`;
+td.className="text-[8px] font-semibold mt-2 bg-slate-700/10 text-slate-400 px-2 py-0.5 rounded-full";
+}
+if(timelineChartIns) { timelineChartIns.destroy(); timelineChartIns = null; }
+const cmEl=document.getElementById("correlation-matrix"); if(cmEl) cmEl.innerHTML='<p class="text-slate-500 text-center py-3 text-[8px]">Sin datos</p>';
+const pp=document.getElementById("predictive-panel"); if(pp) pp.innerHTML='<p class="text-slate-400 text-[8px]">Ingresa datos para ver recomendaciones de IA</p>';
+const msl=document.getElementById("ml-status-list"); if(msl) msl.innerHTML='';
+renderDatasetTable();
+renderDescribeTable();
+renderVTVChecklist();
+const canvas=document.getElementById('timelineChart');
+if(canvas) {
+const ctx=canvas.getContext('2d');
+ctx.clearRect(0,0,canvas.width,canvas.height);
+canvas.parentNode.innerHTML='<div class="absolute inset-0 flex items-center justify-center text-slate-500 text-xs">📭 Sin datos para graficar</div>';
+}
+['desgaste','termovib','inactividad','eficiencia','presion','balance','estres','disp-op'].forEach(k => {
+updateMetricCard(k, k==='inactividad'||k==='disp-op'?'0%':'0');
+});
+showToast("🗑️ Todos los datos borrados permanentemente", "warning");
+}
+}
 // === CÁLCULO DE KPIs ===
 function calculateKPIs() {
-    const kpiMtbf=document.getElementById("kpi-mtbf");
-    const kpiMttr=document.getElementById("kpi-mttr");
-    const kpiDisp=document.getElementById("kpi-disp");
-    const svgDisp=document.getElementById("svg-disp");
-    if(db.length === 0) {
-        if(kpiMtbf) kpiMtbf.innerText="0";
-        if(kpiMttr) kpiMttr.innerText="0";
-        if(kpiDisp) kpiDisp.innerText="0%";
-        if(svgDisp) svgDisp.setAttribute("stroke-dasharray","0 282.7");
-        return;
-    }
-    let totalUptime=0, totalDowntime=0;
-    db.forEach(row => { totalUptime+=row.uptime; totalDowntime+=row.downtime; });
-    const mtbf=totalUptime/db.length;
-    const mttr=totalDowntime/db.length;
-    const disponibilidad=(mtbf+mttr)>0?(mtbf/(mtbf+mttr))*100:0;
-    if(kpiMtbf) kpiMtbf.innerText=mtbf.toFixed(1);
-    if(kpiMttr) kpiMttr.innerText=mttr.toFixed(1);
-    if(kpiDisp) kpiDisp.innerText=Math.round(disponibilidad)+"%";
-    const circ=2*Math.PI*45;
-    const length=(disponibilidad/100)*circ;
-    if(svgDisp) svgDisp.setAttribute("stroke-dasharray",`${length} ${circ}`);
-    const trendEl=document.getElementById("trend-disp");
-    if(trendEl) {
-        if(disponibilidad>=95) {
-            trendEl.innerHTML=`<i class="fas fa-arrow-up"></i> <span class="hidden xs:inline">Óptimo</span>`;
-            trendEl.className="text-[8px] font-semibold mt-2 bg-emerald-500/10 text-emerald-400 px-2 py-0.5 rounded-full border border-emerald-500/20";
-        }
-        else if(disponibilidad>=85) {
-            trendEl.innerHTML=`<i class="fas fa-arrow-right"></i> <span class="hidden xs:inline">Estable</span>`;
-            trendEl.className="text-[8px] font-semibold mt-2 bg-amber-500/10 text-amber-400 px-2 py-0.5 rounded-full border border-amber-500/20";
-        }
-        else {
-            trendEl.innerHTML=`<i class="fas fa-arrow-down"></i> <span class="hidden xs:inline">Revisar</span>`;
-            trendEl.className="text-[8px] font-semibold mt-2 bg-rose-500/10 text-rose-400 px-2 py-0.5 rounded-full border border-rose-500/20";
-        }
-    }
+const kpiMtbf=document.getElementById("kpi-mtbf");
+const kpiMttr=document.getElementById("kpi-mttr");
+const kpiDisp=document.getElementById("kpi-disp");
+const svgDisp=document.getElementById("svg-disp");
+if(db.length === 0) {
+if(kpiMtbf) kpiMtbf.innerText="0";
+if(kpiMttr) kpiMttr.innerText="0";
+if(kpiDisp) kpiDisp.innerText="0%";
+if(svgDisp) svgDisp.setAttribute("stroke-dasharray","0 282.7");
+return;
 }
-
+let totalUptime=0, totalDowntime=0;
+db.forEach(row => { totalUptime+=row.uptime; totalDowntime+=row.downtime; });
+const mtbf=totalUptime/db.length;
+const mttr=totalDowntime/db.length;
+const disponibilidad=(mtbf+mttr)>0?(mtbf/(mtbf+mttr))*100:0;
+if(kpiMtbf) kpiMtbf.innerText=mtbf.toFixed(1);
+if(kpiMttr) kpiMttr.innerText=mttr.toFixed(1);
+if(kpiDisp) kpiDisp.innerText=Math.round(disponibilidad)+"%";
+const circ=2*Math.PI*45;
+const length=(disponibilidad/100)*circ;
+if(svgDisp) svgDisp.setAttribute("stroke-dasharray",`${length} ${circ}`);
+const trendEl=document.getElementById("trend-disp");
+if(trendEl) {
+if(disponibilidad>=95) {
+trendEl.innerHTML=`<i class="fas fa-arrow-up"></i> <span class="hidden xs:inline">Óptimo</span>`;
+trendEl.className="text-[8px] font-semibold mt-2 bg-emerald-500/10 text-emerald-400 px-2 py-0.5 rounded-full border border-emerald-500/20";
+}
+else if(disponibilidad>=85) {
+trendEl.innerHTML=`<i class="fas fa-arrow-right"></i> <span class="hidden xs:inline">Estable</span>`;
+trendEl.className="text-[8px] font-semibold mt-2 bg-amber-500/10 text-amber-400 px-2 py-0.5 rounded-full border border-amber-500/20";
+}
+else {
+trendEl.innerHTML=`<i class="fas fa-arrow-down"></i> <span class="hidden xs:inline">Revisar</span>`;
+trendEl.className="text-[8px] font-semibold mt-2 bg-rose-500/10 text-rose-400 px-2 py-0.5 rounded-full border border-rose-500/20";
+}
+}
+}
 // === MÉTRICAS AVANZADAS ===
 function calculateAdvancedMetrics() {
-    if(db.length === 0) {
-        ['desgaste','termovib','inactividad','eficiencia','presion','balance','estres','disp-op'].forEach(k =>
-            updateMetricCard(k, k==='inactividad'||k==='disp-op'?'0%':'0')
-        );
-        return;
-    }
-    const last = db[db.length-1];
-    const desgasteKm = last.uptime>0 ? (last.km/last.uptime).toFixed(2) : 0;
-    const cicloTermovib = last.rpm>0 ? ((last.ta*last.vibracion)/last.rpm*1000).toFixed(2) : 0;
-    const totalHoras = last.uptime+last.downtime;
-    const inactividad = totalHoras>0 ? ((last.downtime/totalHoras)*100).toFixed(1) : 0;
-    const eficienciaTermica = last.ta>0 ? (last.rpm/last.ta).toFixed(1) : 0;
-    const presionProm = ((last.psiDi+last.psiDd+last.psiTi+last.psiTd)/4).toFixed(1);
-    const presiones = [last.psiDi,last.psiDd,last.psiTi,last.psiTd];
-    const mediaPresion = presiones.reduce((a,b)=>a+b,0)/4;
-    const variance = presiones.reduce((acc,val)=>acc+Math.pow(val-mediaPresion,2),0)/4;
-    const balancePresion = Math.sqrt(variance).toFixed(2);
-    const estresMecanico = ((last.vibracion*last.rpm)/1000).toFixed(2);
-    const dispOp = totalHoras>0 ? ((last.uptime/totalHoras)*100).toFixed(1) : 0;
-    updateMetricCard('desgaste', desgasteKm);
-    updateMetricCard('termovib', cicloTermovib);
-    updateMetricCard('inactividad', inactividad+'%');
-    updateMetricCard('eficiencia', eficienciaTermica);
-    updateMetricCard('presion', presionProm);
-    updateMetricCard('balance', balancePresion);
-    updateMetricCard('estres', estresMecanico);
-    updateMetricCard('disp-op', dispOp+'%');
+if(db.length === 0) {
+['desgaste','termovib','inactividad','eficiencia','presion','balance','estres','disp-op'].forEach(k =>
+updateMetricCard(k, k==='inactividad'||k==='disp-op'?'0%':'0')
+);
+return;
 }
-
+const last = db[db.length-1];
+const desgasteKm = last.uptime>0 ? (last.km/last.uptime).toFixed(2) : 0;
+const cicloTermovib = last.rpm>0 ? ((last.ta*last.vibracion)/last.rpm*1000).toFixed(2) : 0;
+const totalHoras = last.uptime+last.downtime;
+const inactividad = totalHoras>0 ? ((last.downtime/totalHoras)*100).toFixed(1) : 0;
+const eficienciaTermica = last.ta>0 ? (last.rpm/last.ta).toFixed(1) : 0;
+const presionProm = ((last.psiDi+last.psiDd+last.psiTi+last.psiTd)/4).toFixed(1);
+const presiones = [last.psiDi,last.psiDd,last.psiTi,last.psiTd];
+const mediaPresion = presiones.reduce((a,b)=>a+b,0)/4;
+const variance = presiones.reduce((acc,val)=>acc+Math.pow(val-mediaPresion,2),0)/4;
+const balancePresion = Math.sqrt(variance).toFixed(2);
+const estresMecanico = ((last.vibracion*last.rpm)/1000).toFixed(2);
+const dispOp = totalHoras>0 ? ((last.uptime/totalHoras)*100).toFixed(1) : 0;
+updateMetricCard('desgaste', desgasteKm);
+updateMetricCard('termovib', cicloTermovib);
+updateMetricCard('inactividad', inactividad+'%');
+updateMetricCard('eficiencia', eficienciaTermica);
+updateMetricCard('presion', presionProm);
+updateMetricCard('balance', balancePresion);
+updateMetricCard('estres', estresMecanico);
+updateMetricCard('disp-op', dispOp+'%');
+}
 // === IA PREDICTIVA ===
 function runPredictiveAI(entrada) {
-    if(!entrada) return;
-    const panel=document.getElementById("predictive-panel");
-    const statusList=document.getElementById("ml-status-list");
-    if(!panel||!statusList) return;
-    let predicciones=[];
-    let reportKM=[];
-    let explicacion="";
-    if(entrada.motor.toLowerCase().includes("diesel")) {
-        explicacion=`<strong class="text-cyan-400">🔧 Diagnóstico Diésel:</strong> Mayor eficiencia térmica, costos de mantenimiento 20-25% más elevados.`;
-        if(entrada.km>=30000 && entrada.km%30000<5000) reportKM.push("Filtro combustible: Cambio recomendado");
-    } else {
-        explicacion=`<strong class="text-cyan-400">⛽ Diagnóstico Gasolina:</strong> Ideal para uso urbano, mantenimiento económico.`;
-        if(entrada.km>=15000 && entrada.km%15000<3000) reportKM.push("Bujías: Verificar desgaste");
-    }
-    if(entrada.km>=10000 && entrada.km%10000<2000) reportKM.push("Filtro aire: Próximo cambio");
-    if(entrada.km>=60000) reportKM.push("⚠️ Correa distribución: Verificar estado");
-    let tempStatus=`<span class="text-emerald-400"><i class="fas fa-check"></i> OK</span>`;
-    if(entrada.ta>105) {
-        tempStatus=`<span class="text-rose-400"><i class="fas fa-times"></i> ${entrada.ta}°C</span>`;
-        predicciones.push(`<div class="p-2 bg-rose-500/10 border border-rose-500/40 rounded-lg flex items-start gap-2 mb-2"><div class="text-rose-500"><i class="fas fa-temperature-high"></i></div><div><p class="font-bold text-rose-400 text-[8px]">🔥 Sobrecalentamiento</p><p class="text-[7px] text-slate-300">Riesgo: ${entrada.ta}°C detectado. Verificar sistema de refrigeración.</p></div></div>`);
-    } else if(entrada.ta>95) {
-        predicciones.push(`<div class="p-2 bg-amber-500/10 border border-amber-500/40 rounded-lg flex items-start gap-2 mb-2"><div class="text-amber-500"><i class="fas fa-temperature-half"></i></div><div><p class="font-bold text-amber-400 text-[8px]">⚠️ Temperatura elevada</p><p class="text-[7px] text-slate-300">${entrada.ta}°C. Monitorear tendencia.</p></div></div>`);
-    }
-    let vibStatus=`<span class="text-emerald-400"><i class="fas fa-check"></i> OK</span>`;
-    if(entrada.vibracion>=5.0) {
-        vibStatus=`<span class="text-rose-400"><i class="fas fa-times"></i> ${entrada.vibracion}</span>`;
-        predicciones.push(`<div class="p-2 bg-rose-500/10 border border-rose-500/40 rounded-lg flex items-start gap-2 mb-2"><div class="text-rose-500"><i class="fas fa-wave-square"></i></div><div><p class="font-bold text-rose-400 text-[8px]">〰️ Vibración crítica</p><p class="text-[7px] text-slate-300">${entrada.vibracion} mm/s. Posible desgaste en rodamientos.</p></div></div>`);
-    } else if(entrada.vibracion>=3.5) {
-        predicciones.push(`<div class="p-2 bg-amber-500/10 border border-amber-500/40 rounded-lg flex items-start gap-2 mb-2"><div class="text-amber-500"><i class="fas fa-wave-square"></i></div><div><p class="font-bold text-amber-400 text-[8px]">⚠️ Vibración moderada</p><p class="text-[7px] text-slate-300">${entrada.vibracion} mm/s. Programar revisión.</p></div></div>`);
-    }
-    if(reportKM.length>0) {
-        let rl=reportKM.map(r=>`<li>- ${r}</li>`).join("");
-        predicciones.push(`<div class="p-2 bg-purple-500/10 border border-purple-500/40 rounded-lg mb-2"><p class="font-bold text-purple-400 text-[8px]"><i class="fas fa-road"></i> Por KM (${entrada.km.toLocaleString()})</p><ul class="text-[7px] text-slate-300 mt-1">${rl}</ul></div>`);
-    }
-    if(predicciones.length===0) {
-        predicciones.push(`<div class="p-3 bg-emerald-500/10 border border-emerald-500/40 rounded-lg"><p class="font-bold text-emerald-400 text-[8px]"><i class="fas fa-shield-alt mr-1"></i> ✅ Parámetros óptimos</p><p class="text-[7px] text-slate-300 mt-1">Todos los sistemas operando dentro de rangos normales.</p></div>`);
-    }
-    panel.innerHTML=`<div class="bg-black/40 p-3 rounded-lg border border-cyan-500/10 text-slate-300 text-[8px] leading-relaxed mb-3">${explicacion}</div><div class="flex-1">${predicciones.join("")}</div>`;
-    statusList.innerHTML=`
-        <li class="flex justify-between items-center border-b border-cyan-500/10 pb-1 text-[8px]"><span>Unidad:</span> <span class="font-bold text-white font-tech">${entrada.unidad}</span></li>
-        <li class="flex justify-between items-center border-b border-cyan-500/10 pb-1 text-[8px]"><span>Temp:</span> ${tempStatus}</li>
-        <li class="flex justify-between items-center pb-1 text-[8px]"><span>VIB:</span> ${vibStatus}</li>
-    `;
+if(!entrada) return;
+const panel=document.getElementById("predictive-panel");
+const statusList=document.getElementById("ml-status-list");
+if(!panel||!statusList) return;
+let predicciones=[];
+let reportKM=[];
+let explicacion="";
+if(entrada.motor.toLowerCase().includes("diesel")) {
+explicacion=`<strong class="text-cyan-400">🔧 Diagnóstico Diésel:</strong> Mayor eficiencia térmica, costos de mantenimiento 20-25% más elevados.`;
+if(entrada.km>=30000 && entrada.km%30000<5000) reportKM.push("Filtro combustible: Cambio recomendado");
+} else {
+explicacion=`<strong class="text-cyan-400">⛽ Diagnóstico Gasolina:</strong> Ideal para uso urbano, mantenimiento económico.`;
+if(entrada.km>=15000 && entrada.km%15000<3000) reportKM.push("Bujías: Verificar desgaste");
 }
-
+if(entrada.km>=10000 && entrada.km%10000<2000) reportKM.push("Filtro aire: Próximo cambio");
+if(entrada.km>=60000) reportKM.push("⚠️ Correa distribución: Verificar estado");
+let tempStatus=`<span class="text-emerald-400"><i class="fas fa-check"></i> OK</span>`;
+if(entrada.ta>105) {
+tempStatus=`<span class="text-rose-400"><i class="fas fa-times"></i> ${entrada.ta}°C</span>`;
+predicciones.push(`<div class="p-2 bg-rose-500/10 border border-rose-500/40 rounded-lg flex items-start gap-2 mb-2"><div class="text-rose-500"><i class="fas fa-temperature-high"></i></div><div><p class="font-bold text-rose-400 text-[8px]">🔥 Sobrecalentamiento</p><p class="text-[7px] text-slate-300">Riesgo: ${entrada.ta}°C detectado. Verificar sistema de refrigeración.</p></div></div>`);
+} else if(entrada.ta>95) {
+predicciones.push(`<div class="p-2 bg-amber-500/10 border border-amber-500/40 rounded-lg flex items-start gap-2 mb-2"><div class="text-amber-500"><i class="fas fa-temperature-half"></i></div><div><p class="font-bold text-amber-400 text-[8px]">⚠️ Temperatura elevada</p><p class="text-[7px] text-slate-300">${entrada.ta}°C. Monitorear tendencia.</p></div></div>`);
+}
+let vibStatus=`<span class="text-emerald-400"><i class="fas fa-check"></i> OK</span>`;
+if(entrada.vibracion>=5.0) {
+vibStatus=`<span class="text-rose-400"><i class="fas fa-times"></i> ${entrada.vibracion}</span>`;
+predicciones.push(`<div class="p-2 bg-rose-500/10 border border-rose-500/40 rounded-lg flex items-start gap-2 mb-2"><div class="text-rose-500"><i class="fas fa-wave-square"></i></div><div><p class="font-bold text-rose-400 text-[8px]">〰️ Vibración crítica</p><p class="text-[7px] text-slate-300">${entrada.vibracion} mm/s. Posible desgaste en rodamientos.</p></div></div>`);
+} else if(entrada.vibracion>=3.5) {
+predicciones.push(`<div class="p-2 bg-amber-500/10 border border-amber-500/40 rounded-lg flex items-start gap-2 mb-2"><div class="text-amber-500"><i class="fas fa-wave-square"></i></div><div><p class="font-bold text-amber-400 text-[8px]">⚠️ Vibración moderada</p><p class="text-[7px] text-slate-300">${entrada.vibracion} mm/s. Programar revisión.</p></div></div>`);
+}
+if(reportKM.length>0) {
+let rl=reportKM.map(r=>`<li>- ${r}</li>`).join("");
+predicciones.push(`<div class="p-2 bg-purple-500/10 border border-purple-500/40 rounded-lg mb-2"><p class="font-bold text-purple-400 text-[8px]"><i class="fas fa-road"></i> Por KM (${entrada.km.toLocaleString()})</p><ul class="text-[7px] text-slate-300 mt-1">${rl}</ul></div>`);
+}
+if(predicciones.length===0) {
+predicciones.push(`<div class="p-3 bg-emerald-500/10 border border-emerald-500/40 rounded-lg"><p class="font-bold text-emerald-400 text-[8px]"><i class="fas fa-shield-alt mr-1"></i> ✅ Parámetros óptimos</p><p class="text-[7px] text-slate-300 mt-1">Todos los sistemas operando dentro de rangos normales.</p></div>`);
+}
+panel.innerHTML=`<div class="bg-black/40 p-3 rounded-lg border border-cyan-500/10 text-slate-300 text-[8px] leading-relaxed mb-3">${explicacion}</div><div class="flex-1">${predicciones.join("")}</div>`;
+statusList.innerHTML=`
+<li class="flex justify-between items-center border-b border-cyan-500/10 pb-1 text-[8px]"><span>Unidad:</span> <span class="font-bold text-white font-tech">${entrada.unidad}</span></li>
+<li class="flex justify-between items-center border-b border-cyan-500/10 pb-1 text-[8px]"><span>Temp:</span> ${tempStatus}</li>
+<li class="flex justify-between items-center pb-1 text-[8px]"><span>VIB:</span> ${vibStatus}</li>
+`;
+}
 // === INFORME IA ===
 function generateReport() {
-    const container=document.getElementById("ai-report-container");
-    const placeholder=document.getElementById("ai-report-placeholder");
-    if(!container) return;
-    container.classList.remove("hidden");
-    if(placeholder) placeholder.classList.add("hidden");
-    if(db.length===0) {
-        container.innerHTML="<p class='text-rose-400 text-xs'>⚠️ Ingresá datos primero para generar el informe.</p>";
-        return;
-    }
-    const last=db[db.length-1];
-    const mtbf=document.getElementById("kpi-mtbf")?.innerText||"0";
-    const mttr=document.getElementById("kpi-mttr")?.innerText||"0";
-    const disp=document.getElementById("kpi-disp")?.innerText||"0%";
-    const vtvPct=document.getElementById("vtv-score-value")?.innerText||"0%";
-    let html=`<h4 class="text-white font-bold mb-2 flex items-center gap-2 border-b border-cyan-500/20 pb-2 text-xs uppercase font-tech"><i class="fas fa-file-alt text-indigo-400"></i> Informe Técnico Sintetizado</h4>`;
-    html+=`<p class="mb-1 text-slate-300 text-xs">📊 Disponibilidad: <span class="text-cyan-400 font-bold">${disp}</span></p>`;
-    html+=`<p class="mb-1 text-slate-300 text-xs">⏱️ MTBF: <b>${mtbf}h</b> | 🔧 MTTR: <b>${mttr}h</b></p>`;
-    html+=`<p class="mb-2 text-slate-300 text-xs">✅ Score VTV: <span class="text-cyan-400 font-bold">${vtvPct}</span></p>`;
-    let alertas=[];
-    if(last.ta>105) alertas.push("🔥 Temperatura crítica");
-    else if(last.ta>95) alertas.push("⚠️ Temperatura elevada");
-    if(last.vibracion>=5.0) alertas.push("〰️ Vibración crítica");
-    else if(last.vibracion>=3.5) alertas.push("⚠️ Vibración moderada");
-    if(last.km>=60000) alertas.push("⚠️ Correa distribución: revisar");
-    const failedVTV=VTV_ITEMS.filter(i=>!vtvState[i.id]);
-    if(failedVTV.length>0) alertas.push(`📋 ${failedVTV.length} ítems VTV pendientes`);
-    if(alertas.length>0) {
-        html+=`<div class="bg-rose-500/10 border-l-2 border-rose-500 pl-2 py-1 my-2 rounded-r">
-            <p class="font-bold text-rose-400 text-[8px] mb-1">⚡ Alertas Activas:</p>
-            <ul class="list-disc pl-3 space-y-0.5 text-slate-300 text-[8px]">`+alertas.map(a=>`<li>${a}</li>`).join("")+`</ul>
-        </div>`;
-    }
-    if(alertas.length===0) {
-        html+=`<div class="bg-emerald-500/10 border-l-2 border-emerald-500 pl-2 py-1 my-2 rounded-r">
-            <p class="font-bold text-emerald-400 text-[8px]">✅ Estado General: Óptimo</p>
-            <p class="text-[7px] text-slate-300 mt-1">Todos los parámetros dentro de rangos normales.</p>
-        </div>`;
-    }
-    container.innerHTML=html;
-    showToast('📄 Informe IA generado', 'success');
+const container=document.getElementById("ai-report-container");
+const placeholder=document.getElementById("ai-report-placeholder");
+if(!container) return;
+container.classList.remove("hidden");
+if(placeholder) placeholder.classList.add("hidden");
+if(db.length===0) {
+container.innerHTML="<p class='text-rose-400 text-xs'>⚠️ Ingresá datos primero para generar el informe.</p>";
+return;
 }
-
+const last=db[db.length-1];
+const mtbf=document.getElementById("kpi-mtbf")?.innerText||"0";
+const mttr=document.getElementById("kpi-mttr")?.innerText||"0";
+const disp=document.getElementById("kpi-disp")?.innerText||"0%";
+const vtvPct=document.getElementById("vtv-score-value")?.innerText||"0%";
+let html=`<h4 class="text-white font-bold mb-2 flex items-center gap-2 border-b border-cyan-500/20 pb-2 text-xs uppercase font-tech"><i class="fas fa-file-alt text-indigo-400"></i> Informe Técnico Sintetizado</h4>`;
+html+=`<p class="mb-1 text-slate-300 text-xs">📊 Disponibilidad: <span class="text-cyan-400 font-bold">${disp}</span></p>`;
+html+=`<p class="mb-1 text-slate-300 text-xs">⏱️ MTBF: <b>${mtbf}h</b> | 🔧 MTTR: <b>${mttr}h</b></p>`;
+html+=`<p class="mb-2 text-slate-300 text-xs">✅ Score VTV: <span class="text-cyan-400 font-bold">${vtvPct}</span></p>`;
+let alertas=[];
+if(last.ta>105) alertas.push("🔥 Temperatura crítica");
+else if(last.ta>95) alertas.push("⚠️ Temperatura elevada");
+if(last.vibracion>=5.0) alertas.push("〰️ Vibración crítica");
+else if(last.vibracion>=3.5) alertas.push("⚠️ Vibración moderada");
+if(last.km>=60000) alertas.push("⚠️ Correa distribución: revisar");
+const failedVTV=VTV_ITEMS.filter(i=>!vtvState[i.id]);
+if(failedVTV.length>0) alertas.push(`📋 ${failedVTV.length} ítems VTV pendientes`);
+if(alertas.length>0) {
+html+=`<div class="bg-rose-500/10 border-l-2 border-rose-500 pl-2 py-1 my-2 rounded-r">
+<p class="font-bold text-rose-400 text-[8px] mb-1">⚡ Alertas Activas:</p>
+<ul class="list-disc pl-3 space-y-0.5 text-slate-300 text-[8px]">`+alertas.map(a=>`<li>${a}</li>`).join("")+`</ul>
+</div>`;
+}
+if(alertas.length===0) {
+html+=`<div class="bg-emerald-500/10 border-l-2 border-emerald-500 pl-2 py-1 my-2 rounded-r">
+<p class="font-bold text-emerald-400 text-[8px]">✅ Estado General: Óptimo</p>
+<p class="text-[7px] text-slate-300 mt-1">Todos los parámetros dentro de rangos normales.</p>
+</div>`;
+}
+container.innerHTML=html;
+showToast('📄 Informe IA generado', 'success');
+}
 // === TABLA DE DATASET ===
 function renderDatasetTable() {
-    const container=document.getElementById('dataset-table');
-    if(!container) return;
-    if(db.length===0) {
-        container.innerHTML='<tr><td colspan="15" class="text-center py-8 text-slate-500 text-[8px]">📭 Sin datos. Ingresa información para comenzar.</td></tr>';
-        return;
-    }
-    const headers=['Sel','Unidad','Motor','KM','UP','DOWN','VIB','TEMP','RPM','PSI-DI','PSI-DD','Fecha','Trabajo','Acciones'];
-    let html='<thead><tr class="cyber-table">';
-    headers.forEach(h => {
-        html+=`<th class="p-1.5 text-left font-bold border-b border-cyan-500/30 text-[8px] text-cyan-400 font-tech">${h}</th>`;
-    });
-    html+='</tr></thead><tbody>';
-    [...db].reverse().forEach((row, reverseIdx) => {
-        const originalIdx = db.length - 1 - reverseIdx;
-        const isSelected = selectedRows.has(originalIdx);
-        const fecha=new Date(row.timestamp).toLocaleDateString('es-ES',{day:'2-digit',month:'2-digit',hour:'2-digit'});
-        html+=`<tr class="${isSelected?'selected':''} ${reverseIdx===0?'bg-cyan-500/10 border-l-2 border-cyan-500':'border-b border-cyan-500/10'} hover:bg-cyan-500/5 transition-all" data-idx="${originalIdx}">`;
-        html+=`<td class="p-1.5 text-center"><input type="checkbox" class="row-select" ${isSelected?'checked':''} onchange="toggleRowSelection(${originalIdx})"></td>`;
-        html+=`<td class="p-1.5 font-medium text-[8px]">${row.unidad}</td>
-            <td class="p-1.5 text-[8px]">${row.motor}</td>
-            <td class="p-1.5 text-right text-[8px] font-tech">${row.km?.toLocaleString()}</td>
-            <td class="p-1.5 text-right text-[8px]">${row.uptime}</td>
-            <td class="p-1.5 text-right text-[8px]">${row.downtime}</td>
-            <td class="p-1.5 text-right text-[8px]">${row.vibracion}</td>
-            <td class="p-1.5 text-right text-[8px]">${row.ta}°</td>
-            <td class="p-1.5 text-right text-[8px] font-tech">${row.rpm}</td>
-            <td class="p-1.5 text-right text-[8px]">${row.psiDi}</td>
-            <td class="p-1.5 text-right text-[8px]">${row.psiDd}</td>
-            <td class="p-1.5 text-[8px] text-slate-400">${fecha}</td>`;
-        const workPreview = row.trabajo ? (row.trabajo.length > 25 ? row.trabajo.substring(0,25)+'...' : row.trabajo) : '';
-        html+=`<td class="p-1.5"><div class="work-notes">${workPreview || '<span class="work-notes-empty">-</span>'}</div></td>`;
-        html+=`<td class="p-1.5 text-center">
-            <div class="flex gap-1 justify-center flex-wrap">
-                <button class="btn-mini btn-mini-edit" onclick="showEditWorkNotes(${originalIdx})" title="Editar notas"><i class="fas fa-edit"></i></button>
-                <button class="btn-mini btn-mini-pdf" onclick="showWorkHistory('${row.unidad}')" title="Ver historial completo"><i class="fas fa-file-pdf"></i></button>
-                <button class="btn-mini" onclick="exportSingleUnitPDF(${originalIdx})" title="PDF de esta unidad"><i class="fas fa-download"></i></button>
-            </div>
-        </td>`;
-        html+='</tr>';
-    });
-    html+='</tbody>';
-    container.innerHTML=html;
-    const selectAll = document.getElementById('select-all-rows');
-    if(selectAll) {
-        selectAll.checked = selectedRows.size === db.length && db.length > 0;
-        selectAll.indeterminate = selectedRows.size > 0 && selectedRows.size < db.length;
-    }
-    updateFilterBadges();
+const container=document.getElementById('dataset-table');
+if(!container) return;
+if(db.length===0) {
+container.innerHTML='<tr><td colspan="15" class="text-center py-8 text-slate-500 text-[8px]">📭 Sin datos. Ingresa información para comenzar.</td></tr>';
+return;
 }
-
+const headers=['Sel','Unidad','Motor','KM','UP','DOWN','VIB','TEMP','RPM','PSI-DI','PSI-DD','Fecha','Trabajo','Acciones'];
+let html='<thead><tr class="cyber-table">';
+headers.forEach(h => {
+html+=`<th class="p-1.5 text-left font-bold border-b border-cyan-500/30 text-[8px] text-cyan-400 font-tech">${h}</th>`;
+});
+html+='</tr></thead><tbody>';
+[...db].reverse().forEach((row, reverseIdx) => {
+const originalIdx = db.length - 1 - reverseIdx;
+const isSelected = selectedRows.has(originalIdx);
+const fecha=new Date(row.timestamp).toLocaleDateString('es-ES',{day:'2-digit',month:'2-digit',hour:'2-digit'});
+html+=`<tr class="${isSelected?'selected':''} ${reverseIdx===0?'bg-cyan-500/10 border-l-2 border-cyan-500':'border-b border-cyan-500/10'} hover:bg-cyan-500/5 transition-all" data-idx="${originalIdx}">`;
+html+=`<td class="p-1.5 text-center"><input type="checkbox" class="row-select" ${isSelected?'checked':''} onchange="toggleRowSelection(${originalIdx})"></td>`;
+html+=`<td class="p-1.5 font-medium text-[8px]">${row.unidad}</td>
+<td class="p-1.5 text-[8px]">${row.motor}</td>
+<td class="p-1.5 text-right text-[8px] font-tech">${row.km?.toLocaleString()}</td>
+<td class="p-1.5 text-right text-[8px]">${row.uptime}</td>
+<td class="p-1.5 text-right text-[8px]">${row.downtime}</td>
+<td class="p-1.5 text-right text-[8px]">${row.vibracion}</td>
+<td class="p-1.5 text-right text-[8px]">${row.ta}°</td>
+<td class="p-1.5 text-right text-[8px] font-tech">${row.rpm}</td>
+<td class="p-1.5 text-right text-[8px]">${row.psiDi}</td>
+<td class="p-1.5 text-right text-[8px]">${row.psiDd}</td>
+<td class="p-1.5 text-[8px] text-slate-400">${fecha}</td>`;
+const workPreview = row.trabajo ? (row.trabajo.length > 25 ? row.trabajo.substring(0,25)+'...' : row.trabajo) : '';
+html+=`<td class="p-1.5"><div class="work-notes">${workPreview || '<span class="work-notes-empty">-</span>'}</div></td>`;
+html+=`<td class="p-1.5 text-center">
+<div class="flex gap-1 justify-center flex-wrap">
+<button class="btn-mini btn-mini-edit" onclick="showEditWorkNotes(${originalIdx})" title="Editar notas"><i class="fas fa-edit"></i></button>
+<button class="btn-mini btn-mini-pdf" onclick="showWorkHistory('${row.unidad}')" title="Ver historial completo"><i class="fas fa-file-pdf"></i></button>
+<button class="btn-mini" onclick="exportSingleUnitPDF(${originalIdx})" title="PDF de esta unidad"><i class="fas fa-download"></i></button>
+</div>
+</td>`;
+html+='</tr>';
+});
+html+='</tbody>';
+container.innerHTML=html;
+const selectAll = document.getElementById('select-all-rows');
+if(selectAll) {
+selectAll.checked = selectedRows.size === db.length && db.length > 0;
+selectAll.indeterminate = selectedRows.size > 0 && selectedRows.size < db.length;
+}
+updateFilterBadges();
+}
 // === ESTADÍSTICAS DESCRIBE ===
 function calculateDescribeStats(data = null) {
-    const source = data || db;
-    if(source.length===0) return null;
-    const cols=[
-        {key:'km',label:'KM'},{key:'uptime',label:'Uptime(h)'},{key:'downtime',label:'Downtime(h)'},
-        {key:'vibracion',label:'Vibración'},{key:'ta',label:'Temp(°C)'},{key:'rpm',label:'RPM'},
-        {key:'psiDi',label:'PSI-DI'},{key:'psiDd',label:'PSI-DD'},{key:'psiTi',label:'PSI-TI'},{key:'psiTd',label:'PSI-TD'}
-    ];
-    const stats={};
-    cols.forEach(col => {
-        const values=source.map(d=>d[col.key]).filter(v=>v!==undefined&&v!==null&&!isNaN(v));
-        if(values.length===0) return;
-        values.sort((a,b)=>a-b);
-        const n=values.length;
-        const sum=values.reduce((a,b)=>a+b,0);
-        const mean=sum/n;
-        const variance=values.reduce((acc,val)=>acc+Math.pow(val-mean,2),0)/n;
-        const std=Math.sqrt(variance);
-        const pct=(p)=>{
-            const idx=(n-1)*p;
-            const lower=Math.floor(idx);
-            const upper=Math.ceil(idx);
-            if(lower===upper) return values[lower];
-            return values[lower]+(values[upper]-values[lower])*(idx-lower);
-        };
-        stats[col.key]={
-            label:col.label, count:n, mean:mean.toFixed(2), std:std.toFixed(2),
-            min:values[0].toFixed(2), '25%':pct(0.25).toFixed(2), '50%':pct(0.50).toFixed(2),
-            '75%':pct(0.75).toFixed(2), max:values[n-1].toFixed(2)
-        };
-    });
-    return stats;
+const source = data || db;
+if(source.length===0) return null;
+const cols=[
+{key:'km',label:'KM'},{key:'uptime',label:'Uptime(h)'},{key:'downtime',label:'Downtime(h)'},
+{key:'vibracion',label:'Vibración'},{key:'ta',label:'Temp(°C)'},{key:'rpm',label:'RPM'},
+{key:'psiDi',label:'PSI-DI'},{key:'psiDd',label:'PSI-DD'},{key:'psiTi',label:'PSI-TI'},{key:'psiTd',label:'PSI-TD'}
+];
+const stats={};
+cols.forEach(col => {
+const values=source.map(d=>d[col.key]).filter(v=>v!==undefined&&v!==null&&!isNaN(v));
+if(values.length===0) return;
+values.sort((a,b)=>a-b);
+const n=values.length;
+const sum=values.reduce((a,b)=>a+b,0);
+const mean=sum/n;
+const variance=values.reduce((acc,val)=>acc+Math.pow(val-mean,2),0)/n;
+const std=Math.sqrt(variance);
+const pct=(p)=>{
+const idx=(n-1)*p;
+const lower=Math.floor(idx);
+const upper=Math.ceil(idx);
+if(lower===upper) return values[lower];
+return values[lower]+(values[upper]-values[lower])*(idx-lower);
+};
+stats[col.key]={
+label:col.label, count:n, mean:mean.toFixed(2), std:std.toFixed(2),
+min:values[0].toFixed(2), '25%':pct(0.25).toFixed(2), '50%':pct(0.50).toFixed(2),
+'75%':pct(0.75).toFixed(2), max:values[n-1].toFixed(2)
+};
+});
+return stats;
 }
-
 function renderDescribeTable(data = null) {
-    const container=document.getElementById('describe-table-container');
-    if(!container) return;
-    const source = data || db;
-    if(source.length===0) {
-        container.innerHTML='<p class="text-slate-500 text-center py-3 text-[8px]">📊 Sin datos para analizar</p>';
-        return;
-    }
-    const stats=calculateDescribeStats(source);
-    if(!stats||Object.keys(stats).length===0) {
-        container.innerHTML='<p class="text-slate-500 text-center py-3 text-[8px]">⚠️ Sin columnas numéricas válidas</p>';
-        return;
-    }
-    const metrics=[
-        {key:'count',label:'count',color:'text-slate-300'},
-        {key:'mean',label:'mean',color:'text-cyan-400 font-bold'},
-        {key:'std',label:'std',color:'text-purple-400'},
-        {key:'min',label:'min',color:'text-rose-400'},
-        {key:'25%',label:'25%',color:'text-amber-400'},
-        {key:'50%',label:'50%',color:'text-cyan-400'},
-        {key:'75%',label:'75%',color:'text-amber-400'},
-        {key:'max',label:'max',color:'text-rose-400'}
-    ];
-    const columns=Object.keys(stats);
-    let html='<div class="overflow-x-auto"><table class="w-full border-collapse text-[8px]">';
-    html+='<thead><tr class="bg-slate-900/50"><th class="p-1.5 text-left font-bold text-cyan-400 border border-cyan-500/20 sticky left-0 bg-slate-900 z-10 font-tech">Estadística</th>';
-    columns.forEach(col => { html+=`<th class="p-1.5 text-center font-bold text-slate-300 border border-cyan-500/20 min-w-[70px] font-tech">${stats[col].label}</th>`; });
-    html+='</tr></thead><tbody>';
-    metrics.forEach(metric => {
-        html+=`<tr class="border-b border-cyan-500/10 hover:bg-cyan-500/5 transition-colors">`;
-        html+=`<td class="p-1.5 font-bold ${metric.color} border border-cyan-500/20 sticky left-0 bg-slate-900/80 z-10 font-tech">${metric.label}</td>`;
-        columns.forEach(col => { html+=`<td class="p-1.5 text-center border border-cyan-500/20 ${metric.key==='count'?'':metric.color}">${stats[col][metric.key]}</td>`; });
-        html+='</tr>';
-    });
-    html+='</tbody></table></div>';
-    html+='<div class="mt-2 flex flex-wrap gap-1 text-[7px] text-slate-400">';
-    html+='<span><span class="text-cyan-400 font-bold">● mean</span>=promedio</span>';
-    html+='<span><span class="text-purple-400">● std</span>=desviación</span>';
-    html+='<span><span class="text-rose-400">● min/max</span>=extremos</span>';
-    html+='<span><span class="text-cyan-400">● 50%</span>=mediana</span>';
-    html+='</div>';
-    container.innerHTML=html;
+const container=document.getElementById('describe-table-container');
+if(!container) return;
+const source = data || db;
+if(source.length===0) {
+container.innerHTML='<p class="text-slate-500 text-center py-3 text-[8px]">📊 Sin datos para analizar</p>';
+return;
 }
-
+const stats=calculateDescribeStats(source);
+if(!stats||Object.keys(stats).length===0) {
+container.innerHTML='<p class="text-slate-500 text-center py-3 text-[8px]">⚠️ Sin columnas numéricas válidas</p>';
+return;
+}
+const metrics=[
+{key:'count',label:'count',color:'text-slate-300'},
+{key:'mean',label:'mean',color:'text-cyan-400 font-bold'},
+{key:'std',label:'std',color:'text-purple-400'},
+{key:'min',label:'min',color:'text-rose-400'},
+{key:'25%',label:'25%',color:'text-amber-400'},
+{key:'50%',label:'50%',color:'text-cyan-400'},
+{key:'75%',label:'75%',color:'text-amber-400'},
+{key:'max',label:'max',color:'text-rose-400'}
+];
+const columns=Object.keys(stats);
+let html='<div class="overflow-x-auto"><table class="w-full border-collapse text-[8px]">';
+html+='<thead><tr class="bg-slate-900/50"><th class="p-1.5 text-left font-bold text-cyan-400 border border-cyan-500/20 sticky left-0 bg-slate-900 z-10 font-tech">Estadística</th>';
+columns.forEach(col => { html+=`<th class="p-1.5 text-center font-bold text-slate-300 border border-cyan-500/20 min-w-[70px] font-tech">${stats[col].label}</th>`; });
+html+='</tr></thead><tbody>';
+metrics.forEach(metric => {
+html+=`<tr class="border-b border-cyan-500/10 hover:bg-cyan-500/5 transition-colors">`;
+html+=`<td class="p-1.5 font-bold ${metric.color} border border-cyan-500/20 sticky left-0 bg-slate-900/80 z-10 font-tech">${metric.label}</td>`;
+columns.forEach(col => { html+=`<td class="p-1.5 text-center border border-cyan-500/20 ${metric.key==='count'?'':metric.color}">${stats[col][metric.key]}</td>`; });
+html+='</tr>';
+});
+html+='</tbody></table></div>';
+html+='<div class="mt-2 flex flex-wrap gap-1 text-[7px] text-slate-400">';
+html+='<span><span class="text-cyan-400 font-bold">● mean</span>=promedio</span>';
+html+='<span><span class="text-purple-400">● std</span>=desviación</span>';
+html+='<span><span class="text-rose-400">● min/max</span>=extremos</span>';
+html+='<span><span class="text-cyan-400">● 50%</span>=mediana</span>';
+html+='</div>';
+container.innerHTML=html;
+}
 // === ANÁLISIS DE SELECCIÓN ===
 function analyzeSelected() {
-    const selected = getSelectedData();
-    if(selected.length === 0) {
-        showToast('⚠️ Selecciona al menos una fila para analizar', 'warning');
-        return;
-    }
-    updateTimelineChart(selected);
-    updateCorrelationMatrix(selected);
-    renderDescribeTable(selected);
-    showToast(`📊 Analizando ${selected.length} unidad(es) seleccionada(s)`, 'success');
-    updateFilterBadges();
+const selected = getSelectedData();
+if(selected.length === 0) {
+showToast('⚠️ Selecciona al menos una fila para analizar', 'warning');
+return;
 }
-
+updateTimelineChart(selected);
+updateCorrelationMatrix(selected);
+renderDescribeTable(selected);
+showToast(`📊 Analizando ${selected.length} unidad(es) seleccionada(s)`, 'success');
+updateFilterBadges();
+}
 // === GRÁFICO DE LÍNEA TEMPORAL ===
 function updateTimelineChart(data = null) {
-    const canvas=document.getElementById('timelineChart');
-    if(!canvas) return;
-    const ctx=canvas.getContext('2d');
-    const source = data || db;
-    if(source.length===0) {
-        if(timelineChartIns) { timelineChartIns.destroy(); timelineChartIns = null; }
-        ctx.clearRect(0,0,canvas.width,canvas.height);
-        canvas.parentNode.innerHTML='<div class="absolute inset-0 flex items-center justify-center text-slate-500 text-xs">📭 Sin datos para graficar</div>';
-        return;
-    }
-    const labels=source.map(d=>new Date(d.timestamp).toLocaleDateString('es-ES',{day:'2-digit',month:'short'}));
-    const uptimeData=source.map(d=>d.uptime);
-    const downtimeData=source.map(d=>d.downtime);
-    const dispData=source.map(d=>(d.uptime+d.downtime)>0?((d.uptime/(d.uptime+d.downtime))*100).toFixed(1):0);
-    if(timelineChartIns) timelineChartIns.destroy();
-    // ✅ CORREGIDO: Agregada la clave 'data:' que faltaba
-    timelineChartIns=new Chart(ctx, {
-        type:'line',
-        data: {
-            labels: labels,
-            datasets: [
-                {
-                    label:'Disponibilidad %',
-                    data: dispData,
-                    borderColor:'#06b6d4',
-                    backgroundColor:'rgba(6,182,212,0.1)',
-                    borderWidth:2,
-                    tension:0.4,
-                    yAxisID:'y1',
-                    fill:true,
-                    pointRadius:2,
-                    pointHoverRadius:4
-                },
-                {
-                    label:'Uptime (h)',
-                    data: uptimeData,
-                    borderColor:'#14b8a6',
-                    borderDash:[5,5],
-                    borderWidth:2,
-                    tension:0.2,
-                    yAxisID:'y',
-                    pointRadius:0
-                },
-                {
-                    label:'Downtime (h)',
-                    data: downtimeData,
-                    borderColor:'#f97316',
-                    borderWidth:2,
-                    tension:0.2,
-                    yAxisID:'y',
-                    pointRadius:0
-                }
-            ]
-        },
-        options: {
-            responsive:true,
-            maintainAspectRatio:false,
-            interaction:{mode:'index',intersect:false},
-            plugins: {
-                legend: { labels: { color:'#cbd5e1', font:{size:9} }, position:'bottom' },
-                tooltip: { bodyFont: { size:9 }, titleFont: { size:10 }, backgroundColor: 'rgba(15,23,42,0.95)', padding: 10, displayColors: true }
-            },
-            scales: {
-                x: { ticks: { color:'#64748b', font:{size:8} }, grid: { color:'rgba(6,182,212,0.1)' } },
-                y: { type:'linear', display:true, position:'left', title: { display:true, text:'Horas', color:'#94a3b8' }, ticks: { color:'#94a3b8', font:{size:8} }, grid: { color:'rgba(6,182,212,0.1)' } },
-                y1: { type:'linear', display:true, position:'right', title: { display:true, text:'%', color:'#06b6d4' }, ticks: { color:'#06b6d4', font:{size:8} }, grid: { drawOnChartArea:false } }
-            }
-        }
-    });
+const canvas=document.getElementById('timelineChart');
+if(!canvas) return;
+const ctx=canvas.getContext('2d');
+const source = data || db;
+if(source.length===0) {
+if(timelineChartIns) { timelineChartIns.destroy(); timelineChartIns = null; }
+ctx.clearRect(0,0,canvas.width,canvas.height);
+canvas.parentNode.innerHTML='<div class="absolute inset-0 flex items-center justify-center text-slate-500 text-xs">📭 Sin datos para graficar</div>';
+return;
 }
-
-window.addEventListener('resize', () => {
-    clearTimeout(window._resizeTimer);
-    window._resizeTimer=setTimeout(()=>{
-        if(timelineChartIns && (db.length>0 || selectedRows.size>0)) {
-            timelineChartIns.update();
-        }
-    }, 250);
+const labels=source.map(d=>new Date(d.timestamp).toLocaleDateString('es-ES',{day:'2-digit',month:'short'}));
+const uptimeData=source.map(d=>d.uptime);
+const downtimeData=source.map(d=>d.downtime);
+const dispData=source.map(d=>(d.uptime+d.downtime)>0?((d.uptime/(d.uptime+d.downtime))*100).toFixed(1):0);
+if(timelineChartIns) timelineChartIns.destroy();
+timelineChartIns=new Chart(ctx, {
+type:'line',
+ {
+labels: labels,
+datasets: [
+{
+label:'Disponibilidad %',
+data: dispData,
+borderColor:'#06b6d4',
+backgroundColor:'rgba(6,182,212,0.1)',
+borderWidth:2,
+tension:0.4,
+yAxisID:'y1',
+fill:true,
+pointRadius:2,
+pointHoverRadius:4
+},
+{
+label:'Uptime (h)',
+ uptimeData,
+borderColor:'#14b8a6',
+borderDash:[5,5],
+borderWidth:2,
+tension:0.2,
+yAxisID:'y',
+pointRadius:0
+},
+{
+label:'Downtime (h)',
+ downtimeData,
+borderColor:'#f97316',
+borderWidth:2,
+tension:0.2,
+yAxisID:'y',
+pointRadius:0
+}
+]
+},
+options: {
+responsive:true,
+maintainAspectRatio:false,
+interaction:{mode:'index',intersect:false},
+plugins: {
+legend: { labels: { color:'#cbd5e1', font:{size:9} }, position:'bottom' },
+tooltip: { bodyFont: { size:9 }, titleFont: { size:10 }, backgroundColor: 'rgba(15,23,42,0.95)', padding: 10, displayColors: true }
+},
+scales: {
+x: { ticks: { color:'#64748b', font:{size:8} }, grid: { color:'rgba(6,182,212,0.1)' } },
+y: { type:'linear', display:true, position:'left', title: { display:true, text:'Horas', color:'#94a3b8' }, ticks: { color:'#94a3b8', font:{size:8} }, grid: { color:'rgba(6,182,212,0.1)' } },
+y1: { type:'linear', display:true, position:'right', title: { display:true, text:'%', color:'#06b6d4' }, ticks: { color:'#06b6d4', font:{size:8} }, grid: { drawOnChartArea:false } }
+}
+}
 });
-
+}
+window.addEventListener('resize', () => {
+clearTimeout(window._resizeTimer);
+window._resizeTimer=setTimeout(()=>{
+if(timelineChartIns && (db.length>0 || selectedRows.size>0)) {
+timelineChartIns.update();
+}
+}, 250);
+});
 // === MATRIZ DE CORRELACIÓN ===
 function pearsonCorrelation(x,y) {
-    if(x.length===0||y.length===0) return 0;
-    const n=x.length;
-    let sumX=0,sumY=0,sumXY=0,sumX2=0,sumY2=0;
-    for(let i=0;i<n;i++){
-        sumX+=x[i]; sumY+=y[i]; sumXY+=x[i]*y[i];
-        sumX2+=x[i]*x[i]; sumY2+=y[i]*y[i];
-    }
-    const dt=(n*sumX2-sumX*sumX)*(n*sumY2-sumY*sumY);
-    if(dt<=0) return 0;
-    return((n*sumXY)-(sumX*sumY))/Math.sqrt(dt);
+if(x.length===0||y.length===0) return 0;
+const n=x.length;
+let sumX=0,sumY=0,sumXY=0,sumX2=0,sumY2=0;
+for(let i=0;i<n;i++){
+sumX+=x[i]; sumY+=y[i]; sumXY+=x[i]*y[i];
+sumX2+=x[i]*x[i]; sumY2+=y[i]*y[i];
 }
-
+const dt=(n*sumX2-sumX*sumX)*(n*sumY2-sumY*sumY);
+if(dt<=0) return 0;
+return((n*sumXY)-(sumX*sumY))/Math.sqrt(dt);
+}
 function updateCorrelationMatrix(data = null) {
-    const container=document.getElementById('correlation-matrix');
-    if(!container) return;
-    const source = data || db;
-    if(source.length<2) {
-        container.innerHTML='<p class="text-slate-500 text-center py-3 text-[8px]">📊 Mínimo 2 registros requeridos</p>';
-        return;
-    }
-    const variables=['km','uptime','downtime','vibracion','ta','rpm','psiDi'];
-    const labels=['KM','UP','DOWN','VIB','TEMP','RPM','PSI'];
-    let html='<table class="w-full border-collapse text-[8px]"><tr><td class="p-1"></td>';
-    html+=labels.map(l=>`<td class="p-1 font-bold text-cyan-400 text-center border-b border-cyan-500/20 font-tech">${l}</td>`).join('')+'</tr>';
-    for(let i=0;i<variables.length;i++){
-        html+=`<tr><td class="p-1 font-bold text-cyan-400 text-right pr-1 border-r border-cyan-500/20 font-tech">${labels[i]}</td>`;
-        for(let j=0;j<variables.length;j++){
-            const arr1=source.map(d=>d[variables[i]]||0);
-            const arr2=source.map(d=>d[variables[j]]||0);
-            const val=pearsonCorrelation(arr1,arr2);
-            const opacity=Math.min(Math.abs(val),1);
-            let colorStyle=val>0?`rgba(6,182,212,${opacity})`:`rgba(244,63,94,${opacity})`;
-            if(i===j) {
-                html+=`<td class="p-1 border border-cyan-500/10 text-center text-slate-500" style="background-color:rgba(6,182,212,0.05)">1.00</td>`;
-            } else {
-                const textColor = opacity > 0.5 ? 'white' : '#94a3b8';
-                html+=`<td class="p-1 border border-cyan-500/10 text-center font-medium" style="background-color:${colorStyle};color:${textColor};transition:transform 0.2s" onmouseover="this.style.transform='scale(1.1)'" onmouseout="this.style.transform='scale(1)'">${val.toFixed(2)}</td>`;
-            }
-        }
-        html+='</tr>';
-    }
-    html+='</table>';
-    container.innerHTML=html;
+const container=document.getElementById('correlation-matrix');
+if(!container) return;
+const source = data || db;
+if(source.length<2) {
+container.innerHTML='<p class="text-slate-500 text-center py-3 text-[8px]">📊 Mínimo 2 registros requeridos</p>';
+return;
 }
-
+const extSource = source.map(row => ({...row, ...getSyntheticMetrics(row)}));
+const variables=['km','uptime','downtime','vibracion','ta','rpm','psiDi','desgaste','termovib','eficiencia','estres'];
+const labels=['KM','UP','DOWN','VIB','TEMP','RPM','PSI','Desg/km','TermoVib','Ef.Térm','Est.Mec'];
+let html='<table class="w-full border-collapse text-[8px]"><tr><td class="p-1"></td>';
+html+=labels.map(l=>`<td class="p-1 font-bold text-cyan-400 text-center border-b border-cyan-500/20 font-tech">${l}</td>`).join('')+'</tr>';
+for(let i=0;i<variables.length;i++){
+html+=`<tr><td class="p-1 font-bold text-cyan-400 text-right pr-1 border-r border-cyan-500/20 font-tech">${labels[i]}</td>`;
+for(let j=0;j<variables.length;j++){
+const arr1=extSource.map(d=>d[variables[i]]||0);
+const arr2=extSource.map(d=>d[variables[j]]||0);
+const val=pearsonCorrelation(arr1,arr2);
+const opacity=Math.min(Math.abs(val),1);
+let colorStyle=val>0?`rgba(6,182,212,${opacity})`:`rgba(244,63,94,${opacity})`;
+if(i===j) {
+html+=`<td class="p-1 border border-cyan-500/10 text-center text-slate-500" style="background-color:rgba(6,182,212,0.05)">1.00</td>`;
+} else {
+const textColor = opacity > 0.5 ? 'white' : '#94a3b8';
+html+=`<td class="p-1 border border-cyan-500/10 text-center font-medium" style="background-color:${colorStyle};color:${textColor};transition:transform 0.2s" onmouseover="this.style.transform='scale(1.1)'" onmouseout="this.style.transform='scale(1)'">${val.toFixed(2)}</td>`;
+}
+}
+html+='</tr>';
+}
+html+='</table>';
+container.innerHTML=html;
+}
 // === EXPORTAR CSV ===
 function exportCSV() {
-    if(db.length===0) { showToast("📭 Sin datos para exportar","info"); return; }
-    const headers=["Unidad","ID","Motor","KM","Uptime","Downtime","Vibración","Temp°C","RPM","PSI-DI","PSI-DD","PSI-TI","PSI-TD","Trabajo","Timestamp"];
-    let csv=headers.join(";")+"\n";
-    db.forEach(row => {
-        csv+=[row.unidad,row.id,row.motor,row.km,row.uptime,row.downtime,row.vibracion,row.ta,row.rpm,row.psiDi,row.psiDd,row.psiTi,row.psiTd,row.trabajo||'',new Date(row.timestamp).toLocaleString('es-ES')].join(";")+"\n";
-    });
-    const blob=new Blob(["\uFEFF"+csv],{type:'text/csv;charset=utf-8;'});
-    const link=document.createElement("a");
-    link.href=URL.createObjectURL(blob);
-    link.download=`NEXO-ART_Dataset_Completo_${new Date().toISOString().slice(0,10)}.csv`;
-    link.click();
-    showToast("📥 CSV completo descargado","success");
+if(db.length===0) { showToast("📭 Sin datos para exportar","info"); return; }
+const headers=["Unidad","ID","Motor","KM","Uptime","Downtime","Vibración","Temp°C","RPM","PSI-DI","PSI-DD","PSI-TI","PSI-TD","Trabajo","Timestamp"];
+let csv=headers.join(";")+"
+";
+db.forEach(row => {
+csv+=[row.unidad,row.id,row.motor,row.km,row.uptime,row.downtime,row.vibracion,row.ta,row.rpm,row.psiDi,row.psiDd,row.psiTi,row.psiTd,row.trabajo||'',new Date(row.timestamp).toLocaleString('es-ES')].join(";")+"
+";
+});
+const blob=new Blob(["\uFEFF"+csv],{type:'text/csv;charset=utf-8;'});
+const link=document.createElement("a");
+link.href=URL.createObjectURL(blob);
+link.download=`NEXO-ART_Dataset_Completo_${new Date().toISOString().slice(0,10)}.csv`;
+link.click();
+showToast("📥 CSV completo descargado","success");
 }
-
 function exportSelectedCSV() {
-    const selected = getSelectedData();
-    if(selected.length === 0) { showToast("📭 Selecciona filas para exportar","info"); return; }
-    const headers=["Unidad","ID","Motor","KM","Uptime","Downtime","Vibración","Temp°C","RPM","PSI-DI","PSI-DD","PSI-TI","PSI-TD","Trabajo","Timestamp"];
-    let csv=headers.join(";")+"\n";
-    selected.forEach(row => {
-        csv+=[row.unidad,row.id,row.motor,row.km,row.uptime,row.downtime,row.vibracion,row.ta,row.rpm,row.psiDi,row.psiDd,row.psiTi,row.psiTd,row.trabajo||'',new Date(row.timestamp).toLocaleString('es-ES')].join(";")+"\n";
-    });
-    const blob=new Blob(["\uFEFF"+csv],{type:'text/csv;charset=utf-8;'});
-    const link=document.createElement("a");
-    link.href=URL.createObjectURL(blob);
-    link.download=`NEXO-ART_Filtrado_${selected.length}unidades_${new Date().toISOString().slice(0,10)}.csv`;
-    link.click();
-    showToast(`📥 CSV de ${selected.length} unidades descargado`,"success");
+const selected = getSelectedData();
+if(selected.length === 0) { showToast("📭 Selecciona filas para exportar","info"); return; }
+const headers=["Unidad","ID","Motor","KM","Uptime","Downtime","Vibración","Temp°C","RPM","PSI-DI","PSI-DD","PSI-TI","PSI-TD","Trabajo","Timestamp"];
+let csv=headers.join(";")+"
+";
+selected.forEach(row => {
+csv+=[row.unidad,row.id,row.motor,row.km,row.uptime,row.downtime,row.vibracion,row.ta,row.rpm,row.psiDi,row.psiDd,row.psiTi,row.psiTd,row.trabajo||'',new Date(row.timestamp).toLocaleString('es-ES')].join(";")+"
+";
+});
+const blob=new Blob(["\uFEFF"+csv],{type:'text/csv;charset=utf-8;'});
+const link=document.createElement("a");
+link.href=URL.createObjectURL(blob);
+link.download=`NEXO-ART_Filtrado_${selected.length}unidades_${new Date().toISOString().slice(0,10)}.csv`;
+link.click();
+showToast(`📥 CSV de ${selected.length} unidades descargado`,"success");
 }
-
-// === PDFS ===
+// === PDFS (CENTRADOS Y OPTIMIZADOS) ===
 function exportSingleUnitPDF(index) {
-    const unit = db[index];
-    if(!unit) return;
-    showToast(`🔄 Generando PDF para ${unit.unidad}...`,'info');
-    const template = document.getElementById('pdf-report-template-enhanced');
-    const now = new Date();
-    document.getElementById('pdf-unidad').innerText = unit.unidad;
-    document.getElementById('pdf-fecha').innerText = now.toLocaleDateString('es-ES', {weekday:'long',year:'numeric',month:'long',day:'numeric'});
-    document.getElementById('pdf-id').innerText = unit.id;
-    document.getElementById('pdf-motor').innerText = unit.motor;
-    document.getElementById('pdf-km').innerText = unit.km?.toLocaleString() + ' KM';
-    document.getElementById('pdf-rpm').innerText = unit.rpm;
-    document.getElementById('pdf-last-reading').innerText = new Date(unit.timestamp).toLocaleDateString('es-ES');
-    const disp = unit.uptime > 0 ? (unit.uptime / (unit.uptime + unit.downtime) * 100).toFixed(1) : 0;
-    document.getElementById('pdf-disp-val').innerText = disp + '%';
-    document.getElementById('pdf-trend-val').innerText = disp >= 85 ? '✅ Estable' : '⚠️ Revisar';
-    document.getElementById('pdf-mtbf-val').innerText = unit.uptime.toFixed(1) + 'h';
-    document.getElementById('pdf-mttr-val').innerText = unit.downtime.toFixed(1) + 'h';
-    const desgasteKm = unit.uptime>0?(unit.km/unit.uptime).toFixed(2):0;
-    document.getElementById('pdf-adv-desgaste').innerText = desgasteKm;
-    document.getElementById('pdf-adv-termovib').innerText = unit.rpm>0?((unit.ta*unit.vibracion)/unit.rpm*1000).toFixed(2):0;
-    const totalHoras = unit.uptime+unit.downtime;
-    document.getElementById('pdf-adv-inactividad').innerText = totalHoras>0?((unit.downtime/totalHoras)*100).toFixed(1)+'%':'0%';
-    document.getElementById('pdf-adv-eficiencia').innerText = unit.ta>0?(unit.rpm/unit.ta).toFixed(1):0;
-    document.getElementById('pdf-adv-presion').innerText = ((unit.psiDi+unit.psiDd+unit.psiTi+unit.psiTd)/4).toFixed(1);
-    document.getElementById('pdf-adv-balance').innerText = '0.00';
-    document.getElementById('pdf-adv-estres').innerText = ((unit.vibracion*unit.rpm)/1000).toFixed(2);
-    document.getElementById('pdf-adv-disp-op').innerText = totalHoras>0?((unit.uptime/totalHoras)*100).toFixed(1)+'%':'0%';
-    document.getElementById('pdf-dataset-total').innerText = '1';
-    document.getElementById('pdf-dataset-table').innerHTML = generateDatasetTableForPDF([unit]);
-    renderDescribeForPDF([unit]);
-    renderIAForPDF([unit]);
-    document.getElementById('pdf-vtv-score').innerText = document.getElementById('vtv-score-value')?.innerText || '0%';
-    document.getElementById('pdf-vtv-status').innerText = document.getElementById('vtv-score-label')?.innerText || '';
-    document.getElementById('pdf-vtv-progress').innerText = document.getElementById('vtv-progress-text')?.innerText || '0/24';
-    document.getElementById('pdf-vtv-checklist-full').innerHTML = generateVTVChecklistFullPDF();
-    const workHistoryContainer = document.getElementById('pdf-work-history');
-    workHistoryContainer.innerHTML = `<div class="border border-slate-200 rounded-lg p-3 bg-slate-50">
-        <p class="text-[9px] font-bold text-slate-600 mb-2">${new Date(unit.timestamp).toLocaleDateString('es-ES')}</p>
-        <p class="text-[10px] text-slate-700">${unit.trabajo || 'Sin detalles registrados'}</p>
-    </div>`;
-    template.classList.remove('hidden');
-    setTimeout(() => {
-        html2pdf().set({
-            margin:[10,10,10,10],
-            filename:`NEXO-ART_${unit.unidad}_${new Date().toISOString().slice(0,10)}.pdf`,
-            image:{type:'jpeg',quality:0.95},
-            html2canvas:{scale:2,useCORS:true,windowWidth:794,logging:false,backgroundColor:'#ffffff'},
-            jsPDF:{unit:'mm',format:'a4',orientation:'portrait',compress:true}
-        }).from(template).save().then(() => {
-            template.classList.add('hidden');
-            showToast(`✅ PDF de ${unit.unidad} descargado`,'success');
-        }).catch(err => {
-            console.error(err);
-            template.classList.add('hidden');
-            showToast('❌ Error al generar PDF','error');
-        });
-    }, 400);
+const unit = db[index];
+if(!unit) return;
+showToast(`🔄 Generando PDF para ${unit.unidad}...`,'info');
+const template = document.getElementById('pdf-report-template-enhanced');
+const now = new Date();
+document.getElementById('pdf-unidad').innerText = unit.unidad;
+document.getElementById('pdf-fecha').innerText = now.toLocaleDateString('es-ES', {weekday:'long',year:'numeric',month:'long',day:'numeric'});
+document.getElementById('pdf-id').innerText = unit.id;
+document.getElementById('pdf-motor').innerText = unit.motor;
+document.getElementById('pdf-km').innerText = unit.km?.toLocaleString() + ' KM';
+document.getElementById('pdf-rpm').innerText = unit.rpm;
+document.getElementById('pdf-last-reading').innerText = new Date(unit.timestamp).toLocaleDateString('es-ES');
+const disp = unit.uptime > 0 ? (unit.uptime / (unit.uptime + unit.downtime) * 100).toFixed(1) : 0;
+document.getElementById('pdf-disp-val').innerText = disp + '%';
+document.getElementById('pdf-trend-val').innerText = disp >= 85 ? '✅ Estable' : '⚠️ Revisar';
+document.getElementById('pdf-mtbf-val').innerText = unit.uptime.toFixed(1) + 'h';
+document.getElementById('pdf-mttr-val').innerText = unit.downtime.toFixed(1) + 'h';
+const desgasteKm = unit.uptime>0?(unit.km/unit.uptime).toFixed(2):0;
+document.getElementById('pdf-adv-desgaste').innerText = desgasteKm;
+document.getElementById('pdf-adv-termovib').innerText = unit.rpm>0?((unit.ta*unit.vibracion)/unit.rpm*1000).toFixed(2):0;
+const totalHoras = unit.uptime+unit.downtime;
+document.getElementById('pdf-adv-inactividad').innerText = totalHoras>0?((unit.downtime/totalHoras)*100).toFixed(1)+'%':'0%';
+document.getElementById('pdf-adv-eficiencia').innerText = unit.ta>0?(unit.rpm/unit.ta).toFixed(1):0;
+document.getElementById('pdf-adv-presion').innerText = ((unit.psiDi+unit.psiDd+unit.psiTi+unit.psiTd)/4).toFixed(1);
+document.getElementById('pdf-adv-balance').innerText = '0.00';
+document.getElementById('pdf-adv-estres').innerText = ((unit.vibracion*unit.rpm)/1000).toFixed(2);
+document.getElementById('pdf-adv-disp-op').innerText = totalHoras>0?((unit.uptime/totalHoras)*100).toFixed(1)+'%':'0%';
+document.getElementById('pdf-dataset-total').innerText = '1';
+document.getElementById('pdf-dataset-table').innerHTML = generateDatasetTableForPDF([unit]);
+renderDescribeForPDF([unit]);
+renderIAForPDF([unit]);
+document.getElementById('pdf-vtv-score').innerText = document.getElementById('vtv-score-value')?.innerText || '0%';
+document.getElementById('pdf-vtv-status').innerText = document.getElementById('vtv-score-label')?.innerText || '';
+document.getElementById('pdf-vtv-progress').innerText = document.getElementById('vtv-progress-text')?.innerText || '0/24';
+document.getElementById('pdf-vtv-checklist-full').innerHTML = generateVTVChecklistFullPDF();
+const workHistoryContainer = document.getElementById('pdf-work-history');
+workHistoryContainer.innerHTML = `<div class="border border-slate-200 rounded-lg p-3 bg-slate-50">
+<p class="text-[9px] font-bold text-slate-600 mb-2">${new Date(unit.timestamp).toLocaleDateString('es-ES')}</p>
+<p class="text-[10px] text-slate-700">${unit.trabajo || 'Sin detalles registrados'}</p>
+</div>`;
+template.classList.remove('hidden');
+setTimeout(() => {
+html2pdf().set({
+margin:[10,10,10,10],
+filename:`NEXO-ART_${unit.unidad}_${new Date().toISOString().slice(0,10)}.pdf`,
+image:{type:'jpeg',quality:0.95},
+html2canvas:{scale:2,useCORS:true,windowWidth:794,scrollX:0,scrollY:0,x:0,y:0,logging:false,backgroundColor:'#ffffff'},
+jsPDF:{unit:'mm',format:'a4',orientation:'portrait',compress:true}
+}).from(template).save().then(() => {
+template.classList.add('hidden');
+showToast(`✅ PDF de ${unit.unidad} descargado`,'success');
+}).catch(err => {
+console.error(err);
+template.classList.add('hidden');
+showToast('❌ Error al generar PDF','error');
+});
+}, 400);
 }
-
 async function generateEnhancedPDF() {
-    if(db.length===0) { showToast("⚠️ Sin datos para generar reporte","warning"); return; }
-    if(isGeneratingPDF) { showToast("🔄 Ya se está generando un PDF","info"); return; }
-    isGeneratingPDF = true;
-    showToast("🔄 Generando reporte PDF completo...","info");
-    const last = db[db.length - 1];
-    const now = new Date();
-    try {
-        const setPdfText = (id, val) => { const el = document.getElementById(id); if(el) el.innerText = val; };
-        setPdfText('pdf-fecha', now.toLocaleDateString('es-ES', {weekday:'long',year:'numeric',month:'long',day:'numeric',hour:'2-digit',minute:'2-digit'}));
-        setPdfText('pdf-unidad', document.getElementById("card-unidad")?.innerText || "--");
-        setPdfText('pdf-id', last.id||"--");
-        setPdfText('pdf-motor', last.motor||"--");
-        setPdfText('pdf-km', last.km?.toLocaleString()+" KM"||"--");
-        setPdfText('pdf-rpm', document.getElementById("card-rpm")?.innerText || "--");
-        setPdfText('pdf-last-reading', new Date(last.timestamp).toLocaleDateString('es-ES'));
-        setPdfText('pdf-disp-val', document.getElementById("kpi-disp")?.innerText || "0%");
-        setPdfText('pdf-trend-val', document.getElementById("trend-disp")?.innerText?.trim() || "");
-        setPdfText('pdf-mtbf-val', document.getElementById("kpi-mtbf")?.innerText+"h" || "0h");
-        setPdfText('pdf-mttr-val', document.getElementById("kpi-mttr")?.innerText+"h" || "0h");
-        setPdfText('pdf-adv-desgaste', document.getElementById("adv-desgaste")?.innerText || "0");
-        setPdfText('pdf-adv-termovib', document.getElementById("adv-termovib")?.innerText || "0");
-        setPdfText('pdf-adv-inactividad', document.getElementById("adv-inactividad")?.innerText || "0%");
-        setPdfText('pdf-adv-eficiencia', document.getElementById("adv-eficiencia")?.innerText || "0");
-        setPdfText('pdf-adv-presion', document.getElementById("adv-presion")?.innerText || "0");
-        setPdfText('pdf-adv-balance', document.getElementById("adv-balance")?.innerText || "0");
-        setPdfText('pdf-adv-estres', document.getElementById("adv-estres")?.innerText || "0");
-        setPdfText('pdf-adv-disp-op', document.getElementById("adv-disp-op")?.innerText || "0%");
-        await renderChartForPDF();
-        renderCorrelationForPDF();
-        setPdfText('pdf-dataset-total', db.length.toString());
-        document.getElementById('pdf-dataset-table').innerHTML = generateDatasetTableForPDF(db);
-        renderDescribeForPDF();
-        renderIAForPDF();
-        setPdfText('pdf-vtv-score', document.getElementById("vtv-score-value")?.innerText || "0%");
-        setPdfText('pdf-vtv-status', document.getElementById("vtv-score-label")?.innerText || "");
-        setPdfText('pdf-vtv-progress', document.getElementById("vtv-progress-text")?.innerText || "0/24");
-        document.getElementById('pdf-vtv-checklist-full').innerHTML = generateVTVChecklistFullPDF();
-        const workHistoryContainer = document.getElementById('pdf-work-history');
-        const recentWork = [...db].reverse().slice(0, 10);
-        workHistoryContainer.innerHTML = recentWork.map(r => {
-            const fecha = new Date(r.timestamp).toLocaleDateString('es-ES', {day:'2-digit', month:'short', year:'numeric'});
-            return `<div class="border border-slate-200 rounded-lg p-2 mb-2 bg-slate-50">
-                <p class="text-[8px] font-bold text-slate-600 mb-1">${r.unidad} - ${fecha}</p>
-                <p class="text-[9px] text-slate-700">${(r.trabajo || 'Sin detalles').replace(/\n/g, '<br>')}</p>
-            </div>`;
-        }).join('') || '<p class="text-slate-400 text-center">Sin historial reciente</p>';
-        const template = document.getElementById('pdf-report-template-enhanced');
-        template.classList.remove('hidden');
-        await new Promise(resolve => setTimeout(resolve, 400));
-        const opt = {
-            margin:[8,8,8,8],
-            filename:`NEXO-ART_Reporte_Completo_${last.unidad}_${now.toISOString().slice(0,10)}.pdf`,
-            image:{type:'jpeg',quality:0.98},
-            html2canvas:{scale:2,useCORS:true,windowWidth:794,logging:false,backgroundColor:'#ffffff'},
-            jsPDF:{unit:'mm',format:'a4',orientation:'portrait',compress:true}
-        };
-        await html2pdf().set(opt).from(template).save();
-        template.classList.add('hidden');
-        showToast("✅ PDF completo generado exitosamente","success");
-    } catch(error) {
-        console.error("Error PDF:", error);
-        showToast("❌ Error: "+error.message, "error");
-        const template = document.getElementById('pdf-report-template-enhanced');
-        if(template) template.classList.add('hidden');
-    } finally {
-        isGeneratingPDF = false;
-    }
+if(db.length===0) { showToast("⚠️ Sin datos para generar reporte","warning"); return; }
+if(isGeneratingPDF) { showToast("🔄 Ya se está generando un PDF","info"); return; }
+isGeneratingPDF = true;
+showToast("🔄 Generando reporte PDF completo...","info");
+const last = db[db.length - 1];
+const now = new Date();
+try {
+const setPdfText = (id, val) => { const el = document.getElementById(id); if(el) el.innerText = val; };
+setPdfText('pdf-fecha', now.toLocaleDateString('es-ES', {weekday:'long',year:'numeric',month:'long',day:'numeric',hour:'2-digit',minute:'2-digit'}));
+setPdfText('pdf-unidad', document.getElementById("card-unidad")?.innerText || "--");
+setPdfText('pdf-id', last.id||"--");
+setPdfText('pdf-motor', last.motor||"--");
+setPdfText('pdf-km', last.km?.toLocaleString()+" KM"||"--");
+setPdfText('pdf-rpm', document.getElementById("card-rpm")?.innerText || "--");
+setPdfText('pdf-last-reading', new Date(last.timestamp).toLocaleDateString('es-ES'));
+setPdfText('pdf-disp-val', document.getElementById("kpi-disp")?.innerText || "0%");
+setPdfText('pdf-trend-val', document.getElementById("trend-disp")?.innerText?.trim() || "");
+setPdfText('pdf-mtbf-val', document.getElementById("kpi-mtbf")?.innerText+"h" || "0h");
+setPdfText('pdf-mttr-val', document.getElementById("kpi-mttr")?.innerText+"h" || "0h");
+setPdfText('pdf-adv-desgaste', document.getElementById("adv-desgaste")?.innerText || "0");
+setPdfText('pdf-adv-termovib', document.getElementById("adv-termovib")?.innerText || "0");
+setPdfText('pdf-adv-inactividad', document.getElementById("adv-inactividad")?.innerText || "0%");
+setPdfText('pdf-adv-eficiencia', document.getElementById("adv-eficiencia")?.innerText || "0");
+setPdfText('pdf-adv-presion', document.getElementById("adv-presion")?.innerText || "0");
+setPdfText('pdf-adv-balance', document.getElementById("adv-balance")?.innerText || "0");
+setPdfText('pdf-adv-estres', document.getElementById("adv-estres")?.innerText || "0");
+setPdfText('pdf-adv-disp-op', document.getElementById("adv-disp-op")?.innerText || "0%");
+await renderChartForPDF();
+renderCorrelationForPDF();
+setPdfText('pdf-dataset-total', db.length.toString());
+document.getElementById('pdf-dataset-table').innerHTML = generateDatasetTableForPDF(db);
+renderDescribeForPDF();
+renderIAForPDF();
+setPdfText('pdf-vtv-score', document.getElementById("vtv-score-value")?.innerText || "0%");
+setPdfText('pdf-vtv-status', document.getElementById("vtv-score-label")?.innerText || "");
+setPdfText('pdf-vtv-progress', document.getElementById("vtv-progress-text")?.innerText || "0/24");
+document.getElementById('pdf-vtv-checklist-full').innerHTML = generateVTVChecklistFullPDF();
+const workHistoryContainer = document.getElementById('pdf-work-history');
+const recentWork = [...db].reverse().slice(0, 10);
+workHistoryContainer.innerHTML = recentWork.map(r => {
+const fecha = new Date(r.timestamp).toLocaleDateString('es-ES', {day:'2-digit', month:'short', year:'numeric'});
+return `<div class="border border-slate-200 rounded-lg p-2 mb-2 bg-slate-50">
+<p class="text-[8px] font-bold text-slate-600 mb-1">${r.unidad} - ${fecha}</p>
+<p class="text-[9px] text-slate-700">${(r.trabajo || 'Sin detalles').replace(/
+/g, '<br>')}</p>
+</div>`;
+}).join('') || '<p class="text-slate-400 text-center">Sin historial reciente</p>';
+const template = document.getElementById('pdf-report-template-enhanced');
+template.classList.remove('hidden');
+await new Promise(resolve => setTimeout(resolve, 400));
+const opt = {
+margin:[8,8,8,8],
+filename:`NEXO-ART_Reporte_Completo_${last.unidad}_${now.toISOString().slice(0,10)}.pdf`,
+image:{type:'jpeg',quality:0.98},
+html2canvas:{scale:2,useCORS:true,windowWidth:794,scrollX:0,scrollY:0,x:0,y:0,logging:false,backgroundColor:'#ffffff'},
+jsPDF:{unit:'mm',format:'a4',orientation:'portrait',compress:true}
+};
+await html2pdf().set(opt).from(template).save();
+template.classList.add('hidden');
+showToast("✅ PDF completo generado exitosamente","success");
+} catch(error) {
+console.error("Error PDF:", error);
+showToast("❌ Error: "+error.message, "error");
+const template = document.getElementById('pdf-report-template-enhanced');
+if(template) template.classList.add('hidden');
+} finally {
+isGeneratingPDF = false;
 }
-
+}
 async function exportSelectedPDF() {
-    const selected = getSelectedData();
-    if(selected.length === 0) { showToast("⚠️ Selecciona filas para exportar PDF","warning"); return; }
-    if(isGeneratingPDF) { showToast("🔄 Ya se está generando un PDF","info"); return; }
-    isGeneratingPDF = true;
-    showToast(`🔄 Generando PDF de ${selected.length} unidades...`,"info");
-    const template = document.getElementById('pdf-report-template-enhanced');
-    const now = new Date();
-    try {
-        document.getElementById('pdf-unidad').innerText = `${selected.length} unidades filtradas`;
-        document.getElementById('pdf-fecha').innerText = now.toLocaleDateString('es-ES', {weekday:'long',year:'numeric',month:'long',day:'numeric'});
-        document.getElementById('pdf-id').innerText = 'Filtro activo';
-        document.getElementById('pdf-motor').innerText = 'Múltiples';
-        document.getElementById('pdf-km').innerText = 'Ver dataset';
-        const totalUptime = selected.reduce((a,b)=>a+b.uptime,0);
-        const totalDowntime = selected.reduce((a,b)=>a+b.downtime,0);
-        const mtbf = totalUptime/selected.length;
-        const mttr = totalDowntime/selected.length;
-        const disp = (mtbf+mttr)>0 ? (mtbf/(mtbf+mttr))*100 : 0;
-        document.getElementById('pdf-disp-val').innerText = Math.round(disp)+'%';
-        document.getElementById('pdf-trend-val').innerText = disp>=85?'✅ Estable':'⚠️ Revisar';
-        document.getElementById('pdf-mtbf-val').innerText = mtbf.toFixed(1)+'h';
-        document.getElementById('pdf-mttr-val').innerText = mttr.toFixed(1)+'h';
-        const last = selected[selected.length-1];
-        const desgasteKm = last.uptime>0?(last.km/last.uptime).toFixed(2):0;
-        document.getElementById('pdf-adv-desgaste').innerText = desgasteKm;
-        document.getElementById('pdf-adv-termovib').innerText = last.rpm>0?((last.ta*last.vibracion)/last.rpm*1000).toFixed(2):0;
-        const totalHoras = last.uptime+last.downtime;
-        document.getElementById('pdf-adv-inactividad').innerText = totalHoras>0?((last.downtime/totalHoras)*100).toFixed(1)+'%':'0%';
-        document.getElementById('pdf-adv-eficiencia').innerText = last.ta>0?(last.rpm/last.ta).toFixed(1):0;
-        document.getElementById('pdf-adv-presion').innerText = ((last.psiDi+last.psiDd+last.psiTi+last.psiTd)/4).toFixed(1);
-        document.getElementById('pdf-adv-balance').innerText = '0.00';
-        document.getElementById('pdf-adv-estres').innerText = ((last.vibracion*last.rpm)/1000).toFixed(2);
-        document.getElementById('pdf-adv-disp-op').innerText = totalHoras>0?((last.uptime/totalHoras)*100).toFixed(1)+'%':'0%';
-        await renderChartForPDF(selected);
-        renderCorrelationForPDF(selected);
-        document.getElementById('pdf-dataset-total').innerText = selected.length.toString();
-        document.getElementById('pdf-dataset-table').innerHTML = generateDatasetTableForPDF(selected);
-        renderDescribeForPDF(selected);
-        renderIAForPDF(selected);
-        document.getElementById('pdf-vtv-score').innerText = document.getElementById('vtv-score-value')?.innerText || '0%';
-        document.getElementById('pdf-vtv-status').innerText = document.getElementById('vtv-score-label')?.innerText || '';
-        document.getElementById('pdf-vtv-progress').innerText = document.getElementById('vtv-progress-text')?.innerText || '0/24';
-        document.getElementById('pdf-vtv-checklist-full').innerHTML = generateVTVChecklistFullPDF();
-        const workHistoryContainer = document.getElementById('pdf-work-history');
-        workHistoryContainer.innerHTML = selected.map(r => {
-            const fecha = new Date(r.timestamp).toLocaleDateString('es-ES', {day:'2-digit', month:'short', year:'numeric'});
-            return `<div class="border border-slate-200 rounded-lg p-2 mb-2 bg-slate-50">
-                <p class="text-[8px] font-bold text-slate-600 mb-1">${r.unidad} - ${fecha}</p>
-                <p class="text-[9px] text-slate-700">${(r.trabajo || 'Sin detalles').replace(/\n/g, '<br>')}</p>
-            </div>`;
-        }).join('') || '<p class="text-slate-400 text-center">Sin detalles de trabajo</p>';
-        template.classList.remove('hidden');
-        await new Promise(resolve => setTimeout(resolve, 400));
-        const opt = {
-            margin:[8,8,8,8],
-            filename:`NEXO-ART_Filtrado_${selected.length}unidades_${now.toISOString().slice(0,10)}.pdf`,
-            image:{type:'jpeg',quality:0.98},
-            html2canvas:{scale:2,useCORS:true,windowWidth:794,logging:false,backgroundColor:'#ffffff'},
-            jsPDF:{unit:'mm',format:'a4',orientation:'portrait',compress:true}
-        };
-        await html2pdf().set(opt).from(template).save();
-        template.classList.add('hidden');
-        showToast(`✅ PDF de ${selected.length} unidades generado`,"success");
-    } catch(error) {
-        console.error("Error PDF filtrado:", error);
-        showToast("❌ Error: "+error.message, "error");
-        template.classList.add('hidden');
-    } finally {
-        isGeneratingPDF = false;
-    }
+const selected = getSelectedData();
+if(selected.length === 0) { showToast("⚠️ Selecciona filas para exportar PDF","warning"); return; }
+if(isGeneratingPDF) { showToast("🔄 Ya se está generando un PDF","info"); return; }
+isGeneratingPDF = true;
+showToast(`🔄 Generando PDF de ${selected.length} unidades...`,"info");
+const template = document.getElementById('pdf-report-template-enhanced');
+const now = new Date();
+try {
+document.getElementById('pdf-unidad').innerText = `${selected.length} unidades filtradas`;
+document.getElementById('pdf-fecha').innerText = now.toLocaleDateString('es-ES', {weekday:'long',year:'numeric',month:'long',day:'numeric'});
+document.getElementById('pdf-id').innerText = 'Filtro activo';
+document.getElementById('pdf-motor').innerText = 'Múltiples';
+document.getElementById('pdf-km').innerText = 'Ver dataset';
+const totalUptime = selected.reduce((a,b)=>a+b.uptime,0);
+const totalDowntime = selected.reduce((a,b)=>a+b.downtime,0);
+const mtbf = totalUptime/selected.length;
+const mttr = totalDowntime/selected.length;
+const disp = (mtbf+mttr)>0 ? (mtbf/(mtbf+mttr))*100 : 0;
+document.getElementById('pdf-disp-val').innerText = Math.round(disp)+'%';
+document.getElementById('pdf-trend-val').innerText = disp>=85?'✅ Estable':'⚠️ Revisar';
+document.getElementById('pdf-mtbf-val').innerText = mtbf.toFixed(1)+'h';
+document.getElementById('pdf-mttr-val').innerText = mttr.toFixed(1)+'h';
+const last = selected[selected.length-1];
+const desgasteKm = last.uptime>0?(last.km/last.uptime).toFixed(2):0;
+document.getElementById('pdf-adv-desgaste').innerText = desgasteKm;
+document.getElementById('pdf-adv-termovib').innerText = last.rpm>0?((last.ta*last.vibracion)/last.rpm*1000).toFixed(2):0;
+const totalHoras = last.uptime+last.downtime;
+document.getElementById('pdf-adv-inactividad').innerText = totalHoras>0?((last.downtime/totalHoras)*100).toFixed(1)+'%':'0%';
+document.getElementById('pdf-adv-eficiencia').innerText = last.ta>0?(last.rpm/last.ta).toFixed(1):0;
+document.getElementById('pdf-adv-presion').innerText = ((last.psiDi+last.psiDd+last.psiTi+last.psiTd)/4).toFixed(1);
+document.getElementById('pdf-adv-balance').innerText = '0.00';
+document.getElementById('pdf-adv-estres').innerText = ((last.vibracion*last.rpm)/1000).toFixed(2);
+document.getElementById('pdf-adv-disp-op').innerText = totalHoras>0?((last.uptime/totalHoras)*100).toFixed(1)+'%':'0%';
+await renderChartForPDF(selected);
+renderCorrelationForPDF(selected);
+document.getElementById('pdf-dataset-total').innerText = selected.length.toString();
+document.getElementById('pdf-dataset-table').innerHTML = generateDatasetTableForPDF(selected);
+renderDescribeForPDF(selected);
+renderIAForPDF(selected);
+document.getElementById('pdf-vtv-score').innerText = document.getElementById('vtv-score-value')?.innerText || '0%';
+document.getElementById('pdf-vtv-status').innerText = document.getElementById('vtv-score-label')?.innerText || '';
+document.getElementById('pdf-vtv-progress').innerText = document.getElementById('vtv-progress-text')?.innerText || '0/24';
+document.getElementById('pdf-vtv-checklist-full').innerHTML = generateVTVChecklistFullPDF();
+const workHistoryContainer = document.getElementById('pdf-work-history');
+workHistoryContainer.innerHTML = selected.map(r => {
+const fecha = new Date(r.timestamp).toLocaleDateString('es-ES', {day:'2-digit', month:'short', year:'numeric'});
+return `<div class="border border-slate-200 rounded-lg p-2 mb-2 bg-slate-50">
+<p class="text-[8px] font-bold text-slate-600 mb-1">${r.unidad} - ${fecha}</p>
+<p class="text-[9px] text-slate-700">${(r.trabajo || 'Sin detalles').replace(/
+/g, '<br>')}</p>
+</div>`;
+}).join('') || '<p class="text-slate-400 text-center">Sin detalles de trabajo</p>';
+template.classList.remove('hidden');
+await new Promise(resolve => setTimeout(resolve, 400));
+const opt = {
+margin:[8,8,8,8],
+filename:`NEXO-ART_Filtrado_${selected.length}unidades_${now.toISOString().slice(0,10)}.pdf`,
+image:{type:'jpeg',quality:0.98},
+html2canvas:{scale:2,useCORS:true,windowWidth:794,scrollX:0,scrollY:0,x:0,y:0,logging:false,backgroundColor:'#ffffff'},
+jsPDF:{unit:'mm',format:'a4',orientation:'portrait',compress:true}
+};
+await html2pdf().set(opt).from(template).save();
+template.classList.add('hidden');
+showToast(`✅ PDF de ${selected.length} unidades generado`,"success");
+} catch(error) {
+console.error("Error PDF filtrado:", error);
+showToast("❌ Error: "+error.message, "error");
+template.classList.add('hidden');
+} finally {
+isGeneratingPDF = false;
 }
-
+}
 // === FUNCIONES AUXILIARES PARA PDF ===
 async function renderChartForPDF(data = null) {
-    const pdfCanvas = document.getElementById('pdf-timeline-chart');
-    if(!pdfCanvas) return;
-    const source = data || db;
-    if(source.length === 0) return;
-    const ctx = pdfCanvas.getContext('2d');
-    pdfCanvas.width = 760;
-    pdfCanvas.height = 180;
-    const labels = source.map(d => new Date(d.timestamp).toLocaleDateString('es-ES', {day:'2-digit',month:'short'}));
-    const uptimeData = source.map(d => d.uptime);
-    const downtimeData = source.map(d => d.downtime);
-    const dispData = source.map(d => (d.uptime+d.downtime)>0?((d.uptime/(d.uptime+d.downtime))*100).toFixed(1):0);
-    if(window._pdfChart) window._pdfChart.destroy();
-    // ✅ CORREGIDO: Agregada la clave 'data:' que faltaba
-    window._pdfChart = new Chart(ctx, {
-        type:'line',
-        data: {
-            labels: labels,
-            datasets: [
-                {label:'Disponibilidad %',data:dispData,borderColor:'#06b6d4',backgroundColor:'rgba(6,182,212,0.15)',borderWidth:2.5,tension:0.4,yAxisID:'y1',fill:true,pointRadius:3},
-                {label:'Uptime (h)',data:uptimeData,borderColor:'#14b8a6',borderDash:[5,5],borderWidth:2,tension:0.3,yAxisID:'y',pointRadius:0},
-                {label:'Downtime (h)',data:downtimeData,borderColor:'#f97316',borderWidth:2,tension:0.3,yAxisID:'y',pointRadius:0}
-            ]
-        },
-        options:{
-            responsive:false,
-            maintainAspectRatio:false,
-            interaction:{mode:'index',intersect:false},
-            plugins:{legend:{labels:{color:'#334155',font:{size:9,weight:'bold'}},position:'bottom'},tooltip:{backgroundColor:'rgba(15,23,42,0.9)'}},
-            scales:{
-                x:{ticks:{color:'#64748b',font:{size:8}},grid:{color:'#e2e8f0'}},
-                y:{type:'linear',display:true,position:'left',title:{display:true,text:'Horas',color:'#475569'},ticks:{color:'#475569',font:{size:8}},grid:{color:'#e2e8f0'}},
-                y1:{type:'linear',display:true,position:'right',title:{display:true,text:'%',color:'#0891b2'},ticks:{color:'#0891b2',font:{size:8}},grid:{drawOnChartArea:false}}
-            }
-        }
-    });
-    await new Promise(resolve => setTimeout(resolve, 200));
+const pdfCanvas = document.getElementById('pdf-timeline-chart');
+if(!pdfCanvas) return;
+const source = data || db;
+if(source.length === 0) return;
+const ctx = pdfCanvas.getContext('2d');
+pdfCanvas.width = 760;
+pdfCanvas.height = 180;
+const labels = source.map(d => new Date(d.timestamp).toLocaleDateString('es-ES', {day:'2-digit',month:'short'}));
+const uptimeData = source.map(d => d.uptime);
+const downtimeData = source.map(d => d.downtime);
+const dispData = source.map(d => (d.uptime+d.downtime)>0?((d.uptime/(d.uptime+d.downtime))*100).toFixed(1):0);
+if(window._pdfChart) window._pdfChart.destroy();
+window._pdfChart = new Chart(ctx, {
+type:'line',
+ {
+labels: labels,
+datasets: [
+{label:'Disponibilidad %',dispData,borderColor:'#06b6d4',backgroundColor:'rgba(6,182,212,0.15)',borderWidth:2.5,tension:0.4,yAxisID:'y1',fill:true,pointRadius:3},
+{label:'Uptime (h)',uptimeData,borderColor:'#14b8a6',borderDash:[5,5],borderWidth:2,tension:0.3,yAxisID:'y',pointRadius:0},
+{label:'Downtime (h)',data:downtimeData,borderColor:'#f97316',borderWidth:2,tension:0.3,yAxisID:'y',pointRadius:0}
+]
+},
+options:{
+responsive:false,maintainAspectRatio:false,interaction:{mode:'index',intersect:false},
+plugins:{legend:{labels:{color:'#334155',font:{size:9,weight:'bold'}},position:'bottom'},tooltip:{backgroundColor:'rgba(15,23,42,0.9)'}},
+scales:{x:{ticks:{color:'#64748b',font:{size:8}},grid:{color:'#e2e8f0'}},y:{type:'linear',display:true,position:'left',title:{display:true,text:'Horas',color:'#475569'},ticks:{color:'#475569',font:{size:8}},grid:{color:'#e2e8f0'}},y1:{type:'linear',display:true,position:'right',title:{display:true,text:'%',color:'#0891b2'},ticks:{color:'#0891b2',font:{size:8}},grid:{drawOnChartArea:false}}}
 }
-
+});
+await new Promise(resolve => setTimeout(resolve, 200));
+}
 function renderCorrelationForPDF(data = null) {
-    const container = document.getElementById('pdf-correlation-matrix');
-    if(!container) return;
-    const source = data || db;
-    if(source.length < 2) { container.innerHTML = '<p class="text-center py-3 text-slate-400 text-[8px]">Sin datos suficientes</p>'; return; }
-    const variables = ['km','uptime','downtime','vibracion','ta','rpm','psiDi'];
-    const labels = ['KM','UP','DOWN','VIB','TEMP','RPM','PSI'];
-    let html = '<table class="w-full border-collapse text-[8px]"><tr><td class="p-1.5"></td>';
-    html += labels.map(l => `<td class="p-1.5 font-bold text-slate-600 text-center border-b border-slate-300 font-tech">${l}</td>`).join('') + '</tr>';
-    for(let i=0; i<variables.length; i++) {
-        html += `<tr><td class="p-1.5 font-bold text-slate-600 text-right pr-2 border-r border-slate-300 font-tech">${labels[i]}</td>`;
-        for(let j=0; j<variables.length; j++) {
-            const arr1 = source.map(d => d[variables[i]]||0);
-            const arr2 = source.map(d => d[variables[j]]||0);
-            const val = pearsonCorrelation(arr1, arr2);
-            const opacity = Math.min(Math.abs(val), 1);
-            let bg, fg;
-            if(i === j) { bg = '#e2e8f0'; fg = '#64748b'; }
-            else if(val > 0) { bg = `rgba(6,182,212,${opacity*0.8})`; fg = opacity > 0.5 ? 'white' : '#0f172a'; }
-            else { bg = `rgba(244,63,94,${opacity*0.8})`; fg = opacity > 0.5 ? 'white' : '#0f172a'; }
-            html += `<td class="p-1.5 border border-slate-200 text-center font-medium" style="background-color:${bg};color:${fg}">${val.toFixed(2)}</td>`;
-        }
-        html += '</tr>';
-    }
-    html += '</table>';
-    container.innerHTML = html;
+const container = document.getElementById('pdf-correlation-matrix');
+if(!container) return;
+const source = data || db;
+if(source.length < 2) { container.innerHTML = '<p class="text-center py-3 text-slate-400 text-[8px]">Sin datos suficientes</p>'; return; }
+const extSource = source.map(row => ({...row, ...getSyntheticMetrics(row)}));
+const variables = ['km','uptime','downtime','vibracion','ta','rpm','psiDi','desgaste','termovib','eficiencia','estres'];
+const labels = ['KM','UP','DOWN','VIB','TEMP','RPM','PSI','Desg/km','TermoVib','Ef.Térm','Est.Mec'];
+let html = '<table class="w-full border-collapse text-[8px]"><tr><td class="p-1.5"></td>';
+html += labels.map(l => `<td class="p-1.5 font-bold text-slate-600 text-center border-b border-slate-300 font-tech">${l}</td>`).join('') + '</tr>';
+for(let i=0; i<variables.length; i++) {
+html += `<tr><td class="p-1.5 font-bold text-slate-600 text-right pr-2 border-r border-slate-300 font-tech">${labels[i]}</td>`;
+for(let j=0; j<variables.length; j++) {
+const arr1 = extSource.map(d => d[variables[i]]||0);
+const arr2 = extSource.map(d => d[variables[j]]||0);
+const val = pearsonCorrelation(arr1, arr2);
+const opacity = Math.min(Math.abs(val), 1);
+let bg, fg;
+if(i === j) { bg = '#e2e8f0'; fg = '#64748b'; }
+else if(val > 0) { bg = `rgba(6,182,212,${opacity*0.8})`; fg = opacity > 0.5 ? 'white' : '#0f172a'; }
+else { bg = `rgba(244,63,94,${opacity*0.8})`; fg = opacity > 0.5 ? 'white' : '#0f172a'; }
+html += `<td class="p-1.5 border border-slate-200 text-center font-medium" style="background-color:${bg};color:${fg}">${val.toFixed(2)}</td>`;
 }
-
+html += '</tr>';
+}
+html += '</table>';
+container.innerHTML = html;
+}
 function renderDescribeForPDF(data = null) {
-    const container = document.getElementById('pdf-describe-container');
-    if(!container) return;
-    const stats = calculateDescribeStats(data);
-    if(!stats||Object.keys(stats).length===0) { container.innerHTML='<p class="text-center py-3 text-slate-400 text-[8px]">Sin datos</p>'; return; }
-    const metrics=[{key:'count',label:'count'},{key:'mean',label:'mean'},{key:'std',label:'std'},{key:'min',label:'min'},{key:'25%',label:'25%'},{key:'50%',label:'50%'},{key:'75%',label:'75%'},{key:'max',label:'max'}];
-    const columns=Object.keys(stats);
-    let html='<table class="w-full border-collapse text-[8px]">';
-    html+='<thead><tr class="bg-slate-100"><th class="p-1.5 text-left font-bold text-slate-600 border border-slate-300 font-tech">Estadística</th>';
-    columns.forEach(col => { html+=`<th class="p-1.5 text-center font-bold text-slate-600 border border-slate-300 font-tech">${stats[col].label}</th>`; });
-    html+='</tr></thead><tbody>';
-    metrics.forEach(metric => {
-        html+=`<tr class="${metric.key==='mean'?'bg-cyan-50':metric.key==='std'?'bg-purple-50':''}">`;
-        html+=`<td class="p-1.5 font-bold text-slate-700 border border-slate-300 font-tech">${metric.label}</td>`;
-        columns.forEach(col => { html+=`<td class="p-1.5 text-center border border-slate-300 ${metric.key==='mean'?'text-cyan-700 font-bold':metric.key==='std'?'text-purple-700':''}">${stats[col][metric.key]}</td>`; });
-        html+='</tr>';
-    });
-    html+='</tbody></table>';
-    container.innerHTML=html;
+const container = document.getElementById('pdf-describe-container');
+if(!container) return;
+const stats = calculateDescribeStats(data);
+if(!stats||Object.keys(stats).length===0) { container.innerHTML='<p class="text-center py-3 text-slate-400 text-[8px]">Sin datos</p>'; return; }
+const metrics=[{key:'count',label:'count'},{key:'mean',label:'mean'},{key:'std',label:'std'},{key:'min',label:'min'},{key:'25%',label:'25%'},{key:'50%',label:'50%'},{key:'75%',label:'75%'},{key:'max',label:'max'}];
+const columns=Object.keys(stats);
+let html='<table class="w-full border-collapse text-[8px]">';
+html+='<thead><tr class="bg-slate-100"><th class="p-1.5 text-left font-bold text-slate-600 border border-slate-300 font-tech">Estadística</th>';
+columns.forEach(col => { html+=`<th class="p-1.5 text-center font-bold text-slate-600 border border-slate-300 font-tech">${stats[col].label}</th>`; });
+html+='</tr></thead><tbody>';
+metrics.forEach(metric => {
+html+=`<tr class="${metric.key==='mean'?'bg-cyan-50':metric.key==='std'?'bg-purple-50':''}">`;
+html+=`<td class="p-1.5 font-bold text-slate-700 border border-slate-300 font-tech">${metric.label}</td>`;
+columns.forEach(col => { html+=`<td class="p-1.5 text-center border border-slate-300 ${metric.key==='mean'?'text-cyan-700 font-bold':metric.key==='std'?'text-purple-700':''}">${stats[col][metric.key]}</td>`; });
+html+='</tr>';
+});
+html+='</tbody></table>';
+container.innerHTML=html;
 }
-
 function renderIAForPDF(data = null) {
-    const recContainer=document.getElementById('pdf-ia-recommendations');
-    const obsContainer=document.getElementById('pdf-observaciones');
-    if(!recContainer||!obsContainer) return;
-    const source = data || db;
-    if(source.length===0) { recContainer.innerHTML='<p class="text-slate-400 text-[8px]">Sin datos</p>'; return; }
-    const last=source[source.length-1];
-    let html='';
-    if(last.motor.toLowerCase().includes("diesel")) {
-        html+=`<div class="bg-cyan-50 border border-cyan-200 rounded-lg p-2 mb-2"><p class="text-[8px] font-bold text-cyan-700 font-tech">🔧 Diagnóstico: Motor Diésel</p><p class="text-[7px] text-slate-600 mt-1">Mayor eficiencia térmica pero costos de reparación 20-25% más elevados.</p></div>`;
-    } else {
-        html+=`<div class="bg-teal-50 border border-teal-200 rounded-lg p-2 mb-2"><p class="text-[8px] font-bold text-teal-700 font-tech">⛽ Diagnóstico: Motor Gasolina</p><p class="text-[7px] text-slate-600 mt-1">Ideal para uso urbano con mantenimiento económico.</p></div>`;
-    }
-    const estres=parseFloat(document.getElementById('adv-estres')?.innerText||0);
-    const eficiencia=parseFloat(document.getElementById('adv-eficiencia')?.innerText||0);
-    const cicloVib=parseFloat(document.getElementById('adv-termovib')?.innerText||0);
-    html+=`<div class="bg-purple-50 border border-purple-200 rounded-lg p-2 mb-2"><p class="text-[8px] font-bold text-purple-700 font-tech">🧠 Análisis de Variables Sintéticas</p><p class="text-[7px] text-slate-600 mt-1">• Estrés mecánico: <strong>${estres}</strong> ${estres>10?'⚠️ ELEVADO':'✅ Normal'}</p><p class="text-[7px] text-slate-600">• Eficiencia térmica: <strong>${eficiencia}</strong> ${eficiencia<30?'⚠️ BAJA':'✅ Buena'}</p><p class="text-[7px] text-slate-600">• Ciclo termovibracional: <strong>${cicloVib}</strong></p></div>`;
-    let alertas=[];
-    if(last.ta>105) alertas.push({icon:'🔥',text:`Temp crítica: ${last.ta}°C`,color:'bg-rose-50 border-rose-300 text-rose-800'});
-    else if(last.ta>95) alertas.push({icon:'⚠️',text:`Temp elevada: ${last.ta}°C`,color:'bg-orange-50 border-orange-300 text-orange-800'});
-    if(last.vibracion>=5.0) alertas.push({icon:'〰️',text:`Vibración: ${last.vibracion} mm/s`,color:'bg-rose-50 border-rose-300 text-rose-800'});
-    if(last.km>=60000) alertas.push({icon:'🔧',text:`KM crítico: ${last.km.toLocaleString()}`,color:'bg-indigo-50 border-indigo-300 text-indigo-800'});
-    const failedVTV=VTV_ITEMS.filter(i=>!vtvState[i.id]);
-    if(failedVTV.length>0) alertas.push({icon:'📋',text:`${failedVTV.length} ítems VTV pendientes`,color:'bg-amber-50 border-amber-300 text-amber-800'});
-    if(alertas.length>0) {
-        html+=`<div class="mt-2"><p class="text-[8px] font-bold text-rose-700 mb-1 font-tech">⚡ Alertas:</p>`;
-        alertas.forEach(a => { html+=`<div class="flex items-start gap-2 p-1.5 rounded border-l-4 ${a.color} mb-1"><span class="text-base">${a.icon}</span><p class="text-[7px] leading-tight">${a.text}</p></div>`; });
-        html+='</div>';
-    }
-    recContainer.innerHTML=html;
-    obsContainer.innerHTML=alertas.length===0?'<div class="bg-emerald-50 border border-emerald-300 rounded-lg p-2"><p class="text-[8px] text-emerald-700 font-bold">✅ Todos los parámetros óptimos</p></div>':'';
+const recContainer=document.getElementById('pdf-ia-recommendations');
+const obsContainer=document.getElementById('pdf-observaciones');
+if(!recContainer||!obsContainer) return;
+const source = data || db;
+if(source.length===0) { recContainer.innerHTML='<p class="text-slate-400 text-[8px]">Sin datos</p>'; return; }
+const last=source[source.length-1];
+let html='';
+if(last.motor.toLowerCase().includes("diesel")) {
+html+=`<div class="bg-cyan-50 border border-cyan-200 rounded-lg p-2 mb-2"><p class="text-[8px] font-bold text-cyan-700 font-tech">🔧 Diagnóstico: Motor Diésel</p><p class="text-[7px] text-slate-600 mt-1">Mayor eficiencia térmica pero costos de reparación 20-25% más elevados.</p></div>`;
+} else {
+html+=`<div class="bg-teal-50 border border-teal-200 rounded-lg p-2 mb-2"><p class="text-[8px] font-bold text-teal-700 font-tech">⛽ Diagnóstico: Motor Gasolina</p><p class="text-[7px] text-slate-600 mt-1">Ideal para uso urbano con mantenimiento económico.</p></div>`;
 }
-
+const estres=parseFloat(document.getElementById('adv-estres')?.innerText||0);
+const eficiencia=parseFloat(document.getElementById('adv-eficiencia')?.innerText||0);
+const cicloVib=parseFloat(document.getElementById('adv-termovib')?.innerText||0);
+html+=`<div class="bg-purple-50 border border-purple-200 rounded-lg p-2 mb-2"><p class="text-[8px] font-bold text-purple-700 font-tech">🧠 Análisis de Variables Sintéticas</p><p class="text-[7px] text-slate-600 mt-1">• Estrés mecánico: <strong>${estres}</strong> ${estres>10?'⚠️ ELEVADO':'✅ Normal'}</p><p class="text-[7px] text-slate-600">• Eficiencia térmica: <strong>${eficiencia}</strong> ${eficiencia<30?'⚠️ BAJA':'✅ Buena'}</p><p class="text-[7px] text-slate-600">• Ciclo termovibracional: <strong>${cicloVib}</strong></p></div>`;
+let alertas=[];
+if(last.ta>105) alertas.push({icon:'🔥',text:`Temp crítica: ${last.ta}°C`,color:'bg-rose-50 border-rose-300 text-rose-800'});
+else if(last.ta>95) alertas.push({icon:'⚠️',text:`Temp elevada: ${last.ta}°C`,color:'bg-orange-50 border-orange-300 text-orange-800'});
+if(last.vibracion>=5.0) alertas.push({icon:'〰️',text:`Vibración: ${last.vibracion} mm/s`,color:'bg-rose-50 border-rose-300 text-rose-800'});
+if(last.km>=60000) alertas.push({icon:'🔧',text:`KM crítico: ${last.km.toLocaleString()}`,color:'bg-indigo-50 border-indigo-300 text-indigo-800'});
+const failedVTV=VTV_ITEMS.filter(i=>!vtvState[i.id]);
+if(failedVTV.length>0) alertas.push({icon:'📋',text:`${failedVTV.length} ítems VTV pendientes`,color:'bg-amber-50 border-amber-300 text-amber-800'});
+if(alertas.length>0) {
+html+=`<div class="mt-2"><p class="text-[8px] font-bold text-rose-700 mb-1 font-tech">⚡ Alertas:</p>`;
+alertas.forEach(a => { html+=`<div class="flex items-start gap-2 p-1.5 rounded border-l-4 ${a.color} mb-1"><span class="text-base">${a.icon}</span><p class="text-[7px] leading-tight">${a.text}</p></div>`; });
+html+='</div>';
+}
+recContainer.innerHTML=html;
+obsContainer.innerHTML=alertas.length===0?'<div class="bg-emerald-50 border border-emerald-300 rounded-lg p-2"><p class="text-[8px] text-emerald-700 font-bold">✅ Todos los parámetros óptimos</p></div>':'';
+}
 function generateVTVChecklistFullPDF() {
-    let html='<div class="grid grid-cols-2 gap-3">';
-    VTV_CATEGORIES.forEach(cat => {
-        const items=VTV_ITEMS_MAP[cat.id]||[];
-        if(items.length===0) return;
-        const checked=items.filter(i=>vtvState[i.id]).length;
-        const total=items.length;
-        const pct=Math.round((checked/total)*100);
-        html+=`<div class="border border-slate-200 rounded-lg p-2 bg-slate-50"><p class="text-[7px] font-bold text-slate-600 mb-1 font-tech">${cat.emoji} ${cat.title} (${checked}/${total})</p><div class="space-y-0.5">`;
-        items.forEach(item => {
-            const isChecked=vtvState[item.id];
-            html+=`<div class="flex items-center gap-1.5 text-[7px]"><span class="w-2.5 h-2.5 rounded-sm ${isChecked?'bg-cyan-500':'bg-slate-300'} flex items-center justify-center text-white text-[5px]">${isChecked?'✓':''}</span><span class="${isChecked?'text-slate-700':'text-rose-500'}">${item.label}</span></div>`;
-        });
-        html+=`</div><div class="mt-1 w-full h-1 bg-slate-200 rounded"><div class="h-full rounded ${pct===100?'bg-emerald-500':pct>=50?'bg-amber-500':'bg-rose-500'}" style="width:${pct}%"></div></div></div>`;
-    });
-    html+='</div>';
-    return html;
+let html='<div class="grid grid-cols-2 gap-3">';
+VTV_CATEGORIES.forEach(cat => {
+const items=VTV_ITEMS_MAP[cat.id]||[];
+if(items.length===0) return;
+const checked=items.filter(i=>vtvState[i.id]).length;
+const total=items.length;
+const pct=Math.round((checked/total)*100);
+html+=`<div class="border border-slate-200 rounded-lg p-2 bg-slate-50"><p class="text-[7px] font-bold text-slate-600 mb-1 font-tech">${cat.emoji} ${cat.title} (${checked}/${total})</p><div class="space-y-0.5">`;
+items.forEach(item => {
+const isChecked=vtvState[item.id];
+html+=`<div class="flex items-center gap-1.5 text-[7px]"><span class="w-2.5 h-2.5 rounded-sm ${isChecked?'bg-cyan-500':'bg-slate-300'} flex items-center justify-center text-white text-[5px]">${isChecked?'✓':''}</span><span class="${isChecked?'text-slate-700':'text-rose-500'}">${item.label}</span></div>`;
+});
+html+=`</div><div class="mt-1 w-full h-1 bg-slate-200 rounded"><div class="h-full rounded ${pct===100?'bg-emerald-500':pct>=50?'bg-amber-500':'bg-rose-500'}" style="width:${pct}%"></div></div></div>`;
+});
+html+='</div>';
+return html;
 }
-
 function generateDatasetTableForPDF(data) {
-    if(data.length===0) return '<tr><td colspan="12" class="text-center py-3 text-slate-500 text-[7px]">Sin datos</td></tr>';
-    const headers=['Unidad','Motor','KM','UP','DOWN','VIB','TEMP','RPM','PSI-DI','PSI-DD','Trabajo','Fecha'];
-    let html='<thead><tr class="bg-slate-100">';
-    headers.forEach(h => { html+=`<th class="border border-slate-300 px-1 py-1 text-left font-bold text-slate-700 text-[7px]">${h}</th>`; });
-    html+='</tr></thead><tbody>';
-    data.forEach(row => {
-        const fecha=new Date(row.timestamp).toLocaleDateString('es-ES',{day:'2-digit',month:'2-digit',hour:'2-digit'});
-        html+=`<tr><td class="border border-slate-200 px-1 py-1 font-medium text-[7px]">${row.unidad}</td><td class="border border-slate-200 px-1 py-1 text-[7px]">${row.motor}</td><td class="border border-slate-200 px-1 py-1 text-right text-[7px]">${row.km?.toLocaleString()}</td><td class="border border-slate-200 px-1 py-1 text-right text-[7px]">${row.uptime}</td><td class="border border-slate-200 px-1 py-1 text-right text-[7px]">${row.downtime}</td><td class="border border-slate-200 px-1 py-1 text-right text-[7px]">${row.vibracion}</td><td class="border border-slate-200 px-1 py-1 text-right text-[7px]">${row.ta}</td><td class="border border-slate-200 px-1 py-1 text-right text-[7px]">${row.rpm}</td><td class="border border-slate-200 px-1 py-1 text-right text-[7px]">${row.psiDi}</td><td class="border border-slate-200 px-1 py-1 text-right text-[7px]">${row.psiDd}</td><td class="border border-slate-200 px-1 py-1 text-[7px]">${(row.trabajo||'-').substring(0,20)}</td><td class="border border-slate-200 px-1 py-1 text-[7px]">${fecha}</td></tr>`;
-    });
-    html+='</tbody>';
-    return html;
+if(data.length===0) return '<tr><td colspan="12" class="text-center py-3 text-slate-500 text-[7px]">Sin datos</td></tr>';
+const headers=['Unidad','Motor','KM','UP','DOWN','VIB','TEMP','RPM','PSI-DI','PSI-DD','Trabajo','Fecha'];
+let html='<thead><tr class="bg-slate-100">';
+headers.forEach(h => { html+=`<th class="border border-slate-300 px-1 py-1 text-left font-bold text-slate-700 text-[7px]">${h}</th>`; });
+html+='</tr></thead><tbody>';
+data.forEach(row => {
+const fecha=new Date(row.timestamp).toLocaleDateString('es-ES',{day:'2-digit',month:'2-digit',hour:'2-digit'});
+html+=`<tr><td class="border border-slate-200 px-1 py-1 font-medium text-[7px]">${row.unidad}</td><td class="border border-slate-200 px-1 py-1 text-[7px]">${row.motor}</td><td class="border border-slate-200 px-1 py-1 text-right text-[7px]">${row.km?.toLocaleString()}</td><td class="border border-slate-200 px-1 py-1 text-right text-[7px]">${row.uptime}</td><td class="border border-slate-200 px-1 py-1 text-right text-[7px]">${row.downtime}</td><td class="border border-slate-200 px-1 py-1 text-right text-[7px]">${row.vibracion}</td><td class="border border-slate-200 px-1 py-1 text-right text-[7px]">${row.ta}</td><td class="border border-slate-200 px-1 py-1 text-right text-[7px]">${row.rpm}</td><td class="border border-slate-200 px-1 py-1 text-right text-[7px]">${row.psiDi}</td><td class="border border-slate-200 px-1 py-1 text-right text-[7px]">${row.psiDd}</td><td class="border border-slate-200 px-1 py-1 text-[7px]">${(row.trabajo||'-').substring(0,20)}</td><td class="border border-slate-200 px-1 py-1 text-[7px]">${fecha}</td></tr>`;
+});
+html+='</tbody>';
+return html;
 }
-
 // === CHECKLIST VTV ===
 function renderVTVChecklist() {
-    const container = document.getElementById('vtv-checklist-container');
-    if(!container) return;
-    let html = '';
-    VTV_CATEGORIES.forEach(cat => {
-        const items = VTV_ITEMS_MAP[cat.id] || [];
-        if(items.length === 0) return;
-        html += `<div class="vtv-category"><div class="vtv-category-title"><i class="fas ${cat.icon} ${cat.color}"></i> ${cat.emoji} ${cat.title}</div><div class="space-y-0.5">`;
-        items.forEach(item => {
-            const checked = vtvState[item.id] || false;
-            html += `<input type="checkbox" id="vtv-${item.id}" class="vtv-check" ${checked ? 'checked' : ''} onchange="toggleVTVItem('${item.id}')">
-                <label for="vtv-${item.id}" class="vtv-label">
-                    <span class="vtv-icon"><i class="fas ${checked ? 'fa-check' : cat.icon}"></i></span>
-                    <span>${item.label}</span>
-                </label>`;
-        });
-        html += '</div></div>';
-    });
-    container.innerHTML = html;
-    updateVTVScore();
+const container = document.getElementById('vtv-checklist-container');
+if(!container) return;
+let html = '';
+VTV_CATEGORIES.forEach(cat => {
+const items = VTV_ITEMS_MAP[cat.id] || [];
+if(items.length === 0) return;
+html += `<div class="vtv-category"><div class="vtv-category-title"><i class="fas ${cat.icon} ${cat.color}"></i> ${cat.emoji} ${cat.title}</div><div class="space-y-0.5">`;
+items.forEach(item => {
+const checked = vtvState[item.id] || false;
+html += `<input type="checkbox" id="vtv-${item.id}" class="vtv-check" ${checked ? 'checked' : ''} onchange="toggleVTVItem('${item.id}')">
+<label for="vtv-${item.id}" class="vtv-label">
+<span class="vtv-icon"><i class="fas ${checked ? 'fa-check' : cat.icon}"></i></span>
+<span>${item.label}</span>
+</label>`;
+});
+html += '</div></div>';
+});
+container.innerHTML = html;
+updateVTVScore();
 }
-
 function toggleVTVItem(id) {
-    const cb = document.getElementById(`vtv-${id}`);
-    if(!cb) return;
-    vtvState[id] = cb.checked;
-    const icon = cb.nextElementSibling?.querySelector('.vtv-icon i');
-    if(icon) {
-        const item = VTV_ITEMS.find(i => i.id === id);
-        icon.className = `fas ${cb.checked ? 'fa-check' : (item ? item.icon : 'fa-question')}`;
-    }
-    saveVTVState();
-    updateVTVScore();
+const cb = document.getElementById(`vtv-${id}`);
+if(!cb) return;
+vtvState[id] = cb.checked;
+const icon = cb.nextElementSibling?.querySelector('.vtv-icon i');
+if(icon) {
+const item = VTV_ITEMS.find(i => i.id === id);
+icon.className = `fas ${cb.checked ? 'fa-check' : (item ? item.icon : 'fa-question')}`;
 }
-
+saveVTVState();
+updateVTVScore();
+}
 function resetVTVChecklist() {
-    if(confirm('¿Limpiar todo el checklist VTV?')) {
-        VTV_ITEMS.forEach(i => { vtvState[i.id] = false; });
-        localStorage.removeItem(VTV_KEY);
-        renderVTVChecklist();
-        showToast('🗑️ Checklist VTV limpiado', 'warning');
-    }
+if(confirm('¿Limpiar todo el checklist VTV?')) {
+VTV_ITEMS.forEach(i => { vtvState[i.id] = false; });
+localStorage.removeItem(VTV_KEY);
+renderVTVChecklist();
+showToast('🗑️ Checklist VTV limpiado', 'warning');
 }
-
+}
 function updateVTVScore() {
-    const total = VTV_ITEMS.length;
-    const checked = VTV_ITEMS.filter(i => vtvState[i.id]).length;
-    const unchecked = total - checked;
-    const pct = Math.round((checked / total) * 100);
-    const ring = document.getElementById('vtv-score-ring');
-    if(ring) ring.style.setProperty('--score-pct', `${pct}%`);
-    const scoreVal = document.getElementById('vtv-score-value');
-    if(scoreVal) scoreVal.innerText = `${pct}%`;
-    const bar = document.getElementById('vtv-progress-bar');
-    if(bar) {
-        bar.style.width = `${pct}%`;
-        if(pct >= 80) bar.style.background = 'linear-gradient(90deg,#06b6d4,#10b981)';
-        else if(pct >= 50) bar.style.background = 'linear-gradient(90deg,#f59e0b,#06b6d4)';
-        else bar.style.background = 'linear-gradient(90deg,#ef4444,#f59e0b)';
-    }
-    const progText = document.getElementById('vtv-progress-text');
-    if(progText) progText.innerText = `${checked}/${total}`;
-    const passed = document.getElementById('vtv-passed');
-    if(passed) passed.innerText = checked;
-    const failed = document.getElementById('vtv-failed');
-    if(failed) failed.innerText = unchecked;
-    const label = document.getElementById('vtv-score-label');
-    if(label) {
-        if(pct === 100) { label.innerText = '✅ APTO PARA VTV'; label.className = 'text-[8px] text-emerald-400 font-bold'; }
-        else if(pct >= 80) { label.innerText = '🟡 Casi listo'; label.className = 'text-[8px] text-amber-400'; }
-        else if(pct >= 50) { label.innerText = '🟠 En proceso'; label.className = 'text-[8px] text-orange-400'; }
-        else { label.innerText = '🔴 Falta mucho'; label.className = 'text-[8px] text-rose-400'; }
-    }
-    const alertsContainer = document.getElementById('vtv-alerts');
-    const alertsList = document.getElementById('vtv-alerts-list');
-    const allClear = document.getElementById('vtv-all-clear');
-    if(unchecked === 0) {
-        if(alertsContainer) alertsContainer.classList.add('hidden');
-        if(allClear) allClear.classList.remove('hidden');
-    } else {
-        if(allClear) allClear.classList.add('hidden');
-        if(alertsContainer) alertsContainer.classList.remove('hidden');
-        const failedItems = VTV_ITEMS.filter(i => !vtvState[i.id]);
-        if(alertsList) {
-            alertsList.innerHTML = failedItems.slice(0, 5).map(item => `<p class="text-[8px] text-slate-400 flex items-center gap-1"><i class="fas fa-circle-xmark text-rose-400 text-[7px]"></i>${item.label}</p>`).join('');
-            if(failedItems.length > 5) { alertsList.innerHTML += `<p class="text-[8px] text-slate-500 italic">... y ${failedItems.length - 5} más</p>`; }
-        }
-    }
+const total = VTV_ITEMS.length;
+const checked = VTV_ITEMS.filter(i => vtvState[i.id]).length;
+const unchecked = total - checked;
+const pct = Math.round((checked / total) * 100);
+const ring = document.getElementById('vtv-score-ring');
+if(ring) ring.style.setProperty('--score-pct', `${pct}%`);
+const scoreVal = document.getElementById('vtv-score-value');
+if(scoreVal) scoreVal.innerText = `${pct}%`;
+const bar = document.getElementById('vtv-progress-bar');
+if(bar) {
+bar.style.width = `${pct}%`;
+if(pct >= 80) bar.style.background = 'linear-gradient(90deg,#06b6d4,#10b981)';
+else if(pct >= 50) bar.style.background = 'linear-gradient(90deg,#f59e0b,#06b6d4)';
+else bar.style.background = 'linear-gradient(90deg,#ef4444,#f59e0b)';
 }
-
+const progText = document.getElementById('vtv-progress-text');
+if(progText) progText.innerText = `${checked}/${total}`;
+const passed = document.getElementById('vtv-passed');
+if(passed) passed.innerText = checked;
+const failed = document.getElementById('vtv-failed');
+if(failed) failed.innerText = unchecked;
+const label = document.getElementById('vtv-score-label');
+if(label) {
+if(pct === 100) { label.innerText = '✅ APTO PARA VTV'; label.className = 'text-[8px] text-emerald-400 font-bold'; }
+else if(pct >= 80) { label.innerText = '🟡 Casi listo'; label.className = 'text-[8px] text-amber-400'; }
+else if(pct >= 50) { label.innerText = '🟠 En proceso'; label.className = 'text-[8px] text-orange-400'; }
+else { label.innerText = '🔴 Falta mucho'; label.className = 'text-[8px] text-rose-400'; }
+}
+const alertsContainer = document.getElementById('vtv-alerts');
+const alertsList = document.getElementById('vtv-alerts-list');
+const allClear = document.getElementById('vtv-all-clear');
+if(unchecked === 0) {
+if(alertsContainer) alertsContainer.classList.add('hidden');
+if(allClear) allClear.classList.remove('hidden');
+} else {
+if(allClear) allClear.classList.add('hidden');
+if(alertsContainer) alertsContainer.classList.remove('hidden');
+const failedItems = VTV_ITEMS.filter(i => !vtvState[i.id]);
+if(alertsList) {
+alertsList.innerHTML = failedItems.slice(0, 5).map(item => `<p class="text-[8px] text-slate-400 flex items-center gap-1"><i class="fas fa-circle-xmark text-rose-400 text-[7px]"></i>${item.label}</p>`).join('');
+if(failedItems.length > 5) { alertsList.innerHTML += `<p class="text-[8px] text-slate-500 italic">... y ${failedItems.length - 5} más</p>`; }
+}
+}
+}
 // === KEYBOARD SHORTCUTS ===
 document.addEventListener('keydown', (e) => {
-    if(e.ctrlKey && e.key === 'p') { e.preventDefault(); generateEnhancedPDF(); }
-    if(e.ctrlKey && e.key === 's') {
-        e.preventDefault();
-        if(document.getElementById('input-unidad').value) submitData();
-        else { saveToStorage(); showToast('💾 Datos guardados', 'success'); }
-    }
-    if(e.key === 'Escape') { closeWorkHistoryModal(); closeWorkNotesModal(); if(isSidebarOpen) toggleSidebar(); }
-    if(e.key === '?' || (e.shiftKey && e.key === '/')) { e.preventDefault(); showToast('📋 Atajos: Ctrl+P=PDF | Ctrl+S=Guardar | Esc=Cerrar', 'info'); }
+if(e.ctrlKey && e.key === 'p') { e.preventDefault(); generateEnhancedPDF(); }
+if(e.ctrlKey && e.key === 's') {
+e.preventDefault();
+if(document.getElementById('input-unidad').value) submitData();
+else { saveToStorage(); showToast('💾 Datos guardados', 'success'); }
+}
+if(e.key === 'Escape') { closeWorkHistoryModal(); closeWorkNotesModal(); if(isSidebarOpen) toggleSidebar(); }
+if(e.key === '?' || (e.shiftKey && e.key === '/')) { e.preventDefault(); showToast('📋 Atajos: Ctrl+P=PDF | Ctrl+S=Guardar | Esc=Cerrar', 'info'); }
 });
-
 // === INICIALIZACIÓN ===
 window.onload = () => {
-    loadFromStorage();
-    loadVTVState();
-    calculateKPIs();
-    if(db.length > 0) {
-        updateUnidadCard(db[db.length - 1]);
-        runPredictiveAI(db[db.length - 1]);
-        calculateAdvancedMetrics();
-    }
-    updateTimelineChart();
-    updateCorrelationMatrix();
-    renderDatasetTable();
-    renderDescribeTable();
-    renderVTVChecklist();
-    document.querySelectorAll('.modal-overlay').forEach(overlay => {
-        overlay.addEventListener('click', (e) => { if(e.target === overlay) { closeWorkHistoryModal(); closeWorkNotesModal(); } });
-    });
-    window.addEventListener('orientationchange', () => { if(window.innerWidth < 768 && isSidebarOpen) toggleSidebar(); });
-    setTimeout(() => { const hint = document.querySelector('.shortcut-hint'); if(hint) hint.style.opacity = '0'; }, 10000);
-    console.log('✅ NEXO-ART v2.1 inicializado correctamente');
+loadFromStorage();
+loadVTVState();
+calculateKPIs();
+if(db.length > 0) {
+updateUnidadCard(db[db.length - 1]);
+runPredictiveAI(db[db.length - 1]);
+calculateAdvancedMetrics();
+}
+updateTimelineChart();
+updateCorrelationMatrix();
+renderDatasetTable();
+renderDescribeTable();
+renderVTVChecklist();
+document.querySelectorAll('.modal-overlay').forEach(overlay => {
+overlay.addEventListener('click', (e) => { if(e.target === overlay) { closeWorkHistoryModal(); closeWorkNotesModal(); } });
+});
+window.addEventListener('orientationchange', () => { if(window.innerWidth < 768 && isSidebarOpen) toggleSidebar(); });
+setTimeout(() => { const hint = document.querySelector('.shortcut-hint'); if(hint) hint.style.opacity = '0'; }, 10000);
+console.log('✅ NEXO-ART v2.1 inicializado correctamente');
 };
 </script>
 </body>
