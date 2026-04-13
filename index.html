@@ -148,6 +148,67 @@ body{background:white;color:black}
 .no-print{display:none!important}
 }
 
+/* === ASISTENTE VIRTUAL NEXO-ART === */
+.assistant-fab{position:fixed;bottom:90px;right:20px;width:56px;height:56px;border-radius:50%;background:linear-gradient(135deg,#6366f1,#8b5cf6,#06b6d4);border:2px solid rgba(6,182,212,0.5);box-shadow:0 0 25px rgba(99,102,241,0.5),0 0 50px rgba(6,182,212,0.3);display:flex;align-items:center;justify-content:center;cursor:pointer;z-index:1000;transition:all 0.3s ease;animation:pulse-glow 3s infinite}
+.assistant-fab:hover{transform:scale(1.1);box-shadow:0 0 35px rgba(99,102,241,0.7),0 0 70px rgba(6,182,212,0.5)}
+.assistant-fab i{font-size:24px;color:white;text-shadow:0 0 10px rgba(255,255,255,0.5)}
+.assistant-badge{position:absolute;top:-4px;right:-4px;width:20px;height:20px;background:#ef4444;border-radius:50%;border:2px solid #0f172a;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:bold;color:white;animation:blink 2s infinite}
+.assistant-modal{position:fixed;inset:0;background:rgba(0,0,0,0.9);display:flex;align-items:center;justify-content:center;z-index:2000;padding:10px;backdrop-filter:blur(20px);animation:fadeIn 0.3s ease}
+.assistant-content{background:linear-gradient(145deg,rgba(15,23,42,0.98),rgba(30,41,59,0.95));border:1px solid rgba(99,102,241,0.4);border-radius:24px;width:100%;max-width:900px;max-height:90vh;display:flex;flex-direction:column;overflow:hidden;box-shadow:0 25px 80px rgba(99,102,241,0.3)}
+.assistant-header{padding:16px 20px;border-bottom:1px solid rgba(99,102,241,0.2);display:flex;align-items:center;justify-content:space-between;background:rgba(30,41,59,0.5)}
+.assistant-title{display:flex;align-items:center;gap:10px;font-family:'Orbitron',monospace;font-size:14px;font-weight:700;color:#a78bfa}
+.assistant-title i{font-size:18px;animation:float 3s ease-in-out infinite}
+.assistant-close{background:rgba(239,68,68,0.15);border:1px solid rgba(239,68,68,0.3);color:#f87171;width:32px;height:32px;border-radius:10px;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all 0.2s;font-size:14px}
+.assistant-close:hover{background:rgba(239,68,68,0.3);color:white;transform:scale(1.05)}
+.assistant-body{flex:1;display:flex;overflow:hidden}
+.assistant-context{width:35%;border-right:1px solid rgba(99,102,241,0.2);padding:16px;overflow-y:auto;background:rgba(15,23,42,0.3);font-size:10px}
+.assistant-context h4{font-family:'Orbitron',monospace;font-size:11px;color:#6366f1;margin-bottom:12px;display:flex;align-items:center;gap:6px}
+.assistant-context-section{margin-bottom:16px;padding:10px;background:rgba(30,41,59,0.4);border-radius:10px;border:1px solid rgba(99,102,241,0.1)}
+.assistant-context-section h5{font-size:9px;color:#94a3b8;margin-bottom:8px;font-weight:600;text-transform:uppercase;letter-spacing:0.5px}
+.assistant-context-item{display:flex;justify-content:space-between;padding:4px 0;border-bottom:1px dashed rgba(99,102,241,0.1);font-size:9px}
+.assistant-context-item:last-child{border-bottom:none}
+.assistant-context-item .label{color:#64748b}
+.assistant-context-item .value{color:#e0f2fe;font-weight:600;font-family:'Orbitron',monospace}
+.assistant-context-item .value.critical{color:#ef4444}
+.assistant-context-item .value.warning{color:#f59e0b}
+.assistant-context-item .value.optimal{color:#10b981}
+.assistant-chat{flex:1;display:flex;flex-direction:column;padding:16px;overflow:hidden}
+.assistant-messages{flex:1;overflow-y:auto;margin-bottom:12px;padding-right:4px}
+.assistant-message{padding:10px 14px;margin-bottom:10px;border-radius:14px;font-size:11px;line-height:1.5;max-width:85%;animation:slideUp 0.2s ease}
+.assistant-message.ai{background:rgba(99,102,241,0.15);border:1px solid rgba(99,102,241,0.3);border-left:3px solid #8b5cf6;color:#e0f2fe;margin-right:auto}
+.assistant-message.user{background:rgba(6,182,212,0.15);border:1px solid rgba(6,182,212,0.3);border-right:3px solid #06b6d4;color:#e0f2fe;margin-left:auto}
+.assistant-message .timestamp{font-size:8px;color:#64748b;margin-top:4px;display:block}
+.assistant-typing{display:flex;align-items:center;gap:4px;padding:10px 14px;color:#94a3b8;font-size:10px}
+.assistant-typing .dot{width:6px;height:6px;border-radius:50%;background:#6366f1;animation:blink 1.5s infinite}
+.assistant-typing .dot:nth-child(2){animation-delay:0.2s}
+.assistant-typing .dot:nth-child(3){animation-delay:0.4s}
+.assistant-input-area{display:flex;gap:8px;padding-top:12px;border-top:1px solid rgba(99,102,241,0.2)}
+.assistant-input{flex:1;background:rgba(15,23,42,0.6);border:1px solid rgba(99,102,241,0.3);border-radius:12px;color:#e0f2fe;padding:10px 14px;font-size:11px;resize:none;min-height:40px;max-height:100px;transition:all 0.2s}
+.assistant-input:focus{outline:none;border-color:#8b5cf6;box-shadow:0 0 15px rgba(99,102,241,0.2)}
+.assistant-input::placeholder{color:#64748b}
+.assistant-send{background:linear-gradient(135deg,#6366f1,#8b5cf6);border:none;color:white;width:40px;height:40px;border-radius:12px;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all 0.2s;font-size:14px;flex-shrink:0}
+.assistant-send:hover{transform:scale(1.05);box-shadow:0 0 20px rgba(99,102,241,0.5)}
+.assistant-send:disabled{opacity:0.5;cursor:not-allowed;transform:none}
+.assistant-actions{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px}
+.assistant-action-btn{background:rgba(99,102,241,0.1);border:1px solid rgba(99,102,241,0.3);color:#a78bfa;padding:6px 12px;border-radius:8px;font-size:9px;font-weight:500;cursor:pointer;transition:all 0.2s;display:flex;align-items:center;gap:4px}
+.assistant-action-btn:hover{background:rgba(99,102,241,0.2);color:white;transform:translateY(-1px)}
+.assistant-action-btn.primary{background:linear-gradient(135deg,#6366f1,#8b5cf6);border-color:transparent;color:white;font-weight:600}
+.assistant-action-btn.primary:hover{box-shadow:0 0 20px rgba(99,102,241,0.4)}
+.assistant-notebook-link{display:flex;align-items:center;gap:6px;padding:8px 12px;background:rgba(66,133,244,0.1);border:1px solid rgba(66,133,244,0.3);border-radius:10px;color:#93c5fd;font-size:10px;text-decoration:none;transition:all 0.2s;margin-top:8px}
+.assistant-notebook-link:hover{background:rgba(66,133,244,0.2);color:white}
+.assistant-notebook-link i{font-size:12px}
+.assistant-context-toggle{position:absolute;top:16px;right:16px;background:rgba(99,102,241,0.15);border:1px solid rgba(99,102,241,0.3);color:#a78bfa;padding:4px 10px;border-radius:8px;font-size:9px;cursor:pointer;display:flex;align-items:center;gap:4px;transition:all 0.2s;z-index:10}
+.assistant-context-toggle:hover{background:rgba(99,102,241,0.25)}
+.assistant-context.collapsed{display:none}
+.assistant-body.context-hidden .assistant-context{display:none}
+.assistant-body.context-hidden .assistant-chat{width:100%}
+@media(max-width:768px){
+.assistant-content{max-width:100%;max-height:100%;border-radius:0}
+.assistant-body{flex-direction:column}
+.assistant-context{width:100%;max-height:200px;border-right:none;border-bottom:1px solid rgba(99,102,241,0.2)}
+.assistant-context-toggle{position:static;margin-bottom:8px}
+}
+
 /* NUEVOS ESTILOS MATRIZ DIAGNÓSTICO */
 .diag-row{display:flex;align-items:center;padding:8px;margin-bottom:4px;background:rgba(0,20,40,0.4);border:1px solid rgba(6,182,212,0.15);border-radius:8px;transition:all 0.2s;cursor:pointer}
 .diag-row:hover{background:rgba(6,182,212,0.1);border-color:rgba(6,182,212,0.3)}
@@ -505,33 +566,28 @@ Memoria: <span id="mem-count" class="text-cyan-400 font-bold px-1.5 py-0.5 bg-cy
 <div id="describe-table-container" class="overflow-x-auto custom-scrollbar"></div>
 </div>
 </div>
-
 <!-- 🔍 MATRIZ DE DIAGNÓSTICO INTERACTIVO (NUEVO) -->
 <div>
 <div class="glass-card rounded-xl p-3 shadow-lg">
 <h2 class="section-title"><i class="fas fa-network-wired text-amber-400"></i> <span class="hidden xs:inline">Matriz Diagnóstico de Sensores</span><span class="xs:hidden">Diagnóstico</span></h2>
 <p class="text-[8px] text-slate-400 mb-2"><i class="fas fa-robot mr-1"></i>Tildar anomalías detectadas para cruzar con dataset y generar reporte.</p>
-    
-    <div class="flex gap-1 mb-3 flex-wrap">
-        <button onclick="filterSensorMatrix(0)" class="btn-filter-source active-filter px-2 py-1 rounded text-[8px] font-bold bg-cyan-500/20 text-cyan-300 border border-cyan-500/30 hover:bg-cyan-500/30">🌐 Todos</button>
-        <button onclick="filterSensorMatrix(1)" class="btn-filter-source px-2 py-1 rounded text-[8px] font-bold bg-green-500/20 text-green-300 border border-green-500/30 hover:bg-green-500/30">[1] Motor Siente 💯✅</button>
-        <button onclick="filterSensorMatrix(2)" class="btn-filter-source px-2 py-1 rounded text-[8px] font-bold bg-orange-500/20 text-orange-300 border border-orange-500/30 hover:bg-orange-500/30">[2] Check Engine 😱🔥</button>
-        <button onclick="filterSensorMatrix(3)" class="btn-filter-source px-2 py-1 rounded text-[8px] font-bold bg-rose-500/20 text-rose-300 border border-rose-500/30 hover:bg-rose-500/30">[3] Falla Tablero 🚓</button>
-    </div>
-
-    <div id="sensor-matrix-container" class="space-y-1 max-h-[250px] overflow-y-auto custom-scrollbar pr-1"></div>
-
-    <div id="diag-summary-panel" class="mt-3 bg-black/50 rounded-lg p-2 border border-cyan-500/10">
-        <div class="flex justify-between items-center mb-1">
-            <span class="text-[8px] font-bold text-cyan-400 font-tech">📝 REPORTE ACTIVO:</span>
-            <span id="diag-count" class="text-[7px] text-slate-400">0 ítems</span>
-        </div>
-        <ul id="active-diag-list" class="space-y-0.5 text-[8px] text-slate-300 min-h-[20px]"></ul>
-        <button onclick="generateSensorReport()" class="mt-2 w-full btn-neon py-1.5 rounded text-[8px] font-bold">📄 Guardar y Generar Reporte</button>
-    </div>
+<div class="flex gap-1 mb-3 flex-wrap">
+<button onclick="filterSensorMatrix(0)" class="btn-filter-source active-filter px-2 py-1 rounded text-[8px] font-bold bg-cyan-500/20 text-cyan-300 border border-cyan-500/30 hover:bg-cyan-500/30">🌐 Todos</button>
+<button onclick="filterSensorMatrix(1)" class="btn-filter-source px-2 py-1 rounded text-[8px] font-bold bg-green-500/20 text-green-300 border border-green-500/30 hover:bg-green-500/30">[1] Motor Siente 💯✅</button>
+<button onclick="filterSensorMatrix(2)" class="btn-filter-source px-2 py-1 rounded text-[8px] font-bold bg-orange-500/20 text-orange-300 border border-orange-500/30 hover:bg-orange-500/30">[2] Check Engine 😱🔥</button>
+<button onclick="filterSensorMatrix(3)" class="btn-filter-source px-2 py-1 rounded text-[8px] font-bold bg-rose-500/20 text-rose-300 border border-rose-500/30 hover:bg-rose-500/30">[3] Falla Tablero 🚓</button>
+</div>
+<div id="sensor-matrix-container" class="space-y-1 max-h-[250px] overflow-y-auto custom-scrollbar pr-1"></div>
+<div id="diag-summary-panel" class="mt-3 bg-black/50 rounded-lg p-2 border border-cyan-500/10">
+<div class="flex justify-between items-center mb-1">
+<span class="text-[8px] font-bold text-cyan-400 font-tech">📝 REPORTE ACTIVO:</span>
+<span id="diag-count" class="text-[7px] text-slate-400">0 ítems</span>
+</div>
+<ul id="active-diag-list" class="space-y-0.5 text-[8px] text-slate-300 min-h-[20px]"></ul>
+<button onclick="generateSensorReport()" class="mt-2 w-full btn-neon py-1.5 rounded text-[8px] font-bold">📄 Guardar y Generar Reporte</button>
 </div>
 </div>
-
+</div>
 <!-- Predictive AI -->
 <div>
 <h2 class="section-title"><i class="fas fa-brain text-indigo-400"></i> <span class="hidden xs:inline">Recomendaciones IA</span><span class="xs:hidden">IA</span></h2>
@@ -638,6 +694,7 @@ Limpiar
 </div>
 </div>
 </div>
+</div>
 <!-- Mobile Navigation -->
 <nav id="mobile-nav" class="fixed bottom-0 left-0 right-0 bg-black/90 border-t border-cyan-500/20 p-2 md:hidden z-20 backdrop-blur-xl no-print">
 <div class="flex justify-around items-center">
@@ -663,6 +720,119 @@ Limpiar
 <span><kbd>Esc</kbd> Cerrar modal</span>
 <span><kbd>?</kbd> Mostrar ayuda</span>
 </div>
+
+<!-- === ASISTENTE VIRTUAL NEXO-ART === -->
+<button id="assistant-fab" class="assistant-fab no-print" title="Asistente de Diagnóstico IA" onclick="openAssistant()">
+    <i class="fas fa-robot"></i>
+    <span class="assistant-badge">IA</span>
+</button>
+
+<div id="assistant-modal" class="assistant-modal hidden no-print">
+    <div class="assistant-content">
+        <div class="assistant-header">
+            <div class="assistant-title">
+                <i class="fas fa-brain"></i>
+                <span>NEXO-ART AI Assistant</span>
+                <span class="text-[8px] px-2 py-0.5 bg-purple-500/20 text-purple-300 rounded-full border border-purple-500/30">v2.2</span>
+            </div>
+            <button class="assistant-close" onclick="closeAssistant()"><i class="fas fa-times"></i></button>
+        </div>
+        
+        <button class="assistant-context-toggle" onclick="toggleAssistantContext()">
+            <i class="fas fa-database"></i> <span id="context-toggle-text">Ocultar Contexto</span>
+        </button>
+        
+        <div class="assistant-body" id="assistant-body">
+            <!-- Panel de Contexto -->
+            <div class="assistant-context" id="assistant-context">
+                <h4><i class="fas fa-info-circle"></i> Contexto Actual</h4>
+                
+                <div class="assistant-context-section">
+                    <h5><i class="fas fa-car"></i> Unidad Seleccionada</h5>
+                    <div class="assistant-context-item"><span class="label">Unidad:</span><span class="value" id="ctx-unidad">--</span></div>
+                    <div class="assistant-context-item"><span class="label">Motor:</span><span class="value" id="ctx-motor">--</span></div>
+                    <div class="assistant-context-item"><span class="label">KM:</span><span class="value" id="ctx-km">--</span></div>
+                    <div class="assistant-context-item"><span class="label">RPM:</span><span class="value" id="ctx-rpm">--</span></div>
+                </div>
+                
+                <div class="assistant-context-section">
+                    <h5><i class="fas fa-gauge-high"></i> KPIs Principales</h5>
+                    <div class="assistant-context-item"><span class="label">Disponibilidad:</span><span class="value" id="ctx-disp">--</span></div>
+                    <div class="assistant-context-item"><span class="label">MTBF:</span><span class="value" id="ctx-mtbf">--</span></div>
+                    <div class="assistant-context-item"><span class="label">MTTR:</span><span class="value" id="ctx-mttr">--</span></div>
+                </div>
+                
+                <div class="assistant-context-section">
+                    <h5><i class="fas fa-brain"></i> Métricas Sintéticas</h5>
+                    <div class="assistant-context-item"><span class="label">Estrés Mecánico:</span><span class="value" id="ctx-estres">--</span></div>
+                    <div class="assistant-context-item"><span class="label">Eficiencia Térmica:</span><span class="value" id="ctx-eficiencia">--</span></div>
+                    <div class="assistant-context-item"><span class="label">Ciclo Termovib:</span><span class="value" id="ctx-termovib">--</span></div>
+                    <div class="assistant-context-item"><span class="label">Desgaste/km:</span><span class="value" id="ctx-desgaste">--</span></div>
+                </div>
+                
+                <div class="assistant-context-section">
+                    <h5><i class="fas fa-triangle-exclamation"></i> Alertas Activas</h5>
+                    <div id="ctx-alertas" class="space-y-1"></div>
+                </div>
+                
+                <div class="assistant-context-section">
+                    <h5><i class="fas fa-microchip"></i> Diagnóstico Sensores</h5>
+                    <div id="ctx-sensores" class="space-y-1"></div>
+                </div>
+                
+                <div class="assistant-context-section">
+                    <h5><i class="fas fa-clipboard-check"></i> VTV Score</h5>
+                    <div class="assistant-context-item"><span class="label">Score:</span><span class="value" id="ctx-vtv">--</span></div>
+                    <div class="assistant-context-item"><span class="label">Pendientes:</span><span class="value" id="ctx-vtv-pending">--</span></div>
+                </div>
+                
+                <a href="https://notebooklm.google.com/notebook/7b37e8d0-167f-4afc-967d-c2182cdce532?authuser=1" 
+                   target="_blank" 
+                   class="assistant-notebook-link"
+                   onclick="exportContextToNotebook()">
+                    <i class="fas fa-external-link-alt"></i>
+                    Abrir en NotebookLM
+                </a>
+            </div>
+            
+            <!-- Panel de Chat -->
+            <div class="assistant-chat">
+                <div class="assistant-actions">
+                    <button class="assistant-action-btn primary" onclick="askAssistant('diagnostic')">
+                        <i class="fas fa-stethoscope"></i> Diagnóstico Rápido
+                    </button>
+                    <button class="assistant-action-btn" onclick="askAssistant('maintenance')">
+                        <i class="fas fa-wrench"></i> Plan Mantenimiento
+                    </button>
+                    <button class="assistant-action-btn" onclick="askAssistant('vtv')">
+                        <i class="fas fa-file-contract"></i> Preparar VTV
+                    </button>
+                    <button class="assistant-action-btn" onclick="askAssistant('anomaly')">
+                        <i class="fas fa-search"></i> Detectar Anomalías
+                    </button>
+                </div>
+                
+                <div class="assistant-messages" id="assistant-messages">
+                    <div class="assistant-message ai">
+                        👋 Hola, soy tu Asistente de Diagnóstico NEXO-ART. 
+                        Tengo acceso a todos los datos del dashboard: KPIs, métricas sintéticas, sensores, VTV e historial.
+                        <br><br>
+                        <strong>¿En qué puedo ayudarte hoy?</strong>
+                        <span class="timestamp">Ahora</span>
+                    </div>
+                </div>
+                
+                <div class="assistant-input-area">
+                    <textarea id="assistant-input" class="assistant-input" placeholder="Describe el problema o pregunta... Ej: '¿Por qué la temperatura está alta?' o 'Recomendaciones para VTV'" onkeydown="handleAssistantKeydown(event)"></textarea>
+                    <button class="assistant-send" id="assistant-send" onclick="sendAssistantMessage()">
+                        <i class="fas fa-paper-plane"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
 <!-- PDF TEMPLATE (Centered & Fixed) -->
 <div id="pdf-report-template-enhanced" class="hidden w-[794px] bg-white text-slate-800 p-6 font-sans no-print" style="min-height:1123px;box-sizing:border-box;font-size:10px;margin:0 auto;position:relative;left:auto;transform:none;">
 <div class="flex justify-between items-center border-b-4 border-slate-900 pb-3 mb-4">
@@ -845,6 +1015,7 @@ Cancelar
 </div>
 </div>
 </div>
+
 <script>
 // === CONFIGURACIÓN GLOBAL ===
 const STORAGE_KEY = 'nexoart_data_v2';
@@ -859,27 +1030,31 @@ let currentModalUnit = null;
 let isGeneratingPDF = false;
 let activeDiagnostics = [];
 
-// === DATASET SENSORES Y FALLAS (PARSED FROM PDF) ===
+// === ASISTENTE VIRTUAL - VARIABLES ===
+let assistantContextVisible = true;
+let assistantMessages = [];
+
+// === DATASET SENSORES Y FALLAS ===
 const SENSOR_FAULT_MATRIX = [
-    { id: 's_o2', sensor: 'O2 (Oxígeno)', sistema: 'Motor/Inyección', falla: 'Mezcla rica o pobre', sintoma: 'Check Engine', consecuencia: 'Alto consumo', fuentes: [1, 2] },
-    { id: 's_map', sensor: 'MAP', sistema: 'Motor/Admisión', falla: 'Presión fuera de rango', sintoma: 'Alteración inyección', consecuencia: 'Pérdida de potencia', fuentes: [1, 2] },
-    { id: 's_ect', sensor: 'ECT/ST', sistema: 'Motor/Enfriamiento', falla: 'Lecturas incorrectas', sintoma: 'Datos erróneos ECU', consecuencia: 'Arranque/Alto consumo', fuentes: [1, 2] },
-    { id: 's_knock', sensor: 'Detonación (Knock)', sistema: 'Motor/Combustión', falla: 'Cascabeleo/Golpeteo', sintoma: 'Check Engine', consecuencia: 'Retraso encendido', fuentes: [1, 2] },
-    { id: 's_tps', sensor: 'TPS (Mariposa)', sistema: 'Motor/Aceleración', falla: 'Apertura errática', sintoma: 'Tirones en marcha', consecuencia: 'Alteración aceleración', fuentes: [1, 2] },
-    { id: 's_ck', sensor: 'Check Engine', sistema: 'Motor/Sensores', falla: 'Problema ECU', sintoma: 'Luz tablero', consecuencia: 'Diagnóstico inmediato', fuentes: [3] },
-    { id: 's_epc', sensor: 'EPC', sistema: 'Acelerador Electrónico', falla: 'Falla control acelerador', sintoma: 'Luz tablero', consecuencia: 'Pérdida control', fuentes: [3] },
-    { id: 's_ckp', sensor: 'CKP (Cigüeñal)', sistema: 'Motor/Encendido', falla: 'Señal arranque falla', sintoma: 'No especificado', consecuencia: 'Motor no enciende', fuentes: [1] },
-    { id: 's_maf', sensor: 'MAF (Aire)', sistema: 'Motor/Admisión', falla: 'Flujo incorrecto', sintoma: 'Ralentí irregular', consecuencia: 'Inestabilidad baja', fuentes: [1] },
-    { id: 's_oil', sensor: 'Presión Aceite', sistema: 'Motor/Lubricación', falla: 'Fuera de rango', sintoma: 'Alerta tablero', consecuencia: 'Daño interno', fuentes: [1] },
-    { id: 's_cmp', sensor: 'CMP (Levas)', sistema: 'Motor/Sincronización', falla: 'Señal incorrecta', sintoma: 'Check Engine', consecuencia: 'Desajustes ciclo', fuentes: [2] },
-    { id: 's_fuel', sensor: 'Presión Combustible', sistema: 'Motor/Combustible', falla: 'Riel fuera de rango', sintoma: 'Check Engine', consecuencia: 'Fallas inyección', fuentes: [2] },
-    { id: 's_turbo', sensor: 'Presión Turbo', sistema: 'Motor/Inducción', falla: 'Sobrealimentación', sintoma: 'No especificado', consecuencia: 'Pérdida fuerza', fuentes: [1] },
-    { id: 's_abs', sensor: 'ABS', sistema: 'Frenos', falla: 'Avería ABS', sintoma: 'Luz tablero', consecuencia: 'Inoperatividad frenado', fuentes: [3] },
-    { id: 's_traction', sensor: 'Control Tracción', sistema: 'Seguridad Dinámica', falla: 'Sistema fallando', sintoma: 'Luz tablero', consecuencia: 'Pérdida estabilidad', fuentes: [3] },
-    { id: 's_airbag', sensor: 'Airbag', sistema: 'Seguridad Pasiva', falla: 'Sistema seguridad', sintoma: 'Luz tablero', consecuencia: 'No despliegue colisión', fuentes: [3] },
-    { id: 's_steering', sensor: 'Dirección Asistida', sistema: 'Dirección', falla: 'Asistencia hidráulica/eléctrica', sintoma: 'Volante duro', consecuencia: 'Dificultad maniobrabilidad', fuentes: [3] },
-    { id: 's_tire', sensor: 'Presión Neumáticos', sistema: 'Seguridad/Ruedas', falla: 'Baja presión/pérdida', sintoma: 'Alerta tablero', consecuencia: 'Inestabilidad/Pinchadura', fuentes: [3] },
-    { id: 's_speed', sensor: 'Velocidad', sistema: 'Instrumentación', falla: 'Lectura velocidad', sintoma: 'Velocímetro errático', consecuencia: 'Lectura incorrecta', fuentes: [1] }
+{ id: 's_o2', sensor: 'O2 (Oxígeno)', sistema: 'Motor/Inyección', falla: 'Mezcla rica o pobre', sintoma: 'Check Engine', consecuencia: 'Alto consumo', fuentes: [1, 2] },
+{ id: 's_map', sensor: 'MAP', sistema: 'Motor/Admisión', falla: 'Presión fuera de rango', sintoma: 'Alteración inyección', consecuencia: 'Pérdida de potencia', fuentes: [1, 2] },
+{ id: 's_ect', sensor: 'ECT/ST', sistema: 'Motor/Enfriamiento', falla: 'Lecturas incorrectas', sintoma: 'Datos erróneos ECU', consecuencia: 'Arranque/Alto consumo', fuentes: [1, 2] },
+{ id: 's_knock', sensor: 'Detonación (Knock)', sistema: 'Motor/Combustión', falla: 'Cascabeleo/Golpeteo', sintoma: 'Check Engine', consecuencia: 'Retraso encendido', fuentes: [1, 2] },
+{ id: 's_tps', sensor: 'TPS (Mariposa)', sistema: 'Motor/Aceleración', falla: 'Apertura errática', sintoma: 'Tirones en marcha', consecuencia: 'Alteración aceleración', fuentes: [1, 2] },
+{ id: 's_ck', sensor: 'Check Engine', sistema: 'Motor/Sensores', falla: 'Problema ECU', sintoma: 'Luz tablero', consecuencia: 'Diagnóstico inmediato', fuentes: [3] },
+{ id: 's_epc', sensor: 'EPC', sistema: 'Acelerador Electrónico', falla: 'Falla control acelerador', sintoma: 'Luz tablero', consecuencia: 'Pérdida control', fuentes: [3] },
+{ id: 's_ckp', sensor: 'CKP (Cigüeñal)', sistema: 'Motor/Encendido', falla: 'Señal arranque falla', sintoma: 'No especificado', consecuencia: 'Motor no enciende', fuentes: [1] },
+{ id: 's_maf', sensor: 'MAF (Aire)', sistema: 'Motor/Admisión', falla: 'Flujo incorrecto', sintoma: 'Ralentí irregular', consecuencia: 'Inestabilidad baja', fuentes: [1] },
+{ id: 's_oil', sensor: 'Presión Aceite', sistema: 'Motor/Lubricación', falla: 'Fuera de rango', sintoma: 'Alerta tablero', consecuencia: 'Daño interno', fuentes: [1] },
+{ id: 's_cmp', sensor: 'CMP (Levas)', sistema: 'Motor/Sincronización', falla: 'Señal incorrecta', sintoma: 'Check Engine', consecuencia: 'Desajustes ciclo', fuentes: [2] },
+{ id: 's_fuel', sensor: 'Presión Combustible', sistema: 'Motor/Combustible', falla: 'Riel fuera de rango', sintoma: 'Check Engine', consecuencia: 'Fallas inyección', fuentes: [2] },
+{ id: 's_turbo', sensor: 'Presión Turbo', sistema: 'Motor/Inducción', falla: 'Sobrealimentación', sintoma: 'No especificado', consecuencia: 'Pérdida fuerza', fuentes: [1] },
+{ id: 's_abs', sensor: 'ABS', sistema: 'Frenos', falla: 'Avería ABS', sintoma: 'Luz tablero', consecuencia: 'Inoperatividad frenado', fuentes: [3] },
+{ id: 's_traction', sensor: 'Control Tracción', sistema: 'Seguridad Dinámica', falla: 'Sistema fallando', sintoma: 'Luz tablero', consecuencia: 'Pérdida estabilidad', fuentes: [3] },
+{ id: 's_airbag', sensor: 'Airbag', sistema: 'Seguridad Pasiva', falla: 'Sistema seguridad', sintoma: 'Luz tablero', consecuencia: 'No despliegue colisión', fuentes: [3] },
+{ id: 's_steering', sensor: 'Dirección Asistida', sistema: 'Dirección', falla: 'Asistencia hidráulica/eléctrica', sintoma: 'Volante duro', consecuencia: 'Dificultad maniobrabilidad', fuentes: [3] },
+{ id: 's_tire', sensor: 'Presión Neumáticos', sistema: 'Seguridad/Ruedas', falla: 'Baja presión/pérdida', sintoma: 'Alerta tablero', consecuencia: 'Inestabilidad/Pinchadura', fuentes: [3] },
+{ id: 's_speed', sensor: 'Velocidad', sistema: 'Instrumentación', falla: 'Lectura velocidad', sintoma: 'Velocímetro errático', consecuencia: 'Lectura incorrecta', fuentes: [1] }
 ];
 
 // === CATEGORÍAS VTV ===
@@ -908,6 +1083,7 @@ VTV_ITEMS.push({...item, category: cat.id, icon: cat.icon, emoji: cat.emoji});
 });
 });
 let vtvState = {};
+
 // === FUNCIÓN NÚCLEO: CALCULO DE VARIABLES SINTÉTICAS ===
 function getSyntheticMetrics(row) {
 if (!row) return { desgaste: 0, termovib: 0, eficiencia: 0, estres: 0 };
@@ -918,6 +1094,7 @@ eficiencia: row.ta > 0 ? (row.rpm / row.ta) : 0,
 estres: (row.vibracion * row.rpm) / 1000
 };
 }
+
 // === CONFIGURACIÓN DE MÉTRICAS AVANZADAS ===
 const METRIC_CONFIG = {
 desgaste: { min: 20, optMin: 40, optMax: 80, max: 100, unit: '', tooltip: (v) => { if(v < 20) return '⚠️ Muy bajo'; if(v < 40) return '🟡 Bajo'; if(v <= 80) return '✅ ÓPTIMO'; return '🔴 CRÍTICO'; } },
@@ -929,6 +1106,7 @@ balance: { min: 0, optMin: 0, optMax: 1, max: 2, unit: '', tooltip: (v) => { if(
 estres: { min: 20, optMin: 30, optMax: 70, max: 100, unit: '', tooltip: (v) => { if(v < 30) return '🟡 Moderado'; if(v <= 70) return '✅ ÓPTIMO'; return '🔴 CRÍTICO'; } },
 'disp-op': { min: 70, optMin: 85, optMax: 95, max: 100, unit: '%', isPercent: true, tooltip: (v) => { if(v < 85) return '🟡 Aceptable'; if(v <= 95) return '✅ ÓPTIMO'; return '✅ EXCELENTE'; } }
 };
+
 // === FUNCIONES DE ESTADO DE MÉTRICAS ===
 function getMetricStatus(metricKey, value) {
 const cfg = METRIC_CONFIG[metricKey];
@@ -959,6 +1137,7 @@ barPct = Math.min(100, (v / cfg.max) * 100);
 }
 return { status, color, label, barPct };
 }
+
 function updateMetricCard(metricKey, value) {
 const valEl = document.getElementById(`adv-${metricKey}`);
 const statusEl = document.getElementById(`status-${metricKey}`);
@@ -979,6 +1158,7 @@ const cfg = METRIC_CONFIG[metricKey];
 tooltipEl.innerHTML = `<strong>${info.label}</strong><br>${cfg.tooltip(parseFloat(value))}`;
 }
 }
+
 // === PERSISTENCIA (MEMORIA ACTIVA) ===
 function loadFromStorage() {
 try {
@@ -1000,20 +1180,31 @@ saveToStorage();
 } catch(e) { console.error('Error loading data:', e); db = []; }
 updateMemoryCounter();
 }
+
 function saveToStorage() {
 try {
+if(db.length > MAX_RECORDS) { db = db.slice(-MAX_RECORDS); }
 localStorage.setItem(STORAGE_KEY, JSON.stringify(db));
 updateMemoryCounter();
 } catch(e) {
-showToast('⚠️ Error al guardar: almacenamiento lleno', 'error');
+if(e.name === 'QuotaExceededError') {
+db = db.slice(-500);
+localStorage.setItem(STORAGE_KEY, JSON.stringify(db));
+updateMemoryCounter();
+showToast('⚠️ Memoria llena: registros antiguos eliminados', 'warning');
+} else {
+showToast('⚠️ Error al guardar: ' + e.message, 'error');
 }
 }
+}
+
 function updateMemoryCounter() {
 const el = document.getElementById("mem-count");
 if(el) el.innerText = `${db.length}/${MAX_RECORDS}`;
 const dc = document.getElementById("dataset-count");
 if(dc) dc.innerText = db.length;
 }
+
 function loadVTVState() {
 try {
 const stored = localStorage.getItem(VTV_KEY);
@@ -1021,6 +1212,7 @@ if(stored) { vtvState = JSON.parse(stored); }
 else { VTV_ITEMS.forEach(i => { vtvState[i.id] = false; }); }
 } catch(e) { vtvState = {}; VTV_ITEMS.forEach(i => { vtvState[i.id] = false; }); }
 }
+
 function saveVTVState() {
 try { localStorage.setItem(VTV_KEY, JSON.stringify(vtvState)); }
 catch(e) { showToast('⚠️ Error al guardar VTV', 'warning'); }
@@ -1057,10 +1249,12 @@ function autoHighlightDiagnostics() {
 if(db.length === 0) return;
 const last = db[db.length-1];
 if(last.ta > 95) {
-SENSOR_FAULT_MATRIX.find(s => s.id === 's_ect' || s.id === 's_oil')?.id; // Highlight logic
+const ect = SENSOR_FAULT_MATRIX.find(s => s.id === 's_ect');
+if(ect && !activeDiagnostics.includes('s_ect')) showToast(`⚠️ Posible falla: ${ect.sensor}`, 'warning');
 }
 if(last.vibracion > 4) {
-SENSOR_FAULT_MATRIX.find(s => s.id === 's_knock' || s.id === 's_map')?.id;
+const knock = SENSOR_FAULT_MATRIX.find(s => s.id === 's_knock');
+if(knock && !activeDiagnostics.includes('s_knock')) showToast(`⚠️ Vibración alta: revisar ${knock.sensor}`, 'warning');
 }
 }
 
@@ -1072,7 +1266,6 @@ SENSOR_FAULT_MATRIX.forEach(item => {
 if(sourceFilter > 0 && !item.fuentes.includes(sourceFilter)) return;
 const isSelected = activeDiagnostics.includes(item.id);
 let highlightClass = '';
-// Auto-detect logic based on current live data
 const last = db.length > 0 ? db[db.length-1] : null;
 if(last) {
 if(last.ta > 100 && (item.id === 's_ect' || item.id === 's_oil')) highlightClass = 'auto-highlight';
@@ -1138,6 +1331,7 @@ else selectedRows.add(index);
 renderDatasetTable();
 updateFilterBadges();
 }
+
 function toggleSelectAll() {
 const checkbox = document.getElementById('select-all-rows');
 if(checkbox.checked) db.forEach((_, i) => selectedRows.add(i));
@@ -1145,6 +1339,7 @@ else selectedRows.clear();
 renderDatasetTable();
 updateFilterBadges();
 }
+
 function clearSelection() {
 selectedRows.clear();
 document.getElementById('select-all-rows').checked = false;
@@ -1152,17 +1347,16 @@ renderDatasetTable();
 updateFilterBadges();
 showToast('🧹 Selección limpiada', 'info');
 }
+
 function getSelectedData() {
 if(selectedRows.size === 0) return db;
 return db.filter((_, i) => selectedRows.has(i));
 }
+
 function updateFilterBadges() {
 const container = document.getElementById('filter-badge-container');
 if(!container) return;
-if(selectedRows.size === 0) {
-container.innerHTML = '';
-return;
-}
+if(selectedRows.size === 0) { container.innerHTML = ''; return; }
 const units = {};
 selectedRows.forEach(idx => {
 const unidad = db[idx]?.unidad;
@@ -1175,13 +1369,13 @@ if(Object.keys(units).length > 3) {
 container.innerHTML += `<span class="filter-badge">+${Object.keys(units).length - 3} más</span>`;
 }
 }
+
 function removeUnitFilter(unidad) {
-db.forEach((row, idx) => {
-if(row.unidad === unidad) selectedRows.delete(idx);
-});
+db.forEach((row, idx) => { if(row.unidad === unidad) selectedRows.delete(idx); });
 renderDatasetTable();
 updateFilterBadges();
 }
+
 // === MODALES DE HISTORIAL Y NOTAS ===
 function showWorkHistory(unitId) {
 currentModalUnit = unitId;
@@ -1204,11 +1398,13 @@ return `<div class="history-item" style="animation-delay:${i*0.05}s">
 modal.classList.remove('hidden');
 document.body.style.overflow = 'hidden';
 }
+
 function closeWorkHistoryModal() {
 document.getElementById('work-history-modal').classList.add('hidden');
 currentModalUnit = null;
 document.body.style.overflow = '';
 }
+
 function showEditWorkNotes(index) {
 const modal = document.getElementById('work-notes-modal');
 const unitSpan = document.getElementById('modal-edit-unidad');
@@ -1221,10 +1417,12 @@ modal.classList.remove('hidden');
 document.body.style.overflow = 'hidden';
 textarea.focus();
 }
+
 function closeWorkNotesModal() {
 document.getElementById('work-notes-modal').classList.add('hidden');
 document.body.style.overflow = '';
 }
+
 function saveWorkNotes() {
 const index = parseInt(document.getElementById('modal-edit-index').value);
 const notes = document.getElementById('modal-work-notes').value.trim();
@@ -1236,6 +1434,7 @@ showToast('✅ Detalles actualizados correctamente', 'success');
 }
 closeWorkNotesModal();
 }
+
 function exportUnitWorkHistoryPDF() {
 if(!currentModalUnit) return;
 const unitHistory = db.filter(r => r.unidad === currentModalUnit);
@@ -1273,6 +1472,7 @@ showToast('❌ Error al generar PDF', 'error');
 });
 }, 400);
 }
+
 // === NOTIFICACIONES TOAST ===
 function showToast(message, type = 'info') {
 const existing = document.querySelector('.toast-notification');
@@ -1295,6 +1495,7 @@ n.style.transition = 'all 0.3s ease-in';
 setTimeout(() => n.remove(), 300);
 }, 4000);
 }
+
 // === SIDEBAR MOBILE ===
 const sidebar = document.getElementById('sidebar');
 const overlay = document.getElementById('sidebar-overlay');
@@ -1309,6 +1510,7 @@ document.body.style.overflow = isSidebarOpen ? 'hidden' : '';
 if(mobileMenuBtn) mobileMenuBtn.addEventListener('click', toggleSidebar);
 if(sidebarClose) sidebarClose.addEventListener('click', toggleSidebar);
 if(overlay) overlay.addEventListener('click', toggleSidebar);
+
 // === ACTUALIZAR TARJETA DE UNIDAD ===
 function updateUnidadCard(entrada) {
 if(!entrada) return;
@@ -1317,6 +1519,7 @@ const cm=document.getElementById("card-motor"); if(cm) cm.innerText="Motor "+ent
 const ck=document.getElementById("card-km"); if(ck) ck.innerHTML=`<i class="fas fa-road text-[7px]"></i> ${entrada.km.toLocaleString()} KM`;
 const cr=document.getElementById("card-rpm"); if(cr) cr.innerText=entrada.rpm;
 }
+
 // === PROCESAR DATOS ===
 function submitData() {
 const uptime = parseFloat(document.getElementById("input-uptime").value);
@@ -1361,10 +1564,11 @@ updateCorrelationMatrix();
 renderDatasetTable();
 renderDescribeTable();
 calculateAdvancedMetrics();
-autoHighlightDiagnostics(); // Check matrix against new data
+autoHighlightDiagnostics();
 renderSensorMatrix();
 showToast(`✅ ${unidad} procesado (${db.length}/${MAX_RECORDS})`, "success");
 }
+
 // === RESET COMPLETO ===
 function resetAllData() {
 if(db.length === 0 && Object.values(vtvState).every(v => !v) && activeDiagnostics.length === 0) {
@@ -1412,6 +1616,7 @@ updateMetricCard(k, k==='inactividad'||k==='disp-op'?'0%':'0');
 showToast("🗑️ Todos los datos borrados permanentemente", "warning");
 }
 }
+
 // === CÁLCULO DE KPIs ===
 function calculateKPIs() {
 const kpiMtbf=document.getElementById("kpi-mtbf");
@@ -1452,6 +1657,7 @@ trendEl.className="text-[8px] font-semibold mt-2 bg-rose-500/10 text-rose-400 px
 }
 }
 }
+
 // === MÉTRICAS AVANZADAS ===
 function calculateAdvancedMetrics() {
 if(db.length === 0) {
@@ -1483,6 +1689,7 @@ updateMetricCard('balance', balancePresion);
 updateMetricCard('estres', estresMecanico);
 updateMetricCard('disp-op', dispOp+'%');
 }
+
 // === IA PREDICTIVA ===
 function runPredictiveAI(entrada) {
 if(!entrada) return;
@@ -1529,6 +1736,7 @@ statusList.innerHTML=`
 <li class="flex justify-between items-center pb-1 text-[8px]"><span>VIB:</span> ${vibStatus}</li>
 `;
 }
+
 // === INFORME IA ===
 function generateReport() {
 const container=document.getElementById("ai-report-container");
@@ -1572,6 +1780,7 @@ html+=`<div class="bg-emerald-500/10 border-l-2 border-emerald-500 pl-2 py-1 my-
 container.innerHTML=html;
 showToast('📄 Informe IA generado', 'success');
 }
+
 // === TABLA DE DATASET ===
 function renderDatasetTable() {
 const container=document.getElementById('dataset-table');
@@ -1623,7 +1832,8 @@ selectAll.indeterminate = selectedRows.size > 0 && selectedRows.size < db.length
 }
 updateFilterBadges();
 }
-// === ESTADÍSTICAS DESCRIBE (INCLUYE SINTÉTICAS) ===
+
+// === ESTADÍSTICAS DESCRIBE ===
 function calculateDescribeStats(data = null) {
 const source = data || db;
 if(source.length===0) return null;
@@ -1660,6 +1870,7 @@ min:values[0].toFixed(2), '25%':pct(0.25).toFixed(2), '50%':pct(0.50).toFixed(2)
 });
 return stats;
 }
+
 function renderDescribeTable(data = null) {
 const container=document.getElementById('describe-table-container');
 if(!container) return;
@@ -1703,6 +1914,7 @@ html+='<span><span class="text-cyan-400">● 50%</span>=mediana</span>';
 html+='</div>';
 container.innerHTML=html;
 }
+
 // === ANÁLISIS DE SELECCIÓN ===
 function analyzeSelected() {
 const selected = getSelectedData();
@@ -1713,9 +1925,48 @@ return;
 updateTimelineChart(selected);
 updateCorrelationMatrix(selected);
 renderDescribeTable(selected);
+generateAutoInsights(selected);
 showToast(`📊 Analizando ${selected.length} unidad(es) seleccionada(s)`, 'success');
 updateFilterBadges();
 }
+
+function generateAutoInsights(data) {
+const panel = document.getElementById('ai-report-container');
+if(!panel) return;
+const last = data[data.length-1];
+const syn = getSyntheticMetrics(last);
+const avgTemp = data.reduce((a,b)=>a+b.ta,0)/data.length;
+const avgVib = data.reduce((a,b)=>a+b.vibracion,0)/data.length;
+let insights = `<h4 class="text-white font-bold mb-2 flex items-center gap-2 border-b border-cyan-500/20 pb-2 text-xs uppercase font-tech">
+<i class="fas fa-lightbulb text-amber-400"></i> Insights Automáticos</h4>`;
+if(avgTemp > 95) {
+insights += `<div class="p-2 bg-amber-500/10 border border-amber-500/30 rounded-lg mb-2">
+<p class="text-[8px] text-amber-300"><strong>⚠️ Temperatura Promedio Alta:</strong> ${avgTemp.toFixed(1)}°C</p>
+<p class="text-[7px] text-slate-400 mt-1">Recomendación: Verificar sistema de refrigeración en próximas 48hs.</p>
+</div>`;
+}
+if(avgVib > 3.5) {
+insights += `<div class="p-2 bg-orange-500/10 border border-orange-500/30 rounded-lg mb-2">
+<p class="text-[8px] text-orange-300"><strong>〰️ Vibración Elevada:</strong> ${avgVib.toFixed(2)} mm/s</p>
+<p class="text-[7px] text-slate-400 mt-1">Recomendación: Programar balanceo y alineación preventiva.</p>
+</div>`;
+}
+if(syn.estres > 70) {
+insights += `<div class="p-2 bg-rose-500/10 border border-rose-500/30 rounded-lg mb-2">
+<p class="text-[8px] text-rose-300"><strong>🔧 Estrés Mecánico Crítico:</strong> ${syn.estres.toFixed(2)}</p>
+<p class="text-[7px] text-slate-400 mt-1">Recomendación: Reducir carga operativa y revisar suspensión.</p>
+</div>`;
+}
+if(avgTemp <= 95 && avgVib <= 3.5 && syn.estres <= 70) {
+insights += `<div class="p-2 bg-emerald-500/10 border border-emerald-500/30 rounded-lg">
+<p class="text-[8px] text-emerald-300"><strong>✅ Parámetros Óptimos</strong></p>
+<p class="text-[7px] text-slate-400 mt-1">Todos los indicadores dentro de rangos aceptables. Continuar monitoreo estándar.</p>
+</div>`;
+}
+panel.innerHTML = insights;
+panel.classList.remove('hidden');
+}
+
 // === GRÁFICO DE LÍNEA TEMPORAL ===
 function updateTimelineChart(data = null) {
 const canvas=document.getElementById('timelineChart');
@@ -1752,13 +2003,8 @@ scales: {x:{ticks:{color:'#64748b',font:{size:8}},grid:{color:'rgba(6,182,212,0.
 }
 });
 }
-window.addEventListener('resize', () => {
-clearTimeout(window._resizeTimer);
-window._resizeTimer=setTimeout(()=>{
-if(timelineChartIns && (db.length>0 || selectedRows.size>0)) timelineChartIns.update();
-}, 250);
-});
-// === MATRIZ DE CORRELACIÓN (INCLUYE SINTÉTICAS) ===
+
+// === MATRIZ DE CORRELACIÓN ===
 function pearsonCorrelation(x,y) {
 if(x.length===0||y.length===0) return 0;
 const n=x.length;
@@ -1771,6 +2017,7 @@ const dt=(n*sumX2-sumX*sumX)*(n*sumY2-sumY*sumY);
 if(dt<=0) return 0;
 return((n*sumXY)-(sumX*sumY))/Math.sqrt(dt);
 }
+
 function updateCorrelationMatrix(data = null) {
 const container=document.getElementById('correlation-matrix');
 if(!container) return;
@@ -1804,6 +2051,7 @@ html+='</tr>';
 html+='</table>';
 container.innerHTML=html;
 }
+
 // === EXPORTAR CSV ===
 function exportCSV() {
 if(db.length===0) { showToast("📭 Sin datos para exportar","info"); return; }
@@ -1819,6 +2067,7 @@ link.download=`NEXO-ART_Dataset_Completo_${new Date().toISOString().slice(0,10)}
 link.click();
 showToast("📥 CSV completo descargado","success");
 }
+
 function exportSelectedCSV() {
 const selected = getSelectedData();
 if(selected.length === 0) { showToast("📭 Selecciona filas para exportar","info"); return; }
@@ -1834,7 +2083,8 @@ link.download=`NEXO-ART_Filtrado_${selected.length}unidades_${new Date().toISOSt
 link.click();
 showToast(`📥 CSV de ${selected.length} unidades descargado`,"success");
 }
-// === PDFS (CENTRADOS Y OPTIMIZADOS) ===
+
+// === PDFS ===
 function exportSingleUnitPDF(index) {
 const unit = db[index];
 if(!unit) return;
@@ -1895,6 +2145,7 @@ showToast('❌ Error al generar PDF','error');
 });
 }, 400);
 }
+
 function generateSensorDiagPDF() {
 if(activeDiagnostics.length === 0) return '<p class="text-slate-400 text-[8px] text-center">Sin diagnóstico activo</p>';
 return `<table class="w-full text-[8px] border-collapse border border-slate-200">
@@ -1905,6 +2156,7 @@ return `<tr><td class="border border-slate-200 p-1"><b>${s.sensor}</b></td><td c
 }).join('')}</tbody>
 </table>`;
 }
+
 async function generateEnhancedPDF() {
 if(db.length===0) { showToast("⚠️ Sin datos para generar reporte","warning"); return; }
 if(isGeneratingPDF) { showToast("🔄 Ya se está generando un PDF","info"); return; }
@@ -1976,6 +2228,7 @@ if(template) template.classList.add('hidden');
 isGeneratingPDF = false;
 }
 }
+
 async function exportSelectedPDF() {
 const selected = getSelectedData();
 if(selected.length === 0) { showToast("⚠️ Selecciona filas para exportar PDF","warning"); return; }
@@ -2049,7 +2302,7 @@ template.classList.add('hidden');
 isGeneratingPDF = false;
 }
 }
-// === FUNCIONES AUXILIARES PARA PDF ===
+
 async function renderChartForPDF(data = null) {
 const pdfCanvas = document.getElementById('pdf-timeline-chart');
 if(!pdfCanvas) return;
@@ -2081,6 +2334,7 @@ scales:{x:{ticks:{color:'#64748b',font:{size:8}},grid:{color:'#e2e8f0'}},y:{type
 });
 await new Promise(resolve => setTimeout(resolve, 200));
 }
+
 function renderCorrelationForPDF(data = null) {
 const container = document.getElementById('pdf-correlation-matrix');
 if(!container) return;
@@ -2109,6 +2363,7 @@ html += '</tr>';
 html += '</table>';
 container.innerHTML = html;
 }
+
 function renderDescribeForPDF(data = null) {
 const container = document.getElementById('pdf-describe-container');
 if(!container) return;
@@ -2129,6 +2384,7 @@ html+='</tr>';
 html+='</tbody></table>';
 container.innerHTML=html;
 }
+
 function renderIAForPDF(data = null) {
 const recContainer=document.getElementById('pdf-ia-recommendations');
 const obsContainer=document.getElementById('pdf-observaciones');
@@ -2159,6 +2415,7 @@ html+='</div>';
 recContainer.innerHTML=html;
 obsContainer.innerHTML=alertas.length===0?'<div class="bg-emerald-50 border border-emerald-300 rounded-lg p-2"><p class="text-[8px] text-emerald-700 font-bold">✅ Todos los parámetros óptimos</p></div>':'';
 }
+
 function generateVTVChecklistFullPDF() {
 let html='<div class="grid grid-cols-2 gap-3">';
 VTV_CATEGORIES.forEach(cat => {
@@ -2177,6 +2434,7 @@ html+=`</div><div class="mt-1 w-full h-1 bg-slate-200 rounded"><div class="h-ful
 html+='</div>';
 return html;
 }
+
 function generateDatasetTableForPDF(data) {
 if(data.length===0) return '<tr><td colspan="12" class="text-center py-3 text-slate-500 text-[7px]">Sin datos</td></tr>';
 const headers=['Unidad','Motor','KM','UP','DOWN','VIB','TEMP','RPM','PSI-DI','PSI-DD','Trabajo','Fecha'];
@@ -2190,6 +2448,7 @@ html+=`<tr><td class="border border-slate-200 px-1 py-1 font-medium text-[7px]">
 html+='</tbody>';
 return html;
 }
+
 // === CHECKLIST VTV ===
 function renderVTVChecklist() {
 const container = document.getElementById('vtv-checklist-container');
@@ -2212,6 +2471,7 @@ html += '</div></div>';
 container.innerHTML = html;
 updateVTVScore();
 }
+
 function toggleVTVItem(id) {
 const cb = document.getElementById(`vtv-${id}`);
 if(!cb) return;
@@ -2224,6 +2484,7 @@ icon.className = `fas ${cb.checked ? 'fa-check' : (item ? item.icon : 'fa-questi
 saveVTVState();
 updateVTVScore();
 }
+
 function resetVTVChecklist() {
 if(confirm('¿Limpiar todo el checklist VTV?')) {
 VTV_ITEMS.forEach(i => { vtvState[i.id] = false; });
@@ -2232,6 +2493,7 @@ renderVTVChecklist();
 showToast('🗑️ Checklist VTV limpiado', 'warning');
 }
 }
+
 function updateVTVScore() {
 const total = VTV_ITEMS.length;
 const checked = VTV_ITEMS.filter(i => vtvState[i.id]).length;
@@ -2277,6 +2539,7 @@ if(failedItems.length > 5) { alertsList.innerHTML += `<p class="text-[8px] text-
 }
 }
 }
+
 // === KEYBOARD SHORTCUTS ===
 document.addEventListener('keydown', (e) => {
 if(e.ctrlKey && e.key === 'p') { e.preventDefault(); generateEnhancedPDF(); }
@@ -2285,11 +2548,353 @@ e.preventDefault();
 if(document.getElementById('input-unidad').value) submitData();
 else { saveToStorage(); showToast('💾 Datos guardados', 'success'); }
 }
-if(e.key === 'Escape') { closeWorkHistoryModal(); closeWorkNotesModal(); if(isSidebarOpen) toggleSidebar(); }
+if(e.key === 'Escape') { closeWorkHistoryModal(); closeWorkNotesModal(); if(isSidebarOpen) toggleSidebar(); closeAssistant(); }
 if(e.key === '?' || (e.shiftKey && e.key === '/')) { e.preventDefault(); showToast('📋 Atajos: Ctrl+P=PDF | Ctrl+S=Guardar | Esc=Cerrar', 'info'); }
 });
+
+// === ASISTENTE VIRTUAL - FUNCIONES ===
+function openAssistant() {
+updateAssistantContext();
+document.getElementById('assistant-modal').classList.remove('hidden');
+document.body.style.overflow = 'hidden';
+scrollToBottom('assistant-messages');
+document.getElementById('assistant-input').focus();
+}
+
+function closeAssistant() {
+document.getElementById('assistant-modal').classList.add('hidden');
+document.body.style.overflow = '';
+}
+
+function toggleAssistantContext() {
+assistantContextVisible = !assistantContextVisible;
+document.getElementById('assistant-context').classList.toggle('collapsed', !assistantContextVisible);
+document.getElementById('assistant-body').classList.toggle('context-hidden', !assistantContextVisible);
+document.getElementById('context-toggle-text').innerText = assistantContextVisible ? 'Ocultar Contexto' : 'Mostrar Contexto';
+}
+
+function updateAssistantContext() {
+document.getElementById('ctx-unidad').innerText = document.getElementById('card-unidad')?.innerText || '--';
+document.getElementById('ctx-motor').innerText = document.getElementById('card-motor')?.innerText.replace('Motor ','') || '--';
+document.getElementById('ctx-km').innerText = document.getElementById('card-km')?.innerText.replace(/[^\d,]/g,'') || '--';
+document.getElementById('ctx-rpm').innerText = document.getElementById('card-rpm')?.innerText || '--';
+const disp = document.getElementById('kpi-disp')?.innerText || '0%';
+document.getElementById('ctx-disp').innerText = disp;
+document.getElementById('ctx-disp').className = `value ${parseInt(disp)>=95?'optimal':parseInt(disp)>=85?'warning':'critical'}`;
+document.getElementById('ctx-mtbf').innerText = (document.getElementById('kpi-mtbf')?.innerText || '0') + 'h';
+document.getElementById('ctx-mttr').innerText = (document.getElementById('kpi-mttr')?.innerText || '0') + 'h';
+const getMetricValue = (id) => document.getElementById(`adv-${id}`)?.innerText || '0';
+document.getElementById('ctx-estres').innerText = getMetricValue('estres');
+document.getElementById('ctx-eficiencia').innerText = getMetricValue('eficiencia');
+document.getElementById('ctx-termovib').innerText = getMetricValue('termovib');
+document.getElementById('ctx-desgaste').innerText = getMetricValue('desgaste');
+const alertasContainer = document.getElementById('ctx-alertas');
+const alertas = [];
+const last = db[db.length-1];
+if(last) {
+if(last.ta > 105) alertas.push({text:`🔥 Temp crítica: ${last.ta}°C`, class:'critical'});
+else if(last.ta > 95) alertas.push({text:`⚠️ Temp elevada: ${last.ta}°C`, class:'warning'});
+if(last.vibracion >= 5.0) alertas.push({text:`〰️ Vibración: ${last.vibracion}`, class:'critical'});
+else if(last.vibracion >= 3.5) alertas.push({text:`⚠️ Vibración moderada`, class:'warning'});
+if(last.km >= 60000) alertas.push({text:`🔧 KM crítico: ${last.km.toLocaleString()}`, class:'warning'});
+}
+if(alertas.length === 0) alertasContainer.innerHTML = '<span class="text-emerald-400 text-[9px]">✅ Sin alertas</span>';
+else alertasContainer.innerHTML = alertas.map(a => `<span class="text-[9px] ${a.class==='critical'?'text-rose-400':a.class==='warning'?'text-amber-400':''}">${a.text}</span>`).join('');
+const sensoresContainer = document.getElementById('ctx-sensores');
+if(activeDiagnostics.length === 0) {
+sensoresContainer.innerHTML = '<span class="text-slate-400 text-[9px]">Sin anomalías seleccionadas</span>';
+} else {
+sensoresContainer.innerHTML = activeDiagnostics.slice(0,3).map(id => {
+const s = SENSOR_FAULT_MATRIX.find(i => i.id === id);
+return `<span class="text-[9px] text-cyan-300">🔍 ${s?.sensor}</span>`;
+}).join('') + (activeDiagnostics.length > 3 ? `<span class="text-[9px] text-slate-500">+${activeDiagnostics.length-3} más</span>` : '');
+}
+const vtvScore = document.getElementById('vtv-score-value')?.innerText || '0%';
+document.getElementById('ctx-vtv').innerText = vtvScore;
+document.getElementById('ctx-vtv').className = `value ${parseInt(vtvScore)>=80?'optimal':parseInt(vtvScore)>=50?'warning':'critical'}`;
+const pending = VTV_ITEMS.filter(i => !vtvState[i.id]).length;
+document.getElementById('ctx-vtv-pending').innerText = pending;
+document.getElementById('ctx-vtv-pending').className = `value ${pending===0?'optimal':pending<=5?'warning':'critical'}`;
+}
+
+function getFullAssistantContext() {
+const last = db[db.length-1] || {};
+const syn = getSyntheticMetrics(last);
+const totalHoras = (last.uptime||0) + (last.downtime||0);
+return {
+unidad: { id: last.unidad || '--', motor: last.motor || '--', km: last.km || 0, rpm: last.rpm || 0, timestamp: last.timestamp || new Date().toISOString() },
+kpis: { disponibilidad: document.getElementById('kpi-disp')?.innerText || '0%', mtbf: document.getElementById('kpi-mtbf')?.innerText || '0', mttr: document.getElementById('kpi-mttr')?.innerText || '0' },
+metricas_sinteticas: { desgaste_km: parseFloat(syn.desgaste.toFixed(2)), ciclo_termovib: parseFloat(syn.termovib.toFixed(2)), inactividad: totalHoras>0 ? ((last.downtime/totalHoras)*100).toFixed(1)+'%' : '0%', eficiencia_termica: parseFloat(syn.eficiencia.toFixed(2)), presion_promedio: ((last.psiDi+last.psiDd+last.psiTi+last.psiTd)/4).toFixed(1), balance_presion: '0.00', estres_mecanico: parseFloat(syn.estres.toFixed(2)), disponibilidad_operativa: totalHoras>0 ? ((last.uptime/totalHoras)*100).toFixed(1)+'%' : '0%' },
+sensores: { temperatura: last.ta || 0, vibracion: last.vibracion || 0, psi_di: last.psiDi || 0, psi_dd: last.psiDd || 0, psi_ti: last.psiTi || 0, psi_td: last.psiTd || 0 },
+alertas: generateAlertList(),
+diagnostico_sensores: activeDiagnostics.map(id => { const s = SENSOR_FAULT_MATRIX.find(i => i.id === id); return s ? {sensor: s.sensor, falla: s.falla, consecuencia: s.consecuencia} : null; }).filter(Boolean),
+vtv: { score: parseInt(document.getElementById('vtv-score-value')?.innerText || '0'), pendientes: VTV_ITEMS.filter(i => !vtvState[i.id]).map(i => i.label) },
+historial_reciente: db.slice(-5).map(r => ({ fecha: new Date(r.timestamp).toLocaleDateString('es-ES'), trabajo: r.trabajo || 'Sin detalles' }))
+};
+}
+
+function generateAlertList() {
+const alerts = [];
+const last = db[db.length-1];
+if(!last) return alerts;
+if(last.ta > 105) alerts.push({tipo:'critical', mensaje:`Temperatura crítica: ${last.ta}°C`});
+else if(last.ta > 95) alerts.push({tipo:'warning', mensaje:`Temperatura elevada: ${last.ta}°C`});
+if(last.vibracion >= 5.0) alerts.push({tipo:'critical', mensaje:`Vibración crítica: ${last.vibracion} mm/s`});
+else if(last.vibracion >= 3.5) alerts.push({tipo:'warning', mensaje:`Vibración moderada: ${last.vibracion} mm/s`});
+if(last.km >= 60000) alerts.push({tipo:'warning', mensaje:`Kilometraje alto: ${last.km.toLocaleString()} km`});
+const failedVTV = VTV_ITEMS.filter(i => !vtvState[i.id]);
+if(failedVTV.length > 0) alerts.push({tipo:'info', mensaje:`${failedVTV.length} ítems VTV pendientes`});
+return alerts;
+}
+
+function askAssistant(type) {
+const prompts = {
+diagnostic: 'Analiza los datos actuales de la unidad y proporciona un diagnóstico técnico de su estado. Incluye: 1) Evaluación de parámetros críticos, 2) Posibles causas de anomalías, 3) Recomendaciones inmediatas.',
+maintenance: 'Basado en el kilometraje, horas de uso y métricas sintéticas, genera un plan de mantenimiento preventivo priorizado. Incluye plazos estimados y componentes a revisar.',
+vtv: 'Evalúa la preparación para VTV de esta unidad. Identifica ítems pendientes del checklist, prioriza acciones y estima probabilidad de aprobación.',
+anomaly: 'Detecta patrones anómalos en los datos históricos y actuales. Compara con rangos óptimos y señala desviaciones significativas con posible impacto operacional.'
+};
+const input = document.getElementById('assistant-input');
+input.value = prompts[type] || '';
+input.focus();
+sendAssistantMessage();
+}
+
+function sendAssistantMessage() {
+const input = document.getElementById('assistant-input');
+const message = input.value.trim();
+const sendBtn = document.getElementById('assistant-send');
+if(!message) return;
+addAssistantMessage(message, 'user');
+input.value = '';
+sendBtn.disabled = true;
+showAssistantTyping();
+setTimeout(() => {
+hideAssistantTyping();
+const response = generateAssistantResponse(message);
+addAssistantMessage(response, 'ai');
+sendBtn.disabled = false;
+scrollToBottom('assistant-messages');
+}, 1500 + Math.random() * 1000);
+}
+
+function handleAssistantKeydown(e) {
+if(e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendAssistantMessage(); }
+}
+
+function addAssistantMessage(text, type) {
+const container = document.getElementById('assistant-messages');
+const msg = document.createElement('div');
+msg.className = `assistant-message ${type}`;
+msg.innerHTML = `${text}<span class="timestamp">${new Date().toLocaleTimeString('es-ES', {hour:'2-digit', minute:'2-digit'})}</span>`;
+container.appendChild(msg);
+assistantMessages.push({text, type, timestamp: new Date()});
+scrollToBottom('assistant-messages');
+}
+
+function showAssistantTyping() {
+const container = document.getElementById('assistant-messages');
+const typing = document.createElement('div');
+typing.className = 'assistant-typing';
+typing.id = 'assistant-typing-indicator';
+typing.innerHTML = '<span class="dot"></span><span class="dot"></span><span class="dot"></span> Analizando datos...';
+container.appendChild(typing);
+scrollToBottom('assistant-messages');
+}
+
+function hideAssistantTyping() {
+const typing = document.getElementById('assistant-typing-indicator');
+if(typing) typing.remove();
+}
+
+function scrollToBottom(elementId) {
+const el = document.getElementById(elementId);
+if(el) el.scrollTop = el.scrollHeight;
+}
+
+function generateAssistantResponse(userMessage) {
+const ctx = getFullAssistantContext();
+const msgLower = userMessage.toLowerCase();
+if(msgLower.includes('temperatura') || msgLower.includes('temp') || msgLower.includes('calient')) {
+const temp = ctx.sensores.temperatura;
+if(temp > 105) {
+return `🔥 <strong>ALERTA DE TEMPERATURA CRÍTICA</strong><br><br>
+• Lectura actual: <strong>${temp}°C</strong> (Límite seguro: 95°C)<br>
+• <strong>Causas probables:</strong><br>
+  - Nivel bajo de refrigerante<br>
+  - Termostato bloqueado<br>
+  - Ventilador de radiador inoperativo<br>
+  - Bomba de agua con falla<br><br>
+• <strong>Acción inmediata:</strong> Detener operación y verificar sistema de refrigeración. No continuar hasta resolver.`;
+} else if(temp > 95) {
+return `⚠️ <strong>Temperatura elevada detectada</strong><br><br>
+• Lectura: ${temp}°C - Monitorear tendencia<br>
+• Verificar: Nivel de refrigerante, estado de mangueras, funcionamiento de ventilador<br>
+• Programar revisión preventiva en próximas 48hs`;
+}
+return `✅ Temperatura dentro de rango normal (${temp}°C). Continuar monitoreo periódico.`;
+}
+if(msgLower.includes('vibracion') || msgLower.includes('vibración') || msgLower.includes('vib')) {
+const vib = ctx.sensores.vibracion;
+if(vib >= 5.0) {
+return `〰️ <strong>VIBRACIÓN CRÍTICA DETECTADA</strong><br><br>
+• Nivel: <strong>${vib} mm/s</strong> (Límite ISO: 4.5 mm/s)<br>
+• <strong>Posibles causas:</strong><br>
+  - Desbalanceo de ruedas/ejes<br>
+  - Rodamientos desgastados<br>
+  - Alineación incorrecta<br>
+  - Problemas en transmisión<br><br>
+• <strong>Recomendación:</strong> Programar balanceo y alineación. Inspeccionar rodamientos antes de próxima operación.`;
+} else if(vib >= 3.5) {
+return `⚠️ Vibración moderada: ${vib} mm/s<br>
+• Monitorear evolución en próximas lecturas<br>
+• Considerar balanceo preventivo si la tendencia es ascendente`;
+}
+return `✅ Vibración dentro de parámetros aceptables (${vib} mm/s).`;
+}
+if(msgLower.includes('vtv') || msgLower.includes('verificación') || msgLower.includes('inspección')) {
+const score = ctx.vtv.score;
+const pendientes = ctx.vtv.pendientes;
+if(score === 100) {
+return `✅ <strong>Unidad APTA para VTV</strong><br><br>
+• Score: 100% - Todos los ítems verificados<br>
+• Documentación: Verificar vigencia de seguro y cédula<br>
+• Recomendación: Realizar prueba de frenos y luces antes de presentar`;
+} else if(score >= 80) {
+return `🟡 <strong>Casi listo para VTV</strong><br><br>
+• Score: ${score}% - ${pendientes.length} ítems pendientes<br>
+• <strong>Prioridad:</strong> ${pendientes.slice(0,3).join(', ')}<br>
+• Estimación: 1-2 días para completar preparación`;
+}
+return `🔴 <strong>Preparación VTV incompleta</strong><br><br>
+• Score: ${score}% - ${pendientes.length} ítems críticos pendientes<br>
+• <strong>Acciones urgentes:</strong><br>${pendientes.map(p=>`  - ${p}`).join('<br>')}<br><br>
+• Planificar 3-5 días para preparación completa`;
+}
+if(msgLower.includes('mantenimiento') || msgLower.includes('manten') || msgLower.includes('servicio')) {
+const km = ctx.unidad.km;
+const motor = ctx.unidad.motor;
+let recomendaciones = [];
+if(km % 10000 < 2000 && km >= 10000) recomendaciones.push('• Cambio de aceite y filtros (cada 10.000 km)');
+if(km % 15000 < 3000 && km >= 15000 && motor.toLowerCase().includes('nafta')) recomendaciones.push('• Verificar/Reemplazar bujas (cada 15.000 km)');
+if(km % 30000 < 5000 && km >= 30000 && motor.toLowerCase().includes('diesel')) recomendaciones.push('• Cambio filtro combustible diésel (cada 30.000 km)');
+if(km >= 60000) recomendaciones.push('⚠️ Inspección correa de distribución (60.000 km)');
+if(ctx.metricas_sinteticas.estres_mecanico > 70) recomendaciones.push('• Revisión de suspensión y dirección por alto estrés mecánico');
+if(recomendaciones.length === 0) {
+recomendaciones.push('✅ Sin mantenimientos programados en el rango actual');
+recomendaciones.push('• Continuar con chequeos periódicos cada 5.000 km');
+}
+return `🔧 <strong>Plan de Mantenimiento - ${ctx.unidad.id}</strong><br><br>
+• Kilometraje actual: ${km.toLocaleString()} km<br>
+• Motor: ${motor}<br><br>
+<strong>Recomendaciones:</strong><br>
+${recomendaciones.join('<br>')}<br><br>
+<em>Nota: Los intervalos pueden variar según condiciones de operación.</em>`;
+}
+if(msgLower.includes('anomal') || msgLower.includes('raro') || msgLower.includes('problema') || msgLower.includes('falla')) {
+const alerts = ctx.alertas;
+const diag = ctx.diagnostico_sensores;
+if(alerts.length === 0 && diag.length === 0) {
+return `✅ <strong>Análisis de Anomalías</strong><br><br>
+• No se detectaron desviaciones significativas en los parámetros monitoreados<br>
+• Todas las métricas sintéticas dentro de rangos óptimos<br>
+• Continuar con monitoreo preventivo estándar`;
+}
+let analysis = `<strong>🔍 Reporte de Anomalías Detectadas</strong><br><br>`;
+if(alerts.length > 0) {
+analysis += `<strong>Alertas del Sistema:</strong><br>`;
+alerts.forEach(a => {
+const icon = a.tipo === 'critical' ? '🔴' : a.tipo === 'warning' ? '🟡' : '🔵';
+analysis += `${icon} ${a.mensaje}<br>`;
+});
+analysis += `<br>`;
+}
+if(diag.length > 0) {
+analysis += `<strong>Sensores con Anomalías Reportadas:</strong><br>`;
+diag.forEach(d => {
+analysis += `• <strong>${d.sensor}</strong>: ${d.falla}<br>  → Impacto: ${d.consecuencia}<br>`;
+});
+}
+analysis += `<br><strong>Próximos pasos:</strong><br>1. Priorizar resolución de alertas críticas<br>2. Documentar intervenciones en el sistema<br>3. Re-evaluar métricas post-corrección`;
+return analysis;
+}
+return `🤖 <strong>Análisis NEXO-ART para ${ctx.unidad.id}</strong><br><br>
+<strong>Resumen del Estado:</strong><br>
+• Disponibilidad: ${ctx.kpis.disponibilidad}<br>
+• Estrés Mecánico: ${ctx.metricas_sinteticas.estres_mecanico}<br>
+• Eficiencia Térmica: ${ctx.metricas_sinteticas.eficiencia_termica}<br>
+• VTV Score: ${ctx.vtv.score}%<br><br>
+<strong>Recomendación General:</strong><br>
+${ctx.alertas.length > 0 ? '⚠️ Se detectaron alertas que requieren atención. Revisar panel de diagnóstico.' : '✅ Parámetros operativos dentro de rangos aceptables. Continuar monitoreo preventivo.'}<br><br>
+<em>💡 Tip: Sé más específico en tu pregunta para obtener análisis detallados. Ej: "¿Está lista para VTV?", "¿Por qué vibra tanto?", "¿Cuándo cambiar aceite?"</em>`;
+}
+
+function exportContextToNotebook() {
+const ctx = getFullAssistantContext();
+const contextText = `
+# NEXO-ART - Contexto de Diagnóstico
+## Generado: ${new Date().toLocaleString('es-ES')}
+## UNIDAD
+- ID: ${ctx.unidad.id}
+- Motor: ${ctx.unidad.motor}
+- Kilometraje: ${ctx.unidad.km.toLocaleString()} km
+- RPM: ${ctx.unidad.rpm}
+## KPIs DE FLOTA
+- Disponibilidad: ${ctx.kpis.disponibilidad}
+- MTBF: ${ctx.kpis.mtbf}h
+- MTTR: ${ctx.kpis.mttr}h
+## MÉTRICAS SINTÉTICAS (IA)
+- Desgaste/km: ${ctx.metricas_sinteticas.desgaste_km}
+- Ciclo Termovibracional: ${ctx.metricas_sinteticas.ciclo_termovib}
+- Inactividad: ${ctx.metricas_sinteticas.inactividad}
+- Eficiencia Térmica: ${ctx.metricas_sinteticas.eficiencia_termica}
+- Presión Promedio: ${ctx.metricas_sinteticas.presion_promedio} PSI
+- Balance de Presión: ${ctx.metricas_sinteticas.balance_presion}
+- Estrés Mecánico: ${ctx.metricas_sinteticas.estres_mecanico}
+- Disponibilidad Operativa: ${ctx.metricas_sinteticas.disponibilidad_operativa}
+## SENSORES EN TIEMPO REAL
+- Temperatura: ${ctx.sensores.temperatura}°C
+- Vibración: ${ctx.sensores.vibracion} mm/s
+- PSI DI: ${ctx.sensores.psi_di} | DD: ${ctx.sensores.psi_dd} | TI: ${ctx.sensores.psi_ti} | TD: ${ctx.sensores.psi_td}
+## ALERTAS ACTIVAS
+${ctx.alertas.length > 0 ? ctx.alertas.map(a => `- [${a.tipo.toUpperCase()}] ${a.mensaje}`).join('\n') : '- ✅ Sin alertas'}
+## DIAGNÓSTICO DE SENSORES SELECCIONADOS
+${ctx.diagnostico_sensores.length > 0 ? ctx.diagnostico_sensores.map(d => `- ${d.sensor}: ${d.falla} → ${d.consecuencia}`).join('\n') : '- Sin anomalías reportadas'}
+## VTV - VERIFICACIÓN TÉCNICA VEHICULAR
+- Score: ${ctx.vtv.score}%
+- Ítems Pendientes: ${ctx.vtv.pendientes.length > 0 ? ctx.vtv.pendientes.join(', ') : 'Ninguno'}
+## HISTORIAL RECIENTE DE TRABAJOS
+${ctx.historial_reciente.map(h => `- ${h.fecha}: ${h.trabajo}`).join('\n')}
+---
+*Este contexto fue generado automáticamente por NEXO-ART Motor Intelligence v2.2*
+*Para análisis avanzado, importar este contenido en NotebookLM y solicitar:*
+*1. "Identifica patrones de falla recurrentes"*
+*2. "Predice próximos mantenimientos necesarios"*
+*3. "Genera informe técnico para taller"*
+`.trim();
+navigator.clipboard.writeText(contextText).then(() => {
+showToast('📋 Contexto copiado al portapapeles. ¡Pégalo en NotebookLM!', 'success');
+}).catch(() => {
+showToast('⚠️ No se pudo copiar. Selecciona y copia manualmente el texto del contexto.', 'warning');
+});
+console.log('📦 NEXO-ART Context Export:\n', contextText);
+return true;
+}
+
+// Cerrar modal con Escape y click fuera
+document.addEventListener('keydown', (e) => {
+if(e.key === 'Escape') {
+const modal = document.getElementById('assistant-modal');
+if(modal && !modal.classList.contains('hidden')) { closeAssistant(); }
+}
+});
+document.getElementById('assistant-modal')?.addEventListener('click', (e) => {
+if(e.target === document.getElementById('assistant-modal')) { closeAssistant(); }
+});
+
 // === INICIALIZACIÓN ===
 window.onload = () => {
+console.log('🚀 NEXO-ART v2.2 - Inicializando...');
 loadFromStorage();
 loadVTVState();
 loadSensorDiagnostics();
@@ -2311,7 +2916,14 @@ overlay.addEventListener('click', (e) => { if(e.target === overlay) { closeWorkH
 });
 window.addEventListener('orientationchange', () => { if(window.innerWidth < 768 && isSidebarOpen) toggleSidebar(); });
 setTimeout(() => { const hint = document.querySelector('.shortcut-hint'); if(hint) hint.style.opacity = '0'; }, 10000);
+window.addEventListener('resize', () => {
+clearTimeout(window._resizeTimer);
+window._resizeTimer = setTimeout(() => {
+if(timelineChartIns && (db.length > 0 || selectedRows.size > 0)) timelineChartIns.update();
+}, 250);
+});
 console.log('✅ NEXO-ART v2.2 inicializado correctamente');
+showToast('🎯 Sistema listo para operar', 'success');
 };
 </script>
 </body>
