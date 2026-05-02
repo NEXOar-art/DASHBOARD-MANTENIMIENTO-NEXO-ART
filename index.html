@@ -382,6 +382,33 @@
 </a>
 
 <!-- LOGICA JS -->
+<script type="module">
+    import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm";
+
+    const supabaseUrl = "https://frggsxlgpxlexasixtdj.supabase.co/rest/v1/";
+    const supabaseKey = "sb_publishable_IJ5fiIeJHPK_acU_LulfDg_6xfi6_Ho";
+    const supabase = createClient(supabaseUrl, supabaseKey);
+
+    // Guardar datos
+    window.guardarDatoSupabase = async function(unidad, km, temp) {
+        const { data, error } = await supabase
+            .from("vehiculos")
+            .insert([{ unidad: unidad, kilometros: km, temperatura: temp, fecha: new Date().toISOString() }]);
+        if (error) console.error("Error en Supabase:", error);
+        else console.log("Dato guardado en Supabase:", data);
+    };
+
+    // Leer datos
+    window.leerDatosSupabase = async function() {
+        const { data, error } = await supabase
+            .from("vehiculos")
+            .select("*")
+            .order("fecha", { ascending: false });
+        if (error) console.error(error);
+        else console.log("Datos desde Supabase:", data);
+    };
+</script>
+
 <script>
     // ESTADO GLOBAL
     const MAX_RECORDS = 2000;
@@ -521,6 +548,12 @@
         };
         db.push(record);
         guardarEnMemoria();
+        
+        // Guardado en Supabase (si está disponible a través del module)
+        if(typeof window.guardarDatoSupabase === "function") {
+            window.guardarDatoSupabase(record.unidad, record.km, record.temp);
+        }
+        
         e.target.reset();
         document.getElementById('in_fecha').valueAsDate = new Date();
         selectedRows.clear();
@@ -528,7 +561,7 @@
     }
 
     function limpiarFiltros() {
-        if(confirm("¿Seguro que deseas borrar toda la base de datos?")) {
+        if(confirm("¿Seguro que deseas borrar toda la base de datos local?")) {
             db = [];
             guardarEnMemoria();
             selectedRows.clear();
