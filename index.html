@@ -245,12 +245,8 @@
         <div class="glass-card p-5 no-print">
             <h2 class="font-tech text-sm text-cyan-400 font-bold mb-2"><i class="fas fa-microchip mr-2"></i>Diagnóstico de Sensores</h2>
             <p class="text-[9px] text-slate-400 mb-3">Tildar anomalías detectadas para cruzar con dataset e IA.</p>
-            <div class="space-y-2 max-h-[150px] overflow-y-auto text-[10px]">
-                <label class="flex items-center gap-2 cursor-pointer hover:bg-cyan-900/30 p-1 rounded"><input type="checkbox" class="sensor-chk" value="Check Engine"> Check Engine (Alerta General)</label>
-                <label class="flex items-center gap-2 cursor-pointer hover:bg-cyan-900/30 p-1 rounded"><input type="checkbox" class="sensor-chk" value="Temperatura"> Alarma Temperatura Alta</label>
-                <label class="flex items-center gap-2 cursor-pointer hover:bg-cyan-900/30 p-1 rounded"><input type="checkbox" class="sensor-chk" value="Presión Aceite"> Caída Presión Aceite</label>
-                <label class="flex items-center gap-2 cursor-pointer hover:bg-cyan-900/30 p-1 rounded"><input type="checkbox" class="sensor-chk" value="ABS/Frenos"> Falla ABS / Frenos</label>
-                <label class="flex items-center gap-2 cursor-pointer hover:bg-cyan-900/30 p-1 rounded"><input type="checkbox" class="sensor-chk" value="DPF/EGR"> Alerta DPF / EGR</label>
+            <div class="space-y-1 max-h-[180px] overflow-y-auto text-[10px] custom-scrollbar pr-2" id="sensores-container">
+                <!-- Dinámico por JS -->
             </div>
         </div>
 
@@ -381,15 +377,14 @@
     <i class="fab fa-whatsapp"></i>
 </a>
 
-<!-- LOGICA JS -->
+<!-- LOGICA JS SUPABASE -->
 <script type="module">
     import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm";
 
-    const supabaseUrl = "https://frggsxlgpxlexasixtdj.supabase.co/rest/v1/";
+    const supabaseUrl = "https://frggsxlgpxlexasixtdj.supabase.co";
     const supabaseKey = "sb_publishable_IJ5fiIeJHPK_acU_LulfDg_6xfi6_Ho";
     const supabase = createClient(supabaseUrl, supabaseKey);
 
-    // Guardar datos
     window.guardarDatoSupabase = async function(unidad, km, temp) {
         const { data, error } = await supabase
             .from("vehiculos")
@@ -398,7 +393,6 @@
         else console.log("Dato guardado en Supabase:", data);
     };
 
-    // Leer datos
     window.leerDatosSupabase = async function() {
         const { data, error } = await supabase
             .from("vehiculos")
@@ -430,6 +424,27 @@
         { id: 'balance', name: 'Balance Presión', min: 0, optMin: 0, optMax: 1, max: 2, unit: "" },
         { id: 'estres', name: 'Estrés Mecánico', min: 0, optMin: 30, optMax: 70, max: 100, unit: "" },
         { id: 'dispop', name: 'Disp. Operativa', min: 70, optMin: 85, optMax: 95, max: 100, unit: '%' }
+    ];
+
+    const defSensores = [
+        { id: 'O2', label: 'Sensor de Oxígeno (O2)', falla: 'Provoca mezcla rica o pobre y alto consumo de combustible', fuente: '(1,2)' },
+        { id: 'MAP', label: 'Sensor MAP (Presión Múltiple)', falla: 'Genera pérdida de potencia y altera la inyección de combustible', fuente: '(1,2)' },
+        { id: 'CP', label: 'Sensor CP (Cigüeñal)', falla: 'Es vital para el arranque; si falla, el motor puede no encender', fuente: '(1)' },
+        { id: 'ST', label: 'Sensor ST (Temperatura/ECT)', falla: 'Lecturas o datos erróneos que afectan el arranque y el consumo', fuente: '(1,2)' },
+        { id: 'MAV', label: 'Sensor MAV (MAF/Flujo de aire)', falla: 'Puede causar un ralentí irregular', fuente: '(1)' },
+        { id: 'Detonacion', label: 'Sensor de Detonación', falla: 'Detecta cascabeleo o golpeteo anormal y retrasa el avance', fuente: '(1,2)' },
+        { id: 'TPS', label: 'Sensor TPS (Acelerador)', falla: 'Altera la aceleración y puede provocar tirones', fuente: '(1,2)' },
+        { id: 'CMP', label: 'Sensor CMP (Árbol de levas)', falla: 'Una señal incorrecta genera desajustes en el motor', fuente: '(2)' },
+        { id: 'PresionComb', label: 'Sensor de Presión de Combustible', falla: 'Activa el Check Engine si la presión del riel está fuera de rango', fuente: '(2)' },
+        { id: 'PresionTurbo', label: 'Sensor de Presión del Turbo', falla: 'Su falla hace que el motor pierda fuerza', fuente: '(1)' },
+        { id: 'Velocidad', label: 'Sensor de Velocidad', falla: 'Vuelve errático el velocímetro', fuente: '(1)' },
+        { id: 'PresionAceite', label: 'Sensor de Presión de Aceite', falla: 'Enciende alertas específicas en el tablero', fuente: '(1)' },
+        { id: 'CheckEngine', label: 'Check Engine', falla: 'El motor o un sensor crítico reporta un problema', fuente: '(2,3)' },
+        { id: 'EPC', label: 'EPC', falla: 'Falla en el acelerador electrónico o su sistema de control', fuente: '(3)' },
+        { id: 'ABS', label: 'ABS', falla: 'Avería en el sistema de frenos antibloqueo', fuente: '(3)' },
+        { id: 'ControlTraccion', label: 'Control de Tracción', falla: 'El sistema está fallando o se ha desactivado', fuente: '(3)' },
+        { id: 'Airbag', label: 'Airbag', falla: 'Advierte una falla en el sistema de seguridad', fuente: '(3)' },
+        { id: 'Direccion', label: 'Dirección Asistida', falla: 'Problema en la asistencia del volante; este puede ponerse duro', fuente: '(3)' }
     ];
 
     const vtvItems = [
@@ -469,6 +484,18 @@
                     <span>Max:${c.max >= 1000 ? c.max/1000+'k' : c.max}</span>
                 </p>
             </div>`;
+        });
+        container.innerHTML = html;
+    }
+
+    function renderSensores() {
+        const container = document.getElementById('sensores-container');
+        let html = '';
+        defSensores.forEach(s => {
+            html += `<label class="flex items-start gap-2 cursor-pointer hover:bg-cyan-900/30 p-1.5 rounded transition-colors">
+                        <input type="checkbox" class="sensor-chk mt-1" value="${s.id}" onchange="actualizarDashboard()"> 
+                        <div><span class="font-bold text-cyan-400">${s.label}</span></div>
+                     </label>`;
         });
         container.innerHTML = html;
     }
@@ -520,6 +547,7 @@
 
     window.onload = () => {
         initAdvCards();
+        renderSensores();
         renderVTV();
         cargarDeMemoria();
         document.getElementById('in_fecha').valueAsDate = new Date();
@@ -549,7 +577,6 @@
         db.push(record);
         guardarEnMemoria();
         
-        // Guardado en Supabase (si está disponible a través del module)
         if(typeof window.guardarDatoSupabase === "function") {
             window.guardarDatoSupabase(record.unidad, record.km, record.temp);
         }
@@ -1212,26 +1239,239 @@
     }
 
     function exportarPDF() {
-        alert("El exportador PDF sigue intacto y vinculado a html2pdf.");
-    }
-
-    function enviarWhatsApp() {
         const activeDb = selectedRows.size > 0 ? db.filter((_, i) => selectedRows.has(i)) : obtenerDbFiltrada();
-        if(activeDb.length === 0) return alert("No hay datos para reportar.");
+        if(activeDb.length === 0) return alert("No hay datos para exportar.");
+
         const last = activeDb[activeDb.length-1];
         const syn = getSynthetic(last);
+        
         const disp = document.getElementById('kpi_disp').innerText;
         const mtbf = document.getElementById('kpi_mtbf').innerText;
         const mttr = document.getElementById('kpi_mttr').innerText;
         
-        let report = '*NEXO-ART MOTOR INTELLIGENCE*\n';
-        report += '*Reporte de Diagnóstico Avanzado Local*\n\n';
-        report += `*Unidad Analizada:* ${last.unidad} (${last.motor})\n`;
-        report += `*Kilometraje:* ${last.km.toLocaleString()} km\n`;
-        report += `*Fecha:* ${last.fecha}\n\n`;
+        const vtvPct = document.getElementById('vtv-pct').innerText;
+        const vtvStatus = document.getElementById('vtv-status-text').innerText;
+        const vtvChecks = Array.from(document.querySelectorAll('.vtv-chk:checked')).map(c => `<li><span style="color:#10b981; font-weight:bold;">✔</span> ${c.value}</li>`).join('');
+        const vtvUnchecks = Array.from(document.querySelectorAll('.vtv-chk:not(:checked)')).map(c => `<li><span style="color:#f43f5e; font-weight:bold;">✖</span> ${c.value}</li>`).join('');
         
+        const aiHtml = document.getElementById('ai-recommendations').innerHTML;
+
+        const uniqueUnits = [...new Set(activeDb.map(r => r.unidad))];
+        const reportTitle = uniqueUnits.length === 1 ? `REPORTE TÉCNICO: ${uniqueUnits[0]}` : `REPORTE DE FLOTA (${uniqueUnits.length} Unidades)`;
+
+        let tableHtml = `
+            <table class="w-full text-left text-[10px] border-collapse mt-4">
+                <thead>
+                    <tr class="bg-cyan-900 text-white">
+                        <th class="p-2 border border-cyan-700">Fecha</th>
+                        <th class="p-2 border border-cyan-700">Unidad</th>
+                        <th class="p-2 border border-cyan-700">Año</th>
+                        <th class="p-2 border border-cyan-700">KM</th>
+                        <th class="p-2 border border-cyan-700">Up/Down</th>
+                        <th class="p-2 border border-cyan-700">Vib/Temp</th>
+                        <th class="p-2 border border-cyan-700">RPM</th>
+                        <th class="p-2 border border-cyan-700">PSI Prom.</th>
+                        <th class="p-2 border border-cyan-700">Detalle Trabajo</th>
+                    </tr>
+                </thead>
+                <tbody>
+        `;
+        
+        activeDb.forEach((r, idx) => {
+            const psiProm = (r.psi_di + r.psi_dd + r.psi_ti + r.psi_td) / 4;
+            const bgClass = idx % 2 === 0 ? 'bg-slate-50' : 'bg-white';
+            tableHtml += `
+                <tr class="${bgClass} text-slate-700 break-inside-avoid">
+                    <td class="p-2 border border-slate-200 whitespace-nowrap">${formatearFechaCorto(r.fecha)}</td>
+                    <td class="p-2 border border-slate-200 font-bold">${r.unidad}</td>
+                    <td class="p-2 border border-slate-200">${r.anio}</td>
+                    <td class="p-2 border border-slate-200">${r.km.toLocaleString()}</td>
+                    <td class="p-2 border border-slate-200"><span class="text-emerald-600">${r.up.toFixed(1)}h</span> / <span class="text-rose-600">${r.down.toFixed(1)}h</span></td>
+                    <td class="p-2 border border-slate-200"><span class="${r.vib>4?'text-rose-600 font-bold':''}">${r.vib.toFixed(1)}</span> / <span class="${r.temp>95?'text-rose-600 font-bold':''}">${r.temp.toFixed(1)}°</span></td>
+                    <td class="p-2 border border-slate-200">${r.rpm}</td>
+                    <td class="p-2 border border-slate-200">${psiProm.toFixed(1)}</td>
+                    <td class="p-2 border border-slate-200 text-[8px] leading-tight">${r.trabajo || '-'}</td>
+                </tr>
+            `;
+        });
+        tableHtml += `</tbody></table>`;
+
+        const pdfContainer = document.createElement('div');
+        pdfContainer.id = "temp-pdf-export";
+        pdfContainer.className = "bg-white text-slate-800 font-sans";
+        pdfContainer.style.width = "800px";
+        pdfContainer.style.position = "absolute";
+        pdfContainer.style.left = "-9999px";
+        pdfContainer.style.top = "0";
+
+        pdfContainer.innerHTML = `
+            <style>
+                #temp-pdf-export .text-rose-400, #temp-pdf-export .text-rose-500 { color: #e11d48 !important; }
+                #temp-pdf-export .text-amber-400, #temp-pdf-export .text-amber-500 { color: #d97706 !important; }
+                #temp-pdf-export .text-emerald-400, #temp-pdf-export .text-emerald-500 { color: #059669 !important; }
+                #temp-pdf-export .text-purple-400, #temp-pdf-export .text-purple-500 { color: #7e22ce !important; }
+                #temp-pdf-export .text-cyan-400, #temp-pdf-export .text-cyan-500 { color: #0e7490 !important; }
+                #temp-pdf-export .text-blue-400, #temp-pdf-export .text-blue-500 { color: #1d4ed8 !important; }
+                #temp-pdf-export .text-slate-300, #temp-pdf-export .text-slate-400, #temp-pdf-export .text-slate-500 { color: #334155 !important; }
+                #temp-pdf-export p { margin-bottom: 0.5rem; }
+                #temp-pdf-export .llm-response { font-size: 11px; line-height: 1.4; }
+            </style>
+            <div style="padding: 40px;">
+                <!-- HEADER -->
+                <div class="flex justify-between items-center border-b-4 border-cyan-600 pb-4 mb-6">
+                    <div>
+                        <h1 class="text-4xl font-bold text-cyan-800" style="font-family: 'Orbitron', sans-serif;">NEXO-ART</h1>
+                        <p class="text-xs tracking-[0.2em] text-slate-500 uppercase font-bold" style="font-family: 'Orbitron', sans-serif;">Motor Intelligence</p>
+                    </div>
+                    <div class="text-right">
+                        <h2 class="text-2xl font-bold text-slate-800 uppercase">${reportTitle}</h2>
+                        <p class="text-sm text-slate-500">Generado el: ${new Date().toLocaleDateString('es-ES')}</p>
+                    </div>
+                </div>
+
+                <!-- KPIs -->
+                <div class="grid grid-cols-3 gap-4 mb-6">
+                    <div class="bg-slate-50 p-4 rounded-lg border-l-4 border-emerald-500 border border-slate-200">
+                        <p class="text-[10px] text-slate-500 uppercase font-bold">Disponibilidad</p>
+                        <p class="text-3xl font-bold text-emerald-600" style="font-family: 'Orbitron', sans-serif;">${disp}</p>
+                    </div>
+                    <div class="bg-slate-50 p-4 rounded-lg border-l-4 border-cyan-500 border border-slate-200">
+                        <p class="text-[10px] text-slate-500 uppercase font-bold">MTBF</p>
+                        <p class="text-3xl font-bold text-cyan-600" style="font-family: 'Orbitron', sans-serif;">${mtbf} h</p>
+                    </div>
+                    <div class="bg-slate-50 p-4 rounded-lg border-l-4 border-purple-500 border border-slate-200">
+                        <p class="text-[10px] text-slate-500 uppercase font-bold">MTTR</p>
+                        <p class="text-3xl font-bold text-purple-600" style="font-family: 'Orbitron', sans-serif;">${mttr} h</p>
+                    </div>
+                </div>
+
+                <!-- METRICAS SINTETICAS -->
+                <div class="mb-6">
+                    <h3 class="text-sm font-bold text-cyan-800 uppercase border-b border-slate-200 pb-1 mb-3">Métricas Sintéticas (Último Registro)</h3>
+                    <div class="grid grid-cols-4 gap-2 text-center">
+                        <div class="bg-slate-50 p-2 rounded border border-slate-200">
+                            <p class="text-[9px] text-slate-500 uppercase font-bold">Desgaste/KM</p>
+                            <p class="text-lg font-bold text-slate-700" style="font-family: 'Orbitron', sans-serif;">${syn.desgaste.toFixed(1)}</p>
+                        </div>
+                        <div class="bg-slate-50 p-2 rounded border border-slate-200">
+                            <p class="text-[9px] text-slate-500 uppercase font-bold">Eficiencia</p>
+                            <p class="text-lg font-bold text-slate-700" style="font-family: 'Orbitron', sans-serif;">${syn.eficiencia.toFixed(2)}</p>
+                        </div>
+                        <div class="bg-slate-50 p-2 rounded border border-slate-200">
+                            <p class="text-[9px] text-slate-500 uppercase font-bold">Estrés Mecánico</p>
+                            <p class="text-lg font-bold text-slate-700" style="font-family: 'Orbitron', sans-serif;">${syn.estres.toFixed(1)}</p>
+                        </div>
+                        <div class="bg-slate-50 p-2 rounded border border-slate-200">
+                            <p class="text-[9px] text-slate-500 uppercase font-bold">Disp. Operativa</p>
+                            <p class="text-lg font-bold text-slate-700" style="font-family: 'Orbitron', sans-serif;">${syn.dispop.toFixed(1)}%</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- IA & VTV -->
+                <div class="grid grid-cols-2 gap-6 mb-6">
+                    <div>
+                        <h3 class="text-sm font-bold text-cyan-800 uppercase border-b border-slate-200 pb-1 mb-3">Diagnóstico Experto</h3>
+                        <div class="bg-slate-50 p-4 rounded-lg border border-slate-200 text-[11px] text-slate-700 leading-relaxed">
+                            ${aiHtml}
+                        </div>
+                    </div>
+                    <div>
+                        <h3 class="text-sm font-bold text-cyan-800 uppercase border-b border-slate-200 pb-1 mb-3">Estado VTV: ${vtvPct} (${vtvStatus})</h3>
+                        <div class="bg-slate-50 p-4 rounded-lg border border-slate-200 text-[11px] flex gap-4">
+                            <ul class="flex-1 list-none p-0 m-0 space-y-1 text-slate-600">
+                                ${vtvChecks || '<li class="italic">Ningún ítem marcado</li>'}
+                            </ul>
+                            <ul class="flex-1 list-none p-0 m-0 space-y-1 text-slate-600">
+                                ${vtvUnchecks}
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- TABLA DATASET -->
+                <div>
+                    <h3 class="text-sm font-bold text-cyan-800 uppercase border-b border-slate-200 pb-1 mb-2">Detalle de Registros Analizados</h3>
+                    ${tableHtml}
+                </div>
+
+                <!-- FOOTER -->
+                <div class="mt-8 pt-4 border-t border-slate-200 text-center text-[10px] text-slate-400">
+                    NEXO-ART Motor Intelligence - Documento Confidencial Generado Automáticamente
+                </div>
+            </div>
+        `;
+
+        document.body.appendChild(pdfContainer);
+
+        const opt = {
+            margin:       [5, 0, 5, 0],
+            filename:     `NEXO_ART_Reporte_${new Date().toISOString().split('T')[0]}.pdf`,
+            image:        { type: 'jpeg', quality: 0.98 },
+            html2canvas:  { scale: 2, useCORS: true, letterRendering: true, windowWidth: 800 },
+            jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' },
+            pagebreak:    { mode: ['avoid-all', 'css', 'legacy'] }
+        };
+
+        const btnPdf = document.querySelector('button[onclick="exportarPDF()"]');
+        const oldText = btnPdf.innerHTML;
+        btnPdf.innerHTML = '<i class="fas fa-spinner fa-spin mr-1"></i>Generando...';
+
+        html2pdf().set(opt).from(pdfContainer).save().then(() => {
+            document.body.removeChild(pdfContainer);
+            btnPdf.innerHTML = oldText;
+            
+            // Disparar WhatsApp Global Report luego del PDF
+            enviarWhatsAppGlobal(activeDb, disp, mtbf, mttr, vtvPct, vtvStatus);
+        });
+    }
+
+    function enviarWhatsAppGlobal(activeDb, disp, mtbf, mttr, vtvPct, vtvStatus) {
+        let report = `🚀 *NEXO-ART: REPORTE GENERAL DE PLATAFORMA* 🚀\n\n`;
+        report += `📊 *Resumen Global*\n`;
+        report += `🔸 Total Registros Analizados: ${activeDb.length}\n`;
+        
+        const uniqueUnits = [...new Set(activeDb.map(r => r.unidad))];
+        report += `🔸 Unidades: ${uniqueUnits.length}\n`;
+        report += `🔸 Fecha: ${new Date().toLocaleDateString('es-ES')}\n\n`;
+
+        report += `⚙️ *Rendimiento Promedio:*\n`;
+        report += `✅ Disponibilidad: ${disp}\n`;
+        report += `⏱️ MTBF: ${parseFloat(mtbf).toFixed(1)} h\n`;
+        report += `🔧 MTTR: ${parseFloat(mttr).toFixed(1)} h\n\n`;
+
+        report += `📋 *Estado VTV General:*\n`;
+        report += `🔸 Progreso: ${vtvPct} (${vtvStatus})\n\n`;
+
+        report += `📝 *Detalle de Registros (Dato por Dato):*\n`;
+        
+        const ultimos = activeDb.slice(-30).reverse();
+        ultimos.forEach((r, idx) => {
+            report += `▪️ *${r.unidad}* | F: ${r.fecha} | KM: ${r.km} | UP/DWN: ${r.up}/${r.down} | TMP: ${r.temp}°C | VIB: ${r.vib}\n`;
+        });
+
+        if(activeDb.length > 30) {
+            report += `\n_(Mostrando los 30 más recientes de ${activeDb.length})_\n`;
+        }
+
+        report += `\n🔗 *NEXO-ART Motor Intelligence* - Análisis Profesional.`;
+
         const encodedUri = encodeURIComponent(report);
         window.open(`https://wa.me/3489686939?text=${encodedUri}`, "_blank");
+    }
+
+    // Funcionalidad WhatsApp individual/global al tocar el boton inferior
+    function enviarWhatsApp() {
+        const activeDb = selectedRows.size > 0 ? db.filter((_, i) => selectedRows.has(i)) : obtenerDbFiltrada();
+        if(activeDb.length === 0) return alert("No hay datos para reportar.");
+        
+        const disp = document.getElementById('kpi_disp').innerText;
+        const mtbf = document.getElementById('kpi_mtbf').innerText;
+        const mttr = document.getElementById('kpi_mttr').innerText;
+        const vtvPct = document.getElementById('vtv-pct').innerText;
+        const vtvStatus = document.getElementById('vtv-status-text').innerText;
+
+        enviarWhatsAppGlobal(activeDb, disp, mtbf, mttr, vtvPct, vtvStatus);
     }
 </script>
 </body>
